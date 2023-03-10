@@ -15,7 +15,6 @@ import net.dzikoysk.funnyguilds.guild.GuildRank;
 import net.dzikoysk.funnyguilds.guild.GuildRankManager;
 import net.dzikoysk.funnyguilds.guild.GuildUtils;
 import net.dzikoysk.funnyguilds.guild.Region;
-import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.bukkit.ChatUtils;
 import net.dzikoysk.funnyguilds.user.UserUtils;
@@ -109,21 +108,9 @@ public class GuildPlaceholdersService extends StaticPlaceholdersService<Guild, G
                 .property("lives-symbol-all",
                         guild -> StringUtils.repeated(guild.getLives(), pluginConfiguration.livesRepeatingSymbol.full.getValue()),
                         entity -> messages.get(entity, config -> config.livesNoValue))
-                .rankProperty("position",
-                        (entity, guild, rank) -> rankManager.isRankedGuild(guild)
-                                ? String.valueOf(rank.getPosition(DefaultTops.GUILD_AVG_POINTS_TOP))
-                                : messages.get(entity, config -> config.minMembersToIncludeNoValue),
-                        entity -> messages.get(entity, config -> config.minMembersToIncludeNoValue))
-                .rankProperty("rank",
-                        (entity, guild, rank) -> rankManager.isRankedGuild(guild)
-                                ? String.valueOf(rank.getPosition(DefaultTops.GUILD_AVG_POINTS_TOP))
-                                : messages.get(entity, config -> config.minMembersToIncludeNoValue),
-                        entity -> messages.get(entity, config -> config.minMembersToIncludeNoValue))
-                //TODO total-points -> points (I know this will break up backwards compatibility so I'm not doing it now)
-                .rankProperty("total-points", GuildRank::getPoints, 0)
-                .rankProperty("avg-points", GuildRank::getAveragePoints,0)
                 .rankProperty("points", GuildRank::getAveragePoints, 0)
-                .rankProperty("points-format",
+                .rankProperty("avg-points", GuildRank::getAveragePoints,0)
+                .rankProperty("avg-points-format",
                         (entity, guild, rank) -> FunnyFormatter.format(NumberRange.inRangeToString(rank.getAveragePoints(),
                                 pluginConfiguration.pointsFormat), "{POINTS}", guild.getRank().getAveragePoints()),
                         entity -> FunnyFormatter.format(NumberRange.inRangeToString(0, pluginConfiguration.pointsFormat), "{POINTS}", 0))

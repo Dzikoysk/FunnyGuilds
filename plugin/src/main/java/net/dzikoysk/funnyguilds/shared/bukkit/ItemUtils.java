@@ -1,7 +1,7 @@
 package net.dzikoysk.funnyguilds.shared.bukkit;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import dev.peri.yetanothermessageslibrary.message.Sendable;
+import dev.peri.yetanothermessageslibrary.replace.StringReplacer;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -9,48 +9,27 @@ import java.util.Locale;
 import java.util.function.Function;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.message.MessageConfiguration;
-import net.dzikoysk.funnyguilds.nms.EggTypeChanger;
-import net.dzikoysk.funnyguilds.nms.Reflections;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.adventure.ItemComponentHelper;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import panda.std.Option;
 import panda.std.Pair;
 import panda.std.stream.PandaStream;
 import panda.utilities.text.Joiner;
-import dev.peri.yetanothermessageslibrary.message.Sendable;
-import dev.peri.yetanothermessageslibrary.replace.StringReplacer;
 
 public final class ItemUtils {
-
-    private static Method BY_IN_GAME_NAME_ENCHANT;
-    private static Method CREATE_NAMESPACED_KEY;
-
-    private static Method GET_IN_GAME_NAME_ENCHANT;
-    private static Method GET_NAMESPACED_KEY;
-
-    static {
-        if (!Reflections.USE_PRE_12_METHODS) {
-            Class<?> namespacedKeyClass = Reflections.getBukkitClass("NamespacedKey");
-
-            BY_IN_GAME_NAME_ENCHANT = Reflections.getMethod(Enchantment.class, "getByKey");
-            CREATE_NAMESPACED_KEY = Reflections.getMethod(namespacedKeyClass, "minecraft", String.class);
-
-            GET_IN_GAME_NAME_ENCHANT = Reflections.getMethod(Enchantment.class, "getKey");
-            GET_NAMESPACED_KEY = Reflections.getMethod(namespacedKeyClass, "getKey");
-        }
-    }
 
     private ItemUtils() {
     }
@@ -90,19 +69,13 @@ public final class ItemUtils {
 
     public static ItemStack parseItem(String itemString) {
         String[] split = itemString.split(" ");
-        String[] typeSplit = split[1].split(":");
-        String subtype = typeSplit.length > 1 ? typeSplit[1] : "0";
 
-        Material material = MaterialUtils.parseMaterial(typeSplit[0], false);
         Option<Integer> amount = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(split[0])).onEmpty(() -> {
             FunnyGuilds.getPluginLogger().parser("Unknown amount: " + split[0]);
         });
+        Material material = MaterialUtils.parseMaterial(split[1], false);
 
-        Option<Integer> data = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(subtype)).onEmpty(() -> {
-            FunnyGuilds.getPluginLogger().parser("Unknown data: " + subtype);
-        });
-
-        ItemBuilder item = new ItemBuilder(material, amount.orElseGet(1), data.orElseGet(0));
+        ItemBuilder item = new ItemBuilder(material, amount.orElseGet(1));
         FunnyFormatter formatter = new FunnyFormatter().register("_", " ").register("{HASH}", "#");
 
         for (int index = 2; index < split.length; index++) {
@@ -117,6 +90,19 @@ public final class ItemUtils {
             String attributeValue = itemAttributes[1];
 
             switch (attributeName.toLowerCase(Locale.ROOT)) {
+                case "damage":
+                case "durability":
+                    if (!(item.getMeta() instanceof Damageable)) {
+                        FunnyGuilds.getPluginLogger().parser("Cannot set durability for " + material.name());
+                        continue;
+                    }
+
+                    Option<Integer> damage = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(attributeValue)).onEmpty(() -> {
+                        FunnyGuilds.getPluginLogger().parser("Unknown durability: " + attributeValue);
+                    });
+
+                    ((Damageable) item.getMeta()).setDamage(damage.orElseGet(0));
+                    continue;
                 case "name":
                 case "displayname":
                     item.setName(formatter.format(attributeValue), true);
@@ -174,25 +160,6 @@ public final class ItemUtils {
                     catch (NumberFormatException numberFormatException) {
                         FunnyGuilds.getPluginLogger().parser("Invalid armor color: " + attributeValue);
                     }
-
-                    continue;
-                case "eggtype":
-                    if (!EggTypeChanger.needsSpawnEggMeta()) {
-                        FunnyGuilds.getPluginLogger().info("This MC version supports metadata for spawnGuildHeart egg type, " +
-                                "no need to use eggtype in item creation!");
-                        continue;
-                    }
-
-                    Option<EntityType> entityType = Option.attempt(IllegalArgumentException.class, () -> {
-                        return EntityType.valueOf(attributeValue.toUpperCase(Locale.ROOT));
-                    }).onEmpty(() -> {
-                        FunnyGuilds.getPluginLogger().parser("Unknown entity type: " + attributeValue);
-                    });
-
-                    if (entityType.isPresent()) {
-                        EggTypeChanger.applyChanges(item.getMeta(), entityType.get());
-                        item.refreshMeta();
-                    }
             }
         }
 
@@ -208,16 +175,20 @@ public final class ItemUtils {
     }
 
     public static String toString(ItemStack item) {
-        String material = item.getType().toString().toLowerCase(Locale.ROOT);
-        short durability = item.getDurability();
         int amount = item.getAmount();
+        String material = item.getType().toString().toLowerCase(Locale.ROOT);
 
-        StringBuilder itemString = new StringBuilder(amount + " " + material + (durability > 0 ? ":" + durability : ""));
+        StringBuilder itemString = new StringBuilder(amount + " " + material);
         FunnyFormatter formatter = new FunnyFormatter().register(" ", "_").register("#", "{HASH}");
 
         ItemMeta meta = item.getItemMeta();
         if (meta == null) {
             return itemString.toString();
+        }
+
+        if (meta instanceof Damageable) {
+            Damageable damageable = (Damageable) meta;
+            itemString.append(" damage:").append(damageable.getDamage());
         }
 
         if (meta.hasDisplayName()) {
@@ -265,49 +236,15 @@ public final class ItemUtils {
             itemString.append(" armorcolor:").append(colorString);
         }
 
-        if (EggTypeChanger.needsSpawnEggMeta()) {
-            if (meta instanceof SpawnEggMeta) {
-                SpawnEggMeta eggMeta = (SpawnEggMeta) meta;
-                String entityType = eggMeta.getSpawnedType().name().toLowerCase(Locale.ROOT);
-                itemString.append(" eggtype:").append(entityType);
-            }
-        }
-
         return itemString.toString();
     }
 
     private static Enchantment matchEnchant(String enchantName) {
-        if (BY_IN_GAME_NAME_ENCHANT != null && CREATE_NAMESPACED_KEY != null) {
-            try {
-                Object namespacedKey = CREATE_NAMESPACED_KEY.invoke(null, enchantName.toLowerCase(Locale.ROOT));
-                Object enchantment = BY_IN_GAME_NAME_ENCHANT.invoke(null, namespacedKey);
-
-                if (enchantment != null) {
-                    return (Enchantment) enchantment;
-                }
-            }
-            catch (IllegalAccessException | InvocationTargetException ignored) {
-            }
-        }
-
-        return Enchantment.getByName(enchantName.toUpperCase(Locale.ROOT));
+        return Enchantment.getByKey(NamespacedKey.minecraft(enchantName.toLowerCase(Locale.ROOT)));
     }
 
     private static String getEnchantName(Enchantment enchantment) {
-        if (GET_IN_GAME_NAME_ENCHANT != null && GET_NAMESPACED_KEY != null) {
-            try {
-                Object enchantmentName = GET_IN_GAME_NAME_ENCHANT.invoke(enchantment);
-                Object namespacedKey = GET_NAMESPACED_KEY.invoke(enchantmentName);
-
-                if (namespacedKey != null) {
-                    return (String) namespacedKey;
-                }
-            }
-            catch (InvocationTargetException | IllegalAccessException ignored) {
-            }
-        }
-
-        return enchantment.getName();
+        return enchantment.getKey().getKey();
     }
 
     private static Pair<Enchantment, Integer> parseEnchant(String enchantString) {

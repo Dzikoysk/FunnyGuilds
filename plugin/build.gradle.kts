@@ -1,11 +1,20 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
 
 plugins {
+    id("net.minecrell.plugin-yml.paper")
+    id("net.kyori.blossom") version "2.1.0"
     id("xyz.jpenilla.run-paper")
     kotlin("jvm")
 }
 
-@Suppress("VulnerableLibrariesLocal")
+val mcVersion: String by project
+val pluginApiVersion: String by project
+val paperVersion: String by project
+val mcDataVersion: String by project
+val runServerVersion: String by project
+
 dependencies {
     /* funnyguilds */
 
@@ -30,13 +39,6 @@ dependencies {
     implementation("eu.okaeri:okaeri-commons-bukkit-holographicdisplays:0.2.25")
 
     /* messages libraries */
-
-    val adventureVersion = "4.17.0"
-    implementation("net.kyori:adventure-api:$adventureVersion")
-    implementation("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
-    implementation("net.kyori:adventure-text-minimessage:$adventureVersion")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3") // adventure-platform has other versioning than adventure-api
-
     val yamlVersion = "6.8.0-SNAPSHOT"
     implementation("dev.peri.yetanothermessageslibrary:core:$yamlVersion")
     implementation("dev.peri.yetanothermessageslibrary:repository-okaeri:$yamlVersion")
@@ -48,28 +50,11 @@ dependencies {
 
     @Suppress("GradlePackageUpdate")
     implementation("com.zaxxer:HikariCP:4.0.3")
-
-    @Suppress("GradlePackageUpdate")
-    implementation("com.google.guava:guava:21.0") {
-        because("WorldEdit defined a constraint that we must use 21.0 and there is no way to ignore it")
-    }
-
-    @Suppress("GradlePackageUpdate")
-    implementation("com.google.code.gson:gson:2.8.0") {
-        because("WorldEdit defined a constraint that we must use 2.8.0 and there is no way to ignore it")
-    }
-
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
-
-    implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    // probably fix for some exception?
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
-
     // bukkit stuff
-    shadow("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    shadow("org.apache.logging.log4j:log4j-core:2.20.0")
+    shadow("io.papermc.paper:paper-api:${paperVersion}")
 
     /* hooks */
 
@@ -84,19 +69,130 @@ dependencies {
     shadow("us.dynmap:dynmap-api:3.0")
 
     /* tests */
-    testImplementation("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    testImplementation("com.mojang:authlib:3.2.38")
+    testImplementation("io.papermc.paper:paper-api:${paperVersion}")
+    testRuntimeOnly("com.mojang:authlib:6.0.54")
+    testRuntimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1")
 }
 
-tasks.processResources {
-    expand(
-        "funnyGuildsVersion" to version,
-        "funnyGuildsCommit" to grgit.head().abbreviatedId
-    )
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("mcDataVersion", mcDataVersion)
+            }
+        }
+    }
+}
+
+paper {
+    name = rootProject.name
+    version = "${project.version} Snowdrop-${grgit.head().abbreviatedId}"
+    author = "FunnyGuilds Team"
+    website = "https://github.com/FunnyGuilds"
+    apiVersion = pluginApiVersion
+
+    main = "net.dzikoysk.funnyguilds.FunnyGuilds"
+
+    serverDependencies {
+        register("WorldEdit") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("WorldGuard") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("Vault") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("PlaceholderAPI") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("DecentHolograms") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("HolographicDisplays") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("Multiverse-Core") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("dynmap") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
+
+    permissions {
+        register("funnyguilds.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.player" to true,
+                "funnyguilds.vip" to true,
+                "funnyguilds.admin" to true
+            )
+        }
+        register("funnyguilds.admin") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.reload" to true,
+                "funnyguilds.admin.build" to true,
+                "funnyguilds.admin.interact" to true,
+                "funnyguilds.admin.teleport" to true,
+                "funnyguilds.admin.notification" to true,
+                "funnyguilds.admin.disabledummy" to false
+            )
+        }
+        register("funnyguilds.vip") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.vip.items" to true,
+                "funnyguilds.vip.rank" to true,
+                "funnyguilds.vip.base" to true,
+                "funnyguilds.vip.baseTeleportTime" to true
+            )
+        }
+        register("funnyguilds.player") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+            childrenMap = mapOf(
+                "funnyguilds.ally" to true,
+                "funnyguilds.base" to true,
+                "funnyguilds.break" to true,
+                "funnyguilds.create" to true,
+                "funnyguilds.delete" to true,
+                "funnyguilds.deputy" to true,
+                "funnyguilds.enlarge" to true,
+                "funnyguilds.escape" to true,
+                "funnyguilds.guild" to true,
+                "funnyguilds.info" to true,
+                "funnyguilds.invite" to true,
+                "funnyguilds.items" to true,
+                "funnyguilds.join" to true,
+                "funnyguilds.kick" to true,
+                "funnyguilds.leader" to true,
+                "funnyguilds.leave" to true,
+                "funnyguilds.playerinfo" to true,
+                "funnyguilds.pvp" to true,
+                "funnyguilds.ranking" to true,
+                "funnyguilds.rankreset" to true,
+                "funnyguilds.statsreset" to true,
+                "funnyguilds.setbase" to true,
+                "funnyguilds.tnt" to true,
+                "funnyguilds.top" to true,
+                "funnyguilds.validity" to true,
+                "funnyguilds.war" to true
+            )
+        }
+    }
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC 1.8-1.21).jar")
+    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC ${mcVersion}+).jar")
     mergeServiceFiles()
 
     relocate("net.dzikoysk.funnycommands", "net.dzikoysk.funnyguilds.libs.net.dzikoysk.funnycommands")
@@ -134,6 +230,6 @@ tasks.withType<ShadowJar> {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.6")
+        minecraftVersion(runServerVersion)
     }
 }

@@ -13,7 +13,6 @@ import net.dzikoysk.funnyguilds.data.database.SQLDataModel;
 import net.dzikoysk.funnyguilds.data.database.serializer.DatabaseGuildSerializer;
 import net.dzikoysk.funnyguilds.data.flat.FlatDataModel;
 import net.dzikoysk.funnyguilds.feature.scoreboard.ScoreboardGlobalUpdateUserSyncTask;
-import net.dzikoysk.funnyguilds.nms.BlockDataChanger;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
 import net.dzikoysk.funnyguilds.shared.FunnyIOUtils;
 import net.dzikoysk.funnyguilds.user.User;
@@ -241,7 +240,7 @@ public class GuildManager {
                             plugin.getGuildEntityHelper().despawnGuildEntity(guild);
                         }
                         else if (this.pluginConfiguration.heart.createMaterial != null &&
-                                this.pluginConfiguration.heart.createMaterial.getFirst() != Material.AIR) {
+                                this.pluginConfiguration.heart.createMaterial != Material.AIR) {
                             Location center = region.getCenter().clone();
 
                             Bukkit.getScheduler().runTask(plugin, () -> {
@@ -301,13 +300,10 @@ public class GuildManager {
      * @param guild the guild for which heart should be spawned
      */
     public void spawnHeart(GuildEntityHelper guildEntityHelper, Guild guild) {
-        if (this.pluginConfiguration.heart.createMaterial != null && this.pluginConfiguration.heart.createMaterial.getFirst() != Material.AIR) {
+        if (this.pluginConfiguration.heart.createMaterial != null && this.pluginConfiguration.heart.createMaterial != Material.AIR) {
             guild.getRegion()
                     .flatMap(Region::getHeartBlock)
-                    .peek(heart -> {
-                        heart.setType(this.pluginConfiguration.heart.createMaterial.getFirst());
-                        BlockDataChanger.applyChanges(heart, this.pluginConfiguration.heart.createMaterial.getSecond());
-                    });
+                    .peek(heart -> heart.setType(this.pluginConfiguration.heart.createMaterial));
             return;
         }
 

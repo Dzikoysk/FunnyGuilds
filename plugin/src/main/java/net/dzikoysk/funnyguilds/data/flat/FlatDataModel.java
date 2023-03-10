@@ -41,8 +41,6 @@ public class FlatDataModel implements DataModel {
         this.usersFolderFile = new File(dataFolder, "users");
         this.guildsFolderFile = new File(dataFolder, "guilds");
         this.regionsFolderFile = new File(dataFolder, "regions");
-
-        FlatPatcher.patch(plugin, this.usersFolderFile, this.guildsFolderFile, this.regionsFolderFile);
     }
 
     private Option<File> loadCustomFile(EntityType type, String name) {

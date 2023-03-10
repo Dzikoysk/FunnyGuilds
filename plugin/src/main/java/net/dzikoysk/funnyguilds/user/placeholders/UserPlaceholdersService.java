@@ -3,14 +3,12 @@ package net.dzikoysk.funnyguilds.user.placeholders;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Function;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.NumberRange;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.feature.hooks.HookManager;
 import net.dzikoysk.funnyguilds.feature.hooks.vault.VaultHook;
 import net.dzikoysk.funnyguilds.feature.placeholders.StaticPlaceholdersService;
-import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserRank;
@@ -19,7 +17,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 import panda.utilities.text.Joiner;
 
 public class UserPlaceholdersService extends StaticPlaceholdersService<User, UserPlaceholders> {
@@ -33,7 +30,6 @@ public class UserPlaceholdersService extends StaticPlaceholdersService<User, Use
                 .property("ping-format", user -> FunnyFormatter.format(NumberRange.inRangeToString(user.getPing(),
                         config.pingFormat), "{PING}", user.getPing()))
                 .property("guild-position", user -> UserUtils.getUserPosition(config, user))
-                .rankProperty("position", (rank) -> rank.getPosition(DefaultTops.USER_POINTS_TOP))
                 .rankProperty("points", UserRank::getPoints)
                 .rankProperty("points-format", (UserRank rank) -> FunnyFormatter.format(NumberRange.inRangeToString(rank.getPoints(),
                         config.pointsFormat), "{POINTS}", rank.getPoints()))

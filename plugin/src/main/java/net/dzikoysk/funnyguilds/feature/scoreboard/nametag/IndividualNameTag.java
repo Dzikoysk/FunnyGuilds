@@ -8,7 +8,6 @@ import net.dzikoysk.funnyguilds.config.sections.ScoreboardConfiguration;
 import net.dzikoysk.funnyguilds.feature.hooks.HookUtils;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.placeholders.GuildPlaceholdersService;
-import net.dzikoysk.funnyguilds.nms.Reflections;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.bukkit.ChatUtils;
 import net.dzikoysk.funnyguilds.user.User;
@@ -107,15 +106,8 @@ public class IndividualNameTag {
         return team;
     }
 
-    private String prepareValue(RawString value, Player targetPlayer, User targetUser) {
-        String formatted = this.decorateValue(value.getValue(), targetPlayer, targetUser);
-        if (Reflections.USE_PRE_13_METHODS && formatted.length() > 16) {
-            formatted = formatted.substring(0, 16);
-        }
-        return formatted;
-    }
-
-    private String decorateValue(String value, Player targetPlayer, User targetUser) {
+    private String prepareValue(RawString rawValue, Player targetPlayer, User targetUser) {
+        String value = rawValue.getValue();
         Player player = this.getPlayer();
         if (player == null) {
             return value;

@@ -2,7 +2,7 @@ package net.dzikoysk.funnyguilds.shared.bukkit;
 
 import java.text.DecimalFormat;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
 
 public final class NmsUtils {
 
@@ -17,19 +17,7 @@ public final class NmsUtils {
     }
 
     public static double getTpsInLastMinute() {
-        return Math.min(20.0D, FunnyGuilds.getInstance().getNmsAccessor().getStatisticsAccessor().getTpsInLastMinute());
-    }
-
-    public static int getReloadCount() {
-        try {
-            return FunnyGuilds.getInstance().getNmsAccessor().getStatisticsAccessor().getReloadCount();
-        } catch (Exception ex) {
-            return -1;
-        }
-    }
-
-    public static int getPing(Player player) {
-        return Math.max(0, FunnyGuilds.getInstance().getNmsAccessor().getStatisticsAccessor().getPlayerPing(player));
+        return Math.min(20.0D, Bukkit.getServer().getTPS()[0]);
     }
 
 }

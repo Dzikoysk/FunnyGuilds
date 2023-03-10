@@ -51,7 +51,7 @@ public class WarInfoAsyncTask extends AsyncFunnyTask {
     @Override
     public void execute() throws Exception {
         PandaStream.of(this.guildEntityHelper.getGuildEntities().entrySet())
-                .filter(entry -> entry.getValue().getId() == this.entityId)
+                .filter(entry -> entry.getValue().id() == this.entityId)
                 .map(Entry::getKey)
                 .mapOpt(guild -> this.funnyServer.getPlayer(this.user)
                         .map(player -> Pair.of(player, guild))

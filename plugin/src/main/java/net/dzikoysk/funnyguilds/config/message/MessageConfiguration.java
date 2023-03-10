@@ -247,13 +247,13 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     public SendableMessage infoTag = ChatHolder.message("&cPodaj tag gildii!");
     public SendableMessage infoExists = ChatHolder.message("&cGildia o takim tagu nie istnieje!");
 
-    @Comment("Dostępne zmienne: {GUILD}, {TAG}, {OWNER}, {DEPUTIES}, {MEMBERS}, {MEMBERS-ONLINE}, {MEMBERS-ALL}, {REGION-SIZE}, {POINTS}, {POINTS-FORMAT}, {KILLS}, {DEATHS}, {ASSISTS}, {LOGOUTS}, {KDR}, {KDA}, {ALLIES}, {ALLIES-TAGS}, {ENEMIES}, {ENEMIES-TAGS}, {RANK}, {VALIDITY}, {LIVES}, {LIVES-SYMBOL}, {LIVES-SYMBOL-ALL}, {GUILD-PROTECTION}")
+    @Comment("Dostępne zmienne: {GUILD}, {TAG}, {OWNER}, {DEPUTIES}, {MEMBERS}, {MEMBERS-ONLINE}, {MEMBERS-ALL}, {REGION-SIZE}, {POINTS}, {AVG-POINTS-FORMAT}, {KILLS}, {DEATHS}, {ASSISTS}, {LOGOUTS}, {KDR}, {KDA}, {ALLIES}, {ALLIES-TAGS}, {ENEMIES}, {ENEMIES-TAGS}, {RANK}, {VALIDITY}, {LIVES}, {LIVES-SYMBOL}, {LIVES-SYMBOL-ALL}, {GUILD-PROTECTION}")
     public SendableMessage infoList = ChatHolder.message(
             "&8-------------------------------",
             "&7Gildia: &c{GUILD} &8[&c{TAG}&8]",
             "&7Zalozyciel: &c{OWNER}",
             "&7Zastepcy: &c{DEPUTIES}",
-            "&7Punkty: &c{POINTS} &8[&c{RANK}&8]",
+            "&7Punkty: &c{POINTS} &8[&c{POSITION-AVG_POINTS}&8]",
             "&7Ochrona: &c{PROTECTION}",
             "&7Zycia: &4{LIVES}",
             "&7Waznosc: &c{VALIDITY}",
@@ -265,36 +265,36 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
 
     @Comment("")
     @Comment("<------- Top Messages -------> #")
-    @Comment("{GTOP-<pozycja>} - gildia na podanej pozycji w rankingu")
+    @Comment("{GTOP-<typ>-<pozycja>} - gildia na podanej pozycji w topce dla danego typu. Lista dostępnych typów znajduje się w 'config.yml' pod kluczem 'top.enabled-guild-tops'")
     public SendableMessage topList = ChatHolder.message(
             "&8----------{ &cTOP 10 &8}----------",
-            "&71&8. &c{GTOP-1}",
-            "&72&8. &c{GTOP-2}",
-            "&73&8. &c{GTOP-3}",
-            "&74&8. &c{GTOP-4}",
-            "&75&8. &c{GTOP-5}",
-            "&76&8. &c{GTOP-6}",
-            "&77&8. &c{GTOP-7}",
-            "&78&8. &c{GTOP-8}",
-            "&79&8. &c{GTOP-9}",
-            "&710&8. &c{GTOP-10}"
+            "&71&8. &c{GTOP-AVG_POINTS-1}",
+            "&72&8. &c{GTOP-AVG_POINTS-2}",
+            "&73&8. &c{GTOP-AVG_POINTS-3}",
+            "&74&8. &c{GTOP-AVG_POINTS-4}",
+            "&75&8. &c{GTOP-AVG_POINTS-5}",
+            "&76&8. &c{GTOP-AVG_POINTS-6}",
+            "&77&8. &c{GTOP-AVG_POINTS-7}",
+            "&78&8. &c{GTOP-AVG_POINTS-8}",
+            "&79&8. &c{GTOP-AVG_POINTS-9}",
+            "&710&8. &c{GTOP-AVG_POINTS-10}"
     );
 
     @Comment("")
     @Comment("<------- Ranking Messages -------> #")
-    @Comment("{PTOP-<pozycja>} - gracz na podanej pozycji w rankingu")
+    @Comment("{PTOP-<typ>-<pozycja>} - gracz na podanej pozycji w topce dla danego typu. Lista dostępnych typów znajduje się w 'config.yml' pod kluczem 'top.enabled-user-tops'")
     public SendableMessage rankingList = ChatHolder.message(
             "&8----------{ &cTOP 10 Graczy &8}----------",
-            "&71&8. &c{PTOP-1}",
-            "&72&8. &c{PTOP-2}",
-            "&73&8. &c{PTOP-3}",
-            "&74&8. &c{PTOP-4}",
-            "&75&8. &c{PTOP-5}",
-            "&76&8. &c{PTOP-6}",
-            "&77&8. &c{PTOP-7}",
-            "&78&8. &c{PTOP-8}",
-            "&79&8. &c{PTOP-9}",
-            "&710&8. &c{PTOP-10}"
+            "&71&8. &c{PTOP-POINTS-1}",
+            "&72&8. &c{PTOP-POINTS-2}",
+            "&73&8. &c{PTOP-POINTS-3}",
+            "&74&8. &c{PTOP-POINTS-4}",
+            "&75&8. &c{PTOP-POINTS-5}",
+            "&76&8. &c{PTOP-POINTS-6}",
+            "&77&8. &c{PTOP-POINTS-7}",
+            "&78&8. &c{PTOP-POINTS-8}",
+            "&79&8. &c{PTOP-POINTS-9}",
+            "&710&8. &c{PTOP-POINTS-10}"
     );
 
     @Comment("")
@@ -716,7 +716,6 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
 
     @Comment("")
     @Comment("<------- System Messages -------> #")
-    public SendableMessage reloadWarn = ChatHolder.message("&cDziałanie pluginu FunnyGuilds po reloadzie moze byc zaburzone, zalecane jest przeprowadzenie restartu serwera!");
     public SendableMessage reloadTime = ChatHolder.message("&aFunnyGuilds &7przeladowano! (&b{TIME}s&7)");
     public SendableMessage reloadReloading = ChatHolder.message("&7Przeladowywanie...");
     public SendableMessage saveallSaving = ChatHolder.message("&7Zapisywanie...");

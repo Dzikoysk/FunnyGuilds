@@ -64,26 +64,28 @@ import net.dzikoysk.funnyguilds.listener.region.PlayerMove;
 import net.dzikoysk.funnyguilds.listener.region.PlayerRespawn;
 import net.dzikoysk.funnyguilds.listener.region.PlayerTeleport;
 import net.dzikoysk.funnyguilds.nms.DescriptionChanger;
-import net.dzikoysk.funnyguilds.nms.Reflections;
 import net.dzikoysk.funnyguilds.nms.api.NmsAccessor;
 import net.dzikoysk.funnyguilds.nms.api.packet.FunnyGuildsInboundChannelHandler;
 import net.dzikoysk.funnyguilds.nms.api.packet.FunnyGuildsOutboundChannelHandler;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntitySupplier;
+import net.dzikoysk.funnyguilds.nms.impl.NmsAccessorImpl;
 import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.rank.RankRecalculationTask;
 import net.dzikoysk.funnyguilds.rank.placeholders.RankPlaceholdersService;
 import net.dzikoysk.funnyguilds.shared.FunnyIOUtils;
 import net.dzikoysk.funnyguilds.shared.FunnyTask;
 import net.dzikoysk.funnyguilds.shared.bukkit.FunnyServer;
-import net.dzikoysk.funnyguilds.shared.bukkit.NmsUtils;
 import net.dzikoysk.funnyguilds.telemetry.metrics.MetricsCollector;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserManager;
 import net.dzikoysk.funnyguilds.user.UserRankManager;
 import net.dzikoysk.funnyguilds.user.placeholders.UserPlaceholdersService;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.UnsafeValues;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -99,8 +101,8 @@ import static java.lang.String.format;
 
 public class FunnyGuilds extends JavaPlugin {
 
-    private static FunnyGuilds plugin;
-    private static FunnyGuildsLogger logger;
+    private static FunnyGuilds PLUGIN;
+    private static FunnyGuildsLogger LOGGER;
 
     private final File pluginConfigurationFile = new File(this.getDataFolder(), "config.yml");
     private final File tablistConfigurationFile = new File(this.getDataFolder(), "tablist.yml");
@@ -158,28 +160,25 @@ public class FunnyGuilds extends JavaPlugin {
     private volatile Option<BukkitTask> scoreboardQueueUpdateTask = Option.none();
 
     private boolean isDisabling;
+    private boolean wasDisabled;
     private boolean forceDisabling;
 
     @Override
     public void onLoad() {
-        Reflections.prepareServerVersion();
+        PLUGIN = this;
+        LOGGER = new FunnyGuildsLogger.DefaultLogger(this);
 
-        plugin = this;
-        logger = new FunnyGuildsLogger.DefaultLogger(this);
-        this.version = new FunnyGuildsVersion(this);
-        this.funnyServer = new FunnyServer(this.getServer());
+        if (!this.wasDisabled) {
+            Component kickMessage = Component.text("Server had been reloaded!").color(NamedTextColor.RED); //TODO Make Configurable
+            Bukkit.getOnlinePlayers().forEach(player -> player.kick(kickMessage));
 
-        try {
-            Class.forName("net.md_5.bungee.api.ChatColor");
-        }
-        catch (Exception spigotNeeded) {
-            logger.error("FunnyGuilds requires spigot to work, your server seems to be using something else");
-            logger.error("If you think that is not true - contact plugin developers");
-            logger.error("https://github.com/FunnyGuilds/FunnyGuilds");
-
-            this.shutdown("Spigot required for service not detected!");
+            LOGGER.warning("FunnyGuilds was reloaded, this is not supported and won't be");
+            LOGGER.warning("Please restart your server to avoid any issues");
             return;
         }
+
+        this.version = new FunnyGuildsVersion(this);
+        this.funnyServer = new FunnyServer(this.getServer());
 
         Result<File, String> createResult = FunnyIOUtils.createFile(this.getDataFolder(), true);
         if (createResult.isErr()) {
@@ -190,28 +189,16 @@ public class FunnyGuilds extends JavaPlugin {
         try {
             this.pluginConfiguration = ConfigurationFactory.createPluginConfiguration(this.pluginConfigurationFile);
             this.tablistConfiguration = ConfigurationFactory.createTablistConfiguration(this.tablistConfigurationFile);
-        }
-        catch (Exception exception) {
-            logger.error("Could not load plugin configuration", exception);
+        } catch (Exception exception) {
+            LOGGER.error("Could not load plugin configuration", exception);
             this.shutdown("Critical error has been encountered!");
             return;
         }
 
         try {
             this.nmsAccessor = prepareNmsAccessor();
-        }
-        catch (Throwable th) {
-            String currentVersion = "Unknown";
-            try {
-                Method getMinecraftVersion = Server.class.getMethod("getMinecraftVersion");
-                currentVersion = (String) getMinecraftVersion.invoke(this.getServer());
-            } catch (Throwable ignored) {
-                try {
-                    currentVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-                } catch (Throwable ignored2) { }
-            }
-
-            logger.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", currentVersion), th);
+        } catch (Throwable th) {
+            this.printUnsupportedMinecraftVersion(th);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -222,7 +209,7 @@ public class FunnyGuilds extends JavaPlugin {
 
         this.dynamicListenerManager = new DynamicListenerManager(this);
 
-        this.hookManager = new HookManager(plugin);
+        this.hookManager = new HookManager(PLUGIN);
         this.hookManager.setupEarlyHooks();
         this.hookManager.earlyInit();
     }
@@ -240,9 +227,8 @@ public class FunnyGuilds extends JavaPlugin {
                 return;
             }
             this.messageService = MessageService.prepareMessageService(this, this.pluginLanguageFolderFile);
-        }
-        catch (Exception exception) {
-            logger.error("Could not initialize message service", exception);
+        } catch (Exception exception) {
+            LOGGER.error("Could not initialize message service", exception);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -278,7 +264,6 @@ public class FunnyGuilds extends JavaPlugin {
 
         this.rankPlaceholdersService = new RankPlaceholdersService(
                 this.pluginConfiguration,
-                this.tablistConfiguration,
                 this.messageService,
                 this.userRankManager,
                 this.guildRankManager
@@ -294,7 +279,7 @@ public class FunnyGuilds extends JavaPlugin {
             try {
                 this.database = Option.of(new Database());
             } catch (Exception ex) {
-                logger.error("Could not create data from database", ex);
+                LOGGER.error("Could not create data from database", ex);
                 this.shutdown("Critical error has been encountered!");
                 return;
             }
@@ -303,9 +288,8 @@ public class FunnyGuilds extends JavaPlugin {
         try {
             this.dataModel = DataModel.create(this, this.pluginConfiguration.dataModel);
             this.dataModel.load();
-        }
-        catch (Exception ex) {
-            logger.error("Could not load data from database", ex);
+        } catch (Exception ex) {
+            LOGGER.error("Could not load data from database", ex);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -352,9 +336,8 @@ public class FunnyGuilds extends JavaPlugin {
 
         try {
             this.funnyCommands = FunnyCommandsConfiguration.createFunnyCommands(this);
-        }
-        catch (Exception exception) {
-            logger.error("Could not register commands", exception);
+        } catch (Exception exception) {
+            LOGGER.error("Could not register commands", exception);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -381,9 +364,8 @@ public class FunnyGuilds extends JavaPlugin {
 
             if (ClassUtils.forName("org.bukkit.event.entity.EntityPlaceEvent").isPresent()) {
                 setBuilder.add(EntityPlace.class);
-            }
-            else {
-                logger.warning("Cannot register EntityPlaceEvent listener on this version of server");
+            } else {
+                LOGGER.warning("Cannot register EntityPlaceEvent listener on this version of server");
             }
 
             for (Class<? extends Listener> listenerClass : setBuilder.build()) {
@@ -422,9 +404,8 @@ public class FunnyGuilds extends JavaPlugin {
             );
 
             this.dynamicListenerManager.reloadAll();
-        }
-        catch (Throwable throwable) {
-            logger.error("Could not register listeners", throwable);
+        } catch (Throwable throwable) {
+            LOGGER.error("Could not register listeners", throwable);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -435,22 +416,15 @@ public class FunnyGuilds extends JavaPlugin {
         this.hookManager.setupHooks();
         this.hookManager.init();
 
-        if (NmsUtils.getReloadCount() > 0) {
-            this.messageService.getMessage(config -> config.reloadWarn)
-                    .broadcast()
-                    .permission("funnyguilds.admin")
-                    .send();
-        }
-
-        logger.info("~ Created by FunnyGuilds Team ~");
+        LOGGER.info("~ Created by FunnyGuilds Team ~");
     }
 
     @Override
     public void onDisable() {
+        this.wasDisabled = true;
         if (this.forceDisabling) {
             return;
         }
-
         this.isDisabling = true;
 
         this.funnyCommands.dispose();
@@ -470,9 +444,7 @@ public class FunnyGuilds extends JavaPlugin {
         this.getServer().getScheduler().cancelTasks(this);
         this.database.peek(Database::shutdown);
 
-        this.messageService.close();
-
-        plugin = null;
+        PLUGIN = null;
     }
 
     public void shutdown(String content) {
@@ -481,7 +453,7 @@ public class FunnyGuilds extends JavaPlugin {
         }
 
         this.forceDisabling = true;
-        logger.warning("The FunnyGuilds is going to shut down! " + content);
+        LOGGER.warning("The FunnyGuilds is going to shut down! " + content);
         this.getServer().getPluginManager().disablePlugin(this);
     }
 
@@ -494,7 +466,7 @@ public class FunnyGuilds extends JavaPlugin {
             User user = userOption.get();
 
             FunnyGuildsInboundChannelHandler inboundChannelHandler = this.nmsAccessor.getPacketAccessor().getOrInstallInboundChannelHandler(player);
-            inboundChannelHandler.getPacketCallbacksRegistry().registerPacketCallback(new WarPacketCallbacks(plugin, user));
+            inboundChannelHandler.getPacketCallbacksRegistry().registerPacketCallback(new WarPacketCallbacks(PLUGIN, user));
 
             FunnyGuildsOutboundChannelHandler outboundChannelHandler = this.nmsAccessor.getPacketAccessor().getOrInstallOutboundChannelHandler(player);
             outboundChannelHandler.getPacketSuppliersRegistry().setOwner(player);
@@ -536,10 +508,6 @@ public class FunnyGuilds extends JavaPlugin {
                     break;
             }
         }
-    }
-
-    public boolean isDisabling() {
-        return this.isDisabling;
     }
 
     public FunnyGuildsVersion getVersion() {
@@ -698,7 +666,7 @@ public class FunnyGuilds extends JavaPlugin {
                 () -> new IndividualNameTagManager(this.pluginConfiguration, this.userManager, scoreboardService)
         );
         this.nameTagUpdateTask = this.individualNameTagManager.map(manager -> Bukkit.getScheduler().runTaskTimer(
-                plugin,
+                PLUGIN,
                 () -> manager.updatePlayers(false),
                 100,
                 scoreboardConfig.nametag.updateRate.getSeconds() * 20L
@@ -709,7 +677,7 @@ public class FunnyGuilds extends JavaPlugin {
                 () -> new DummyManager(this.pluginConfiguration, this.userManager, scoreboardService)
         );
         this.dummyUpdateTask = this.dummyManager.map(manager -> Bukkit.getScheduler().runTaskTimer(
-                plugin,
+                PLUGIN,
                 () -> manager.updatePlayers(false),
                 100,
                 scoreboardConfig.dummy.updateRate.getSeconds() * 20L
@@ -718,7 +686,7 @@ public class FunnyGuilds extends JavaPlugin {
         this.scoreboardQueueUpdateTask = Option.when(
                 this.individualNameTagManager.isPresent() || this.dummyManager.isPresent(),
                 () -> Bukkit.getScheduler().runTaskTimer(
-                        plugin,
+                        PLUGIN,
                         () -> {
                             for (int i = 0; i < scoreboardConfig.queueConfiguration.maxUpdatesInTick; i++) {
                                 boolean nameTagUpdated = this.individualNameTagManager.is(IndividualNameTagManager::popAndUpdate);
@@ -735,15 +703,40 @@ public class FunnyGuilds extends JavaPlugin {
     }
 
     public static FunnyGuilds getInstance() {
-        return plugin;
+        return PLUGIN;
     }
 
     public static FunnyGuildsLogger getPluginLogger() {
-        return logger;
+        return LOGGER;
+    }
+
+    private void printUnsupportedMinecraftVersion(Throwable th) {
+        String currentVersion = null;
+        try {
+            Method getMinecraftVersion = Server.class.getMethod("getMinecraftVersion"); // DO NOT CHANGE TO DIRECT METHOD USE - We need this to properly print info that version is REALLY legacy
+            currentVersion = (String) getMinecraftVersion.invoke(this.getServer());
+
+            Method getDataVersion = UnsafeValues.class.getMethod("getDataVersion");
+            int dataVersion = (int) getDataVersion.invoke(this.getServer().getUnsafe());
+            if (dataVersion < FunnyGuildsConst.MC_DATA_VERSION) {
+                throw new Throwable();
+            }
+
+            LOGGER.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", currentVersion), th);
+        } catch (Throwable ignored) {
+            try {
+                if (currentVersion == null) {
+                    currentVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                }
+
+                LOGGER.error(format("Version '%s' is legacy and therefore not supported ", currentVersion), th);
+            } catch (Throwable ignored2) {
+            }
+        }
     }
 
     private static NmsAccessor prepareNmsAccessor() throws IllegalStateException {
-        return NmsAccessor.instance();
+        return new NmsAccessorImpl();
     }
 
 }

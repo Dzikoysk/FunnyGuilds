@@ -14,13 +14,10 @@ Community: <a href="https://discord.gg/CYvyq3u">Discord</a>
 Description: <a href="https://github.com/FunnyGuilds/FunnyGuilds/wiki">Wiki (PL/ENG)</a>
 
 #### Supported Paper versions
-Spigot versions and 1.20.6+
-
-#### (DEPRECATED) Supported Spigot versions
-1.8.8, 1.9.4, 1.10.2, 1.11.2, 1.12.2, 1.13.2, 1.14.4, 1.15.2, 1.16.5, 1.18.2, 1.19.4, 1.20.1, 1.20.2
+Spigot versions and 1.21+
 
 #### Download
-Get the latest version: [FunnyGuilds 4.13.0+ Nightly](https://ci.insertt.dev/job/FunnyGuilds/job/4.x/) <br>
+Get the latest version: [FunnyGuilds 5.0.0+ Nightly](https://ci.insertt.dev/job/FunnyGuilds/job/5.x/) <br>
 
 #### Hooks
 FunnyGuilds hooks into those plugins:
@@ -43,7 +40,7 @@ FunnyGuilds hooks into those plugins:
 <dependency>
     <groupId>net.dzikoysk.funnyguilds</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.13.1-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <scope>provided</scope>
 </dependency>
 ```

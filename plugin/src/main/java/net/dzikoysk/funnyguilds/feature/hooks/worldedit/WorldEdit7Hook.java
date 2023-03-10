@@ -24,7 +24,7 @@ public class WorldEdit7Hook extends WorldEditHook {
     }
 
     @Override
-    public HookInitResult init() throws Throwable {
+    public HookInitResult init() {
         return HookInitResult.SUCCESS;
     }
 

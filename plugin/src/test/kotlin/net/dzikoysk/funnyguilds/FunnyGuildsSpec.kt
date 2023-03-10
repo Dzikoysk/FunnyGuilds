@@ -21,6 +21,7 @@ import org.mockito.Mock
 import org.mockito.MockedStatic
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.slf4j.LoggerFactory
 import java.util.*
 import java.util.logging.Logger
 
@@ -39,7 +40,7 @@ open class FunnyGuildsSpec : BukkitSpec() {
     @Mock
     lateinit var funnyGuilds: FunnyGuilds
 
-    private val funnyGuildsLogger = TestLogger(Logger.getLogger("TestLogger"))
+    private val funnyGuildsLogger = TestLogger(LoggerFactory.getLogger("TestLogger"))
 
     protected lateinit var config: PluginConfiguration
     private lateinit var tablistConfig: TablistConfiguration
@@ -61,7 +62,7 @@ open class FunnyGuildsSpec : BukkitSpec() {
 
         config = PluginConfiguration()
         tablistConfig = TablistConfiguration()
-        messages = MessageService(null, null)
+        messages = MessageService(null)
         messages.defaultLocale = Locale.forLanguageTag("pl")
         messages.registerRepository(Locale.forLanguageTag("pl"), MessageConfiguration())
 
@@ -87,7 +88,6 @@ open class FunnyGuildsSpec : BukkitSpec() {
 
         rankPlaceholdersService = RankPlaceholdersService(
             config,
-            tablistConfig,
             messages,
             userRankManager,
             guildRankManager

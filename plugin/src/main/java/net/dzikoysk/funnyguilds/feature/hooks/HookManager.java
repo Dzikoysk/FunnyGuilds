@@ -4,18 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
-import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.feature.holograms.HologramsHook;
 import net.dzikoysk.funnyguilds.feature.hooks.decentholograms.DecentHologramsHook;
 import net.dzikoysk.funnyguilds.feature.hooks.dynmap.DynmapHook;
-import net.dzikoysk.funnyguilds.feature.hooks.funnytab.FunnyTabHook;
 import net.dzikoysk.funnyguilds.feature.hooks.holographicdisplays.HolographicDisplaysHook;
 import net.dzikoysk.funnyguilds.feature.hooks.placeholderapi.PlaceholderAPIHook;
 import net.dzikoysk.funnyguilds.feature.hooks.vault.VaultHook;
-import net.dzikoysk.funnyguilds.feature.hooks.worldedit.WorldEdit6Hook;
 import net.dzikoysk.funnyguilds.feature.hooks.worldedit.WorldEdit7Hook;
 import net.dzikoysk.funnyguilds.feature.hooks.worldedit.WorldEditHook;
-import net.dzikoysk.funnyguilds.feature.hooks.worldguard.WorldGuard6Hook;
 import net.dzikoysk.funnyguilds.feature.hooks.worldguard.WorldGuard7Hook;
 import net.dzikoysk.funnyguilds.feature.hooks.worldguard.WorldGuardHook;
 import org.bukkit.Bukkit;
@@ -28,7 +24,6 @@ public class HookManager {
 
     public static Option<WorldGuardHook> WORLD_GUARD = Option.none();
     public static Option<WorldEditHook> WORLD_EDIT = Option.none();
-    public static Option<FunnyTabHook> FUNNY_TAB = Option.none();
     public static Option<VaultHook> VAULT = Option.none();
     public static Option<PlaceholderAPIHook> PLACEHOLDER_API = Option.none();
     public static Option<HologramsHook> HOLOGRAMS = Option.none();
@@ -42,34 +37,11 @@ public class HookManager {
     }
 
     public void setupEarlyHooks() {
-        this.setupHook("WorldGuard", false, pluginName -> {
-            try {
-                Class.forName("com.sk89q.worldguard.protection.flags.registry.FlagRegistry");
-                Class.forName("com.sk89q.worldguard.protection.flags.Flag");
-
-                String worldGuardVersion = Bukkit.getPluginManager().getPlugin(pluginName).getDescription().getVersion();
-                return worldGuardVersion.startsWith("7") ? new WorldGuard7Hook(pluginName) : new WorldGuard6Hook(pluginName);
-            }
-            catch (ClassNotFoundException exception) {
-                FunnyGuilds.getPluginLogger().warning("FunnyGuilds supports only WorldGuard v6.2 or newer");
-                return null;
-            }
-        }, true).subscribe(hook -> WORLD_GUARD = hook);
-
-        this.setupHook("FunnyTab", false, pluginName -> new FunnyTabHook(pluginName, this.plugin), false)
-                .subscribe(hook -> FUNNY_TAB = hook);
+        this.<WorldGuardHook>setupHook("WorldGuard", false, pluginName -> new WorldGuard7Hook(pluginName), true).subscribe(hook -> WORLD_GUARD = hook);
     }
 
     public void setupHooks() {
-        this.setupHook("WorldEdit", true, pluginName -> {
-            try {
-                Class.forName("com.sk89q.worldedit.Vector");
-                return new WorldEdit6Hook(pluginName);
-            }
-            catch (ClassNotFoundException exception) {
-                return new WorldEdit7Hook(pluginName);
-            }
-        }, true).subscribe(hook -> WORLD_EDIT = hook);
+        this.<WorldEditHook>setupHook("WorldEdit", true, pluginName -> new WorldEdit7Hook(pluginName), true).subscribe(hook -> WORLD_EDIT = hook);
 
         this.setupHook("Vault", true, VaultHook::new, true)
                 .subscribe(hook -> VAULT = hook);
@@ -109,12 +81,8 @@ public class HookManager {
 
         PandaStream<String> disabledHooks = PandaStream.of(this.plugin.getPluginConfiguration().disabledHooks);
         if (disabledHooks.find(disabledHook -> disabledHook.equalsIgnoreCase(pluginName)).isPresent()) {
-            if (!pluginName.equalsIgnoreCase("FunnyTab")) {
-                FunnyGuilds.getPluginLogger().warning(pluginName + " plugin hook is disabled in configuration, some features may not be available");
-                return Completable.completed(Option.none());
-            }
-
-            FunnyGuilds.getPluginLogger().warning("You can't disable FunnyTab plugin hook lol");
+            FunnyGuilds.getPluginLogger().warning(pluginName + " plugin hook is disabled in configuration, some features may not be available");
+            return Completable.completed(Option.none());
         }
 
         Completable<Option<T>> hookCompletable = new Completable<>();

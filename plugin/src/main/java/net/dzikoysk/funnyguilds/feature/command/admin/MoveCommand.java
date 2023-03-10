@@ -62,7 +62,7 @@ public final class MoveCommand extends AbstractFunnyCommand {
                     if (heartConfig.createEntityType != null) {
                         this.plugin.getGuildEntityHelper().despawnGuildEntity(guild);
                     }
-                    else if (heartConfig.createMaterial != null && heartConfig.createMaterial.getFirst() != Material.AIR) {
+                    else if (heartConfig.createMaterial != null && heartConfig.createMaterial != Material.AIR) {
                         peekRegion.getHeartBlock()
                                 .filter(heart -> heart.getLocation().getBlockY() > 1)
                                 .peek(heart -> Bukkit.getScheduler().runTask(this.plugin, () -> heart.setType(Material.AIR)));

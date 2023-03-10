@@ -6,7 +6,6 @@ import net.dzikoysk.funnyguilds.feature.hooks.vault.VaultHook;
 import net.dzikoysk.funnyguilds.shared.FunnyStringUtils;
 import net.dzikoysk.funnyguilds.shared.Position;
 import net.dzikoysk.funnyguilds.shared.bukkit.FunnyServer;
-import net.dzikoysk.funnyguilds.shared.bukkit.NmsUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.PositionConverter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -75,7 +74,7 @@ public class BukkitUserProfile implements UserProfile {
 
     @Override
     public int getPing() {
-        return this.getPlayer().map(NmsUtils::getPing).orElseGet(0);
+        return this.getPlayer().map(Player::getPing).orElseGet(0);
     }
 
     @Override

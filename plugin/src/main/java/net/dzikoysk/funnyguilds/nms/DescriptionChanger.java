@@ -19,11 +19,7 @@ public final class DescriptionChanger {
         }
 
         try {
-            Field field = Reflections.getPrivateField(this.descriptionFile.getClass(), "name");
-            if (field == null) {
-                return;
-            }
-
+            Field field = this.descriptionFile.getClass().getDeclaredField("name");
             field.set(this.descriptionFile, pluginName);
         }
         catch (Exception exception) {

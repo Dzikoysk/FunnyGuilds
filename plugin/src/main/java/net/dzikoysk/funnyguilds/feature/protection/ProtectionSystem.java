@@ -1,5 +1,6 @@
 package net.dzikoysk.funnyguilds.feature.protection;
 
+import dev.peri.yetanothermessageslibrary.message.Sendable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
@@ -16,9 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import panda.std.Option;
-import panda.std.Pair;
 import panda.std.Triple;
-import dev.peri.yetanothermessageslibrary.message.Sendable;
 
 public final class ProtectionSystem {
 
@@ -42,8 +41,8 @@ public final class ProtectionSystem {
         PluginConfiguration config = plugin.getPluginConfiguration();
         HeartConfiguration heartConfig = config.heart;
         if (region.getHeart().contentEquals(location)) {
-            Pair<Material, Byte> heartMaterial = heartConfig.createMaterial;
-            return Option.when(heartMaterial != null && heartMaterial.getFirst() != Material.AIR, Triple.of(player, guild, ProtectionType.HEART));
+            Material heartMaterial = heartConfig.createMaterial;
+            return Option.when(heartMaterial != null && heartMaterial != Material.AIR, Triple.of(player, guild, ProtectionType.HEART));
         }
 
         if (player.hasPermission("funnyguilds.admin.build")) {

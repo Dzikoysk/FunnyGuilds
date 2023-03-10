@@ -24,7 +24,7 @@ public final class SecurityReach {
         SecuritySystemConfiguration.Reach config = funnyGuilds.getPluginConfiguration().securitySystem.reach;
         UserManager userManager = funnyGuilds.getUserManager();
 
-        double ping = NmsUtils.getPing(player);
+        double ping = player.getPing();
         double tpsDelayMs = (1000.0 / NmsUtils.getTpsInLastMinute() - 50.0);
         double compensation = player.getGameMode() == GameMode.CREATIVE
                 ? config.creativeReach

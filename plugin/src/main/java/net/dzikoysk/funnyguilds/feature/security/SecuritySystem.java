@@ -9,7 +9,6 @@ import net.dzikoysk.funnyguilds.feature.security.cheat.SecurityFreeCam;
 import net.dzikoysk.funnyguilds.feature.security.cheat.SecurityReach;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.Region;
-import net.dzikoysk.funnyguilds.nms.Reflections;
 import net.dzikoysk.funnyguilds.shared.bukkit.FunnyBox;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.Location;
@@ -57,7 +56,7 @@ public final class SecuritySystem {
 
         Location eye = player.getEyeLocation();
         Vector direction = eye.getDirection();
-        Vector origin = (player.isSneaking() && !Reflections.USE_PRE_9_METHODS)
+        Vector origin = player.isSneaking()
                 ? eye.add(0.0, ADDITIONAL_SNEAKING_HEIGHT_CURSOR, 0.0).toVector()
                 : eye.toVector();
 
