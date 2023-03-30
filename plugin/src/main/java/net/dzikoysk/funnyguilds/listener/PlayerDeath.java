@@ -55,7 +55,7 @@ public class PlayerDeath extends AbstractFunnyListener {
         this.rankSystem = RankSystem.create(config);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent event) {
         Player playerVictim = event.getEntity();
         Player playerAttacker = event.getEntity().getKiller();
