@@ -13,7 +13,6 @@ import net.dzikoysk.funnyguilds.feature.tablist.IndividualPlayerList;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.FunnyTask.AsyncFunnyTask;
 import net.dzikoysk.funnyguilds.shared.TimeUtils;
-import net.dzikoysk.funnyguilds.telemetry.FunnybinAsyncTask;
 import net.dzikoysk.funnyguilds.user.UserManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -47,9 +46,6 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
                 break;
             case "save-all":
                 this.saveAll(sender);
-                break;
-            case "funnybin":
-                this.post(sender, args);
                 break;
             case "help":
                 this.messageService.getMessage(config -> config.funnyguildsHelp)
@@ -89,16 +85,6 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
                 .receiver(sender)
                 .with("{TIME}", time)
                 .send();
-    }
-
-    private void post(CommandSender sender, String[] args) {
-        when(!sender.hasPermission("funnyguilds.admin"), config -> config.permission);
-
-        FunnybinAsyncTask.of(sender, args)
-                .onEmpty(() -> this.messageService.getMessage(config -> config.funnybinHelp)
-                        .receiver(sender)
-                        .send())
-                .peek(task -> this.plugin.scheduleFunnyTasks(task));
     }
 
     private void reload(CommandSender sender) {
