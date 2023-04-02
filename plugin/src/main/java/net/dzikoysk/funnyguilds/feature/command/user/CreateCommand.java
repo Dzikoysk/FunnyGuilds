@@ -33,7 +33,6 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -247,8 +246,9 @@ public final class CreateCommand extends AbstractFunnyCommand {
             }
 
             this.guildManager.spawnHeart(this.plugin.getGuildEntityHelper(), guild);
-            //player.teleport(guildLocation);
-            guild.teleportHome(player);
+            if (this.config.heart.teleportToHeartOnCreate) {
+                guild.teleportHome(player);
+            }
         }
 
         this.guildManager.addGuild(guild);

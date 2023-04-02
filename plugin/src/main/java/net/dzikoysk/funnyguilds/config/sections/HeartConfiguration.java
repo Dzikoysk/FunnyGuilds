@@ -112,6 +112,10 @@ public class HeartConfiguration extends OkaeriConfig {
     public File guildSchematicFile;
 
     @Comment("")
+    @Comment("Czy gracz powinien być teleportowany do serca gildii przy jej zakładaniu.")
+    public boolean teleportToHeartOnCreate = true;
+
+    @Comment("")
     @Comment("Przesunięcie domyślnego home gildii względem serca gildii")
     @Comment("Opcja przydatna w przypadku ustawienie własnego schematu serca, aby gracze nie pojawiali sie w bloku")
     public Vector homeOffset = new Vector(0, 0, 0);
