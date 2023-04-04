@@ -22,19 +22,17 @@ public final class LogoutsCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-        when(args.length < 2, config -> config.adminNoLogoutsGiven);
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
+        User user = UserValidation.requireUserByName(args[0]);
 
+        when(args.length < 2, config -> config.admin.commands.player.logouts.noValueGiven);
         int logouts = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(args[1])).orThrow(() -> {
-            return new InternalValidationException(config -> config.adminErrorInNumber, FunnyFormatter.of("{ERROR}", args[0]));
+            return new InternalValidationException(config -> config.commands.validation.invalidNumber, FunnyFormatter.of("{ERROR}", args[0]));
         });
 
         User admin = AdminUtils.getAdminUser(sender);
-        User user = UserValidation.requireUserByName(args[0]);
-
         UserRank userRank = user.getRank();
         int change = logouts - userRank.getLogouts();
-
         LogoutsChangeEvent logoutsChangeEvent = new LogoutsChangeEvent(AdminUtils.getCause(admin), admin, user, change);
         if (!SimpleEventHandler.handle(logoutsChangeEvent)) {
             return;
@@ -43,13 +41,10 @@ public final class LogoutsCommand extends AbstractFunnyCommand {
         int finalLogouts = logouts + logoutsChangeEvent.getLogoutsChange();
         user.getRank().setLogouts(finalLogouts);
 
-        FunnyFormatter formatter = new FunnyFormatter()
-                .register("{PLAYER}", user.getName())
-                .register("{LOGOUTS}", finalLogouts);
-
-        this.messageService.getMessage(config -> config.adminLogoutsChanged)
+        this.messageService.getMessage(config -> config.admin.commands.player.logouts.changed)
                 .receiver(sender)
-                .with(formatter)
+                .with("{PLAYER}", user.getName())
+                .with("{VALUE}", finalLogouts)
                 .send();
     }
 

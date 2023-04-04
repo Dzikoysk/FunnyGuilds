@@ -20,13 +20,13 @@ public class PlayerLogin extends AbstractFunnyListener {
         String name = player.getName();
         switch (FunnyValidator.validateUsername(this.config, name)) {
             case TOO_SHORT:
-                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.loginNickTooShort));
+                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.system.loginNickTooShort));
                 break;
             case TOO_LONG:
-                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.loginNickTooLong));
+                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.system.loginNickTooLong));
                 break;
             case INVALID:
-                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.loginNickInvalid));
+                event.disallow(Result.KICK_OTHER, this.messageService.<String>get(player, config -> config.system.loginNickInvalid));
                 break;
             case VALID:
                 break;

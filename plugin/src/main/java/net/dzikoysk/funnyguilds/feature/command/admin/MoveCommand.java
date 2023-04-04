@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 public final class MoveCommand extends AbstractFunnyCommand {
@@ -30,11 +29,11 @@ public final class MoveCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(Player player, User admin, String[] args) {
-        when(!this.config.regionsEnabled, config -> config.regionsDisabled);
-        when(args.length < 1, config -> config.generalNoTagGiven);
+        when(!this.config.regionsEnabled, config -> config.guild.region.disabled);
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
+        Guild guild = GuildValidation.requireGuildByTag(args[0]);
 
         HeartConfiguration heartConfig = this.config.heart;
-        Guild guild = GuildValidation.requireGuildByTag(args[0]);
         Location location = player.getLocation().getBlock().getLocation();
         World world = player.getWorld();
 
@@ -50,8 +49,8 @@ public final class MoveCommand extends AbstractFunnyCommand {
         }
 
         when(distance > LocationUtils.flatDistance(player.getWorld().getSpawnLocation(), location),
-                config -> config.createSpawn, FunnyFormatter.of("{DISTANCE}", distance));
-        when(this.regionManager.isNearRegion(location), config -> config.createIsNear);
+                config -> config.guild.commands.create.nearSpawn, FunnyFormatter.of("{DISTANCE}", distance));
+        when(this.regionManager.isNearRegion(location), config -> config.guild.commands.create.nearOtherGuild);
 
         if (!SimpleEventHandler.handle(new GuildMoveEvent(AdminUtils.getCause(admin), admin, guild, location))) {
             return;
@@ -84,14 +83,9 @@ public final class MoveCommand extends AbstractFunnyCommand {
         }
 
         this.plugin.getGuildEntityHelper().spawnGuildEntity(guild);
-
-        FunnyFormatter formatter = new FunnyFormatter()
-                .register("{GUILD}", guild.getName())
-                .register("{REGION}", region.getName());
-
-        this.messageService.getMessage(config -> config.adminGuildRelocated)
+        this.messageService.getMessage(config -> config.admin.commands.guild.move.moved)
                 .receiver(player)
-                .with(formatter)
+                .with(guild)
                 .send();
     }
 

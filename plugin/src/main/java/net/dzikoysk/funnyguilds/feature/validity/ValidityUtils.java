@@ -27,21 +27,21 @@ public final class ValidityUtils {
                 .register("{GUILD}", guild.getName());
 
         Option<Region> regionOption = guild.getRegion();
-        boolean hasCenter = regionOption.isPresent() && regionOption.get().getCenter() != null;
+        boolean hasRegion = regionOption.isPresent();
 
-        messageService.getMessage(config -> config.broadcastValidity)
+        messageService.getMessage(config -> config.guild.commands.validity.expiredBroadcast)
                 .broadcast()
                 .with(formatter)
                 .with(CommandSender.class, receiver -> {
                     FunnyFormatter cordFormatter = new FunnyFormatter();
-                    if (hasCenter) {
+                    if (hasRegion) {
                         Location center = regionOption.get().getCenter();
                         cordFormatter.register("{X}", center.getBlockX());
                         cordFormatter.register("{Y}", center.getBlockY());
                         cordFormatter.register("{Z}", center.getBlockZ());
                     }
                     else {
-                        String noInformation = messageService.get(receiver, config -> config.noInformation);
+                        String noInformation = messageService.get(receiver, config -> config.guild.commands.validity.noCoordinates);
                         cordFormatter.register("{X}", noInformation);
                         cordFormatter.register("{Y}", noInformation);
                         cordFormatter.register("{Z}", noInformation);

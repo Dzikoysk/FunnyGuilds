@@ -20,31 +20,29 @@ public final class LeaderAdminCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-        when(args.length < 2, config -> config.generalNoNickGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
-        User user = UserValidation.requireUserByName(args[1]);
 
-        when(!guild.isMember(user), config -> config.adminUserNotMemberOf);
-        when(guild.isOwner(user), config -> config.adminAlreadyLeader);
+        when(args.length < 2, config -> config.commands.validation.noNickGiven);
+        User ownerUser = UserValidation.requireUserByName(args[1]);
+
+        when(!guild.isMember(ownerUser), config -> config.admin.commands.validation.notMemberOf);
+        when(guild.isOwner(ownerUser), config -> config.admin.commands.guild.leader.alreadyLeader);
 
         User admin = AdminUtils.getAdminUser(sender);
-        if (!SimpleEventHandler.handle(new GuildMemberLeaderEvent(AdminUtils.getCause(admin), admin, guild, user))) {
+        if (!SimpleEventHandler.handle(new GuildMemberLeaderEvent(AdminUtils.getCause(admin), admin, guild, ownerUser))) {
             return;
         }
 
-        guild.setOwner(user);
-
-        this.messageService.getMessage(config -> config.leaderSet)
+        guild.setOwner(ownerUser);
+        this.messageService.getMessage(config -> config.guild.commands.deputy.set)
                 .receiver(sender)
                 .send();
-        this.messageService.getMessage( config -> config.leaderOwner)
-                .receiver(user)
+        this.messageService.getMessage(config -> config.guild.commands.deputy.setTarget)
+                .receiver(ownerUser)
                 .send();
-        this.messageService.getMessage(config -> config.leaderMembers)
+        this.messageService.getMessage(config -> config.guild.commands.deputy.setMembers)
                 .receiver(guild)
-                .with("{PLAYER}", user.getName())
                 .send();
     }
 

@@ -70,7 +70,7 @@ public class EntityExplode extends AbstractFunnyListener {
                     Entity explosionSource = entityTnt.getSource();
 
                     if (explosionSource instanceof Player) {
-                        this.messageService.getMessage(config -> config.regionExplosionHasProtection)
+                        this.messageService.getMessage(config -> config.guild.region.explosion.hasProtection)
                                 .receiver(explosionSource)
                                 .send();
                     }
@@ -104,7 +104,7 @@ public class EntityExplode extends AbstractFunnyListener {
                     Entity explosionSource = entityTnt.getSource();
 
                     if (explosionSource instanceof Player) {
-                        this.messageService.getMessage(config -> config.regionExplosionHasProtection)
+                        this.messageService.getMessage(config -> config.guild.region.explosion.hasProtection)
                                 .receiver(explosionSource)
                                 .send();
                     }

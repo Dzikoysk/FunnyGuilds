@@ -91,19 +91,19 @@ public final class ProtectionSystem {
         Function<MessageConfiguration, Sendable> messageSupplier;
         switch (protectionType) {
             case UNAUTHORIZED:
-                messageSupplier = config -> config.regionUnauthorized;
+                messageSupplier = config -> config.guild.region.protection.unauthorized;
                 break;
             case HEART:
-                messageSupplier = config -> config.regionCenter;
+                messageSupplier = config -> config.guild.region.protection.center;
                 break;
             case HEART_INTERACTION:
-                messageSupplier = config -> config.regionInteract;
+                messageSupplier = config -> config.guild.region.protection.heart;
                 break;
             case LOCKED:
                 ProtectionSystem.sendRegionExplodeMessage(player, result.getSecond());
                 return;
             default:
-                messageSupplier = config -> config.regionOther;
+                messageSupplier = config -> config.guild.region.protection.other;
                 break;
         }
         FunnyGuilds.getInstance().getMessageService().getMessage(messageSupplier)
@@ -114,7 +114,7 @@ public final class ProtectionSystem {
     private static void sendRegionExplodeMessage(Player player, Guild guild) {
         guild.getBuild().peek(build -> {
             Duration time = Duration.between(Instant.now(), build);
-            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.regionExplodeInteract)
+            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.guild.region.explosion.interaction)
                     .with(FunnyFormatter.of("{TIME}", time.getSeconds()))
                     .receiver(player)
                     .send();

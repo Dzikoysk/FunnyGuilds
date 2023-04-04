@@ -24,7 +24,7 @@ public final class StatsResetCommand extends AbstractFunnyCommand {
     )
     public void execute(Player player, User user) {
         List<ItemStack> requiredItems = this.config.statsResetItems;
-        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.statsResetItems)) {
+        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.player.commands.statsReset.missingItems)) {
             return;
         }
 
@@ -56,7 +56,7 @@ public final class StatsResetCommand extends AbstractFunnyCommand {
                 .register("{LAST-LOGOUTS}", lastLogouts)
                 .register("{CURRENT-LOGOUTS}", rank.getLogouts());
 
-        this.messageService.getMessage(config -> config.statsResetMessage)
+        this.messageService.getMessage(config -> config.player.commands.statsReset.resetMessage)
                 .receiver(player)
                 .with(formatter)
                 .send();

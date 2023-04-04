@@ -53,7 +53,7 @@ public final class BanUtils {
                             .register("{REASON}", ban.getReason())
                             .register("{PLAYER}", user.getName());
 
-                    return messageService.get(user, config -> config.banMessage, formatter);
+                    return messageService.get(user, config -> config.admin.commands.guild.ban.bannedKick, formatter);
                 })
                 .orElseGet("");
     }

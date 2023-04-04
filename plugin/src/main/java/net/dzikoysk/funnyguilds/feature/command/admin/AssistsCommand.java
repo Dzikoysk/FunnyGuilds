@@ -22,19 +22,17 @@ public final class AssistsCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-        when(args.length < 2, config -> config.adminNoAssistsGiven);
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
+        User user = UserValidation.requireUserByName(args[0]);
 
+        when(args.length < 2, config -> config.admin.commands.player.assists.noValueGiven);
         int assists = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(args[1])).orThrow(() -> {
-            return new InternalValidationException(config -> config.adminErrorInNumber, FunnyFormatter.of("{ERROR}", args[0]));
+            return new InternalValidationException(config -> config.commands.validation.invalidNumber, FunnyFormatter.of("{ERROR}", args[0]));
         });
 
         User admin = AdminUtils.getAdminUser(sender);
-        User user = UserValidation.requireUserByName(args[0]);
-
         UserRank userRank = user.getRank();
         int change = assists - userRank.getAssists();
-
         AssistsChangeEvent assistsChangeEvent = new AssistsChangeEvent(AdminUtils.getCause(admin), admin, user, change);
         if (!SimpleEventHandler.handle(assistsChangeEvent)) {
             return;
@@ -43,13 +41,10 @@ public final class AssistsCommand extends AbstractFunnyCommand {
         int finalAssists = assists + assistsChangeEvent.getAssistsChange();
         user.getRank().setAssists(finalAssists);
 
-        FunnyFormatter formatter = new FunnyFormatter()
-                .register("{PLAYER}", user.getName())
-                .register("{ASSISTS}", finalAssists);
-
-        this.messageService.getMessage(config -> config.adminAssistsChanged)
+        this.messageService.getMessage(config -> config.admin.commands.player.assists.changed)
                 .receiver(sender)
-                .with(formatter)
+                .with("{PLAYER}", user.getName())
+                .with("{VALUE}", finalAssists)
                 .send();
     }
 

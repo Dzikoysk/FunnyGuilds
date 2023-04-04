@@ -17,7 +17,7 @@ public final class RankingCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender) {
-        this.messageService.getMessage(config -> config.rankingList)
+        this.messageService.getMessage(config -> config.player.commands.topList)
                 .receiver(sender)
                 .with(CommandSender.class, receiver -> {
                     User targetUser = this.userManager.findByName(sender.getName()).orNull();

@@ -15,11 +15,9 @@ final class OwnerValidator implements Validator<IsOwner, User, ValidationExcepti
     @Override
     public boolean validate(Context context, IsOwner annotation, Property property, User user) throws ValidationException {
         this.memberValidator.isMember(user);
-
         if (!user.isOwner()) {
-            throw new InternalValidationException(config -> config.generalIsNotOwner);
+            throw new InternalValidationException(config -> config.commands.validation.notOwner);
         }
-
         return true;
     }
 

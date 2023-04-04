@@ -22,19 +22,17 @@ public final class DeathsCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-        when(args.length < 2, config -> config.adminNoDeathsGiven);
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
+        User user = UserValidation.requireUserByName(args[0]);
 
+        when(args.length < 2, config -> config.admin.commands.player.deaths.noValueGiven);
         int deaths = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(args[1])).orThrow(() -> {
-            return new InternalValidationException(config -> config.adminErrorInNumber, FunnyFormatter.of("{ERROR}", args[0]));
+            return new InternalValidationException(config -> config.commands.validation.invalidNumber, FunnyFormatter.of("{ERROR}", args[0]));
         });
 
         User admin = AdminUtils.getAdminUser(sender);
-        User user = UserValidation.requireUserByName(args[0]);
-
         UserRank userRank = user.getRank();
         int change = deaths - userRank.getDeaths();
-
         DeathsChangeEvent deathsChangeEvent = new DeathsChangeEvent(AdminUtils.getCause(admin), admin, user, change);
         if (!SimpleEventHandler.handle(deathsChangeEvent)) {
             return;
@@ -47,7 +45,7 @@ public final class DeathsCommand extends AbstractFunnyCommand {
                 .register("{PLAYER}", user.getName())
                 .register("{DEATHS}", finalDeaths);
 
-        this.messageService.getMessage(config -> config.adminDeathsChanged)
+        this.messageService.getMessage(config -> config.admin.commands.player.deaths.changed)
                 .receiver(sender)
                 .with(formatter)
                 .send();

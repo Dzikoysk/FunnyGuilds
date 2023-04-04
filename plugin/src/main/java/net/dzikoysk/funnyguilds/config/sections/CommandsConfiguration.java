@@ -103,28 +103,28 @@ public class CommandsConfiguration extends OkaeriConfig {
     public static class AdminCommands extends OkaeriConfig {
 
         public String main = "ga";
-        public String add = "ga dodaj";
-        public String delete = "ga usun";
-        public String kick = "ga wyrzuc";
-        public String teleport = "ga tp";
         public String points = "ga points";
         public String kills = "ga kills";
         public String deaths = "ga deaths";
-        public String ban = "ga ban";
+        public String assists = "ga assists";
+        public String logouts = "ga logouts";
+        public String status = "ga status";
+        public String delete = "ga usun";
+        public String tag = "ga tag";
+        public String name = "ga nazwa";
+        public String validity = "ga przedluz";
+        public String protection = "ga ochrona";
         public String lives = "ga zycia";
         public String move = "ga przenies";
-        public String unban = "ga unban";
-        public String validity = "ga przedluz";
-        public String name = "ga nazwa";
-        public String tag = "ga tag";
-        public String spy = "ga spy";
-        public String enabled = "ga enabled";
+        public String teleport = "ga tp";
+        public String base = "ga baza";
+        public String add = "ga dodaj";
+        public String kick = "ga wyrzuc";
         public String leader = "ga lider";
         public String deputy = "ga zastepca";
-        public String protection = "ga ochrona";
-        public String base = "ga baza";
-        public String logouts = "ga logouts";
-        public String assists = "ga assists";
+        public String ban = "ga ban";
+        public String unban = "ga unban";
+        public String spy = "ga spy";
 
     }
 

@@ -11,7 +11,6 @@ import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.command.CommandSender;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 public final class AddCommand extends AbstractFunnyCommand {
@@ -24,16 +23,14 @@ public final class AddCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-        when(!this.guildManager.tagExists(args[0]), config -> config.generalNoGuildFound);
-        when(args.length < 2, config -> config.generalNoNickGiven);
-
-        User userToAdd = UserValidation.requireUserByName(args[1]);
-        when(userToAdd.hasGuild(), config -> config.generalUserHasGuild);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
-        User admin = AdminUtils.getAdminUser(sender);
 
+        when(args.length < 2, config -> config.commands.validation.noNickGiven);
+        User userToAdd = UserValidation.requireUserByName(args[1]);
+        when(userToAdd.hasGuild(), config -> config.commands.validation.userHasGuild);
+
+        User admin = AdminUtils.getAdminUser(sender);
         if (!SimpleEventHandler.handle(new GuildMemberJoinEvent(AdminUtils.getCause(admin), admin, guild, userToAdd))) {
             return;
         }
@@ -49,15 +46,15 @@ public final class AddCommand extends AbstractFunnyCommand {
                 .register("{TAG}", guild.getTag())
                 .register("{PLAYER}", userToAdd.getName());
 
-        this.messageService.getMessage(config -> config.joinToMember)
-                .receiver(userToAdd)
-                .with(formatter)
-                .send();
-        this.messageService.getMessage(config -> config.joinToOwner)
+        this.messageService.getMessage(config -> config.guild.commands.join.joined)
                 .receiver(guild.getOwner())
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.broadcastJoin)
+        this.messageService.getMessage(config -> config.guild.commands.join.joinedTarget)
+                .receiver(userToAdd)
+                .with(formatter)
+                .send();
+        this.messageService.getMessage(config -> config.guild.commands.join.joinedBroadcast)
                 .broadcast()
                 .with(formatter)
                 .send();

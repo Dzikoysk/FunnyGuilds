@@ -1,5 +1,6 @@
 package net.dzikoysk.funnyguilds.feature.command.user;
 
+import dev.peri.yetanothermessageslibrary.replace.replacement.Replacement;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -18,7 +19,6 @@ import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import dev.peri.yetanothermessageslibrary.replace.replacement.Replacement;
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -37,12 +37,12 @@ public final class ValidityCommand extends AbstractFunnyCommand {
             Instant validity = guild.getValidity();
             Duration delta = Duration.between(Instant.now(), validity);
 
-            when(delta.compareTo(this.config.validityWhen) > 0,config -> config.validityWhen, FunnyFormatter.of("{TIME}",
+            when(delta.compareTo(this.config.validityWhen) > 0,config -> config.guild.commands.validity.tooEarly, FunnyFormatter.of("{TIME}",
                     TimeUtils.formatTime(delta.minus(this.config.validityWhen))));
         }
 
         List<ItemStack> requiredItems = this.config.validityItems;
-        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.validityItems)) {
+        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.guild.commands.validity.missingItems)) {
             return;
         }
 
@@ -62,7 +62,7 @@ public final class ValidityCommand extends AbstractFunnyCommand {
         guild.setValidity(validity);
 
         Instant finalValidity = validity;
-        this.messageService.getMessage(config -> config.validityDone)
+        this.messageService.getMessage(config -> config.guild.commands.validity.extended)
                 .receiver(player)
                 .with(CommandSender.class, receiver -> {
                     String formattedValidity = this.messageService.get(receiver, config -> config.dateFormat).format(finalValidity);

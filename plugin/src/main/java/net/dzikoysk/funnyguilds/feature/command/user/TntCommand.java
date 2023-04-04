@@ -19,7 +19,7 @@ public final class TntCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender) {
-        when(!this.config.tntProtection.time.enabled, config -> config.tntProtectDisable);
+        when(!this.config.tntProtection.time.enabled, config -> config.commands.tnt.infoAlways);
 
         LocalTime now = LocalTime.now();
         LocalTime start = this.config.tntProtection.time.startTime.getTime();
@@ -33,13 +33,15 @@ public final class TntCommand extends AbstractFunnyCommand {
                 .register("{PROTECTION_START}", this.config.tntProtection.time.startTime.getFormattedTime())
                 .register("{PROTECTION_END}", this.config.tntProtection.time.endTime.getFormattedTime());
 
-        this.messageService.getMessage(config -> config.tntInfo)
+        this.messageService.getMessage(config -> config.commands.tnt.info)
                 .receiver(sender)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(isWithinTimeframe
-                        ? config -> config.tntNowDisabled
-                        : config -> config.tntNowEnabled)
+        this.messageService
+                .getMessage(isWithinTimeframe
+                        ? config -> config.commands.tnt.disabled
+                        : config -> config.commands.tnt.enabled
+                )
                 .receiver(sender)
                 .send();
     }

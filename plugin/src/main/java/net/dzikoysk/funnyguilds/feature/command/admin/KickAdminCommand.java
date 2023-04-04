@@ -10,7 +10,6 @@ import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.command.CommandSender;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 public final class KickAdminCommand extends AbstractFunnyCommand {
@@ -22,15 +21,13 @@ public final class KickAdminCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         User user = UserValidation.requireUserByName(args[0]);
-        when(!user.hasGuild(), config -> config.generalPlayerHasNoGuild);
-        when(user.isOwner(), config -> config.adminGuildOwner);
 
-        Guild guild = user.getGuild().get();
+        Guild guild = when(user.getGuild(), config -> config.commands.validation.userHasNoGuild);
+        when(user.isOwner(), config -> config.guild.commands.kick.targetIsOwner);
+
         User admin = AdminUtils.getAdminUser(sender);
-
         if (!SimpleEventHandler.handle(new GuildMemberKickEvent(AdminUtils.getCause(admin), admin, guild, user))) {
             return;
         }
@@ -46,15 +43,15 @@ public final class KickAdminCommand extends AbstractFunnyCommand {
                 .register("{TAG}", guild.getTag())
                 .register("{PLAYER}", user.getName());
 
-        this.messageService.getMessage(config -> config.kickToOwner)
+        this.messageService.getMessage(config -> config.guild.commands.kick.kicked)
                 .receiver(sender)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.kickToPlayer)
+        this.messageService.getMessage(config -> config.guild.commands.kick.kickedTarget)
                 .receiver(user)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.broadcastKick)
+        this.messageService.getMessage(config -> config.guild.commands.kick.kickedBroadcast)
                 .broadcast()
                 .with(formatter)
                 .send();

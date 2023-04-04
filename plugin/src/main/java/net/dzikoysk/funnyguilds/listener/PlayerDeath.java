@@ -66,7 +66,7 @@ public class PlayerDeath extends AbstractFunnyListener {
         }
 
         User victim = victimOption.get();
-        DamageState victimDamageState = damageManager.getDamageState(victim.getUUID());
+        DamageState victimDamageState = this.damageManager.getDamageState(victim.getUUID());
 
         Option<User> attackerOption = Option.none();
         if (playerAttacker == null && this.config.considerLastAttackerAsKiller || playerVictim.equals(playerAttacker)) { // If player killed himself use last attacker as a killer
@@ -238,19 +238,23 @@ public class PlayerDeath extends AbstractFunnyListener {
 
         Replaceable itemReplacement = ItemComponentHelper.prepareItemReplacement(playerAttacker.getItemInHand());
 
-        if (this.config.displayNotificationForKiller) {
-            this.messageService.getMessage(config -> config.rankKillMessage)
-                    .with(killFormatter)
-                    .with(itemReplacement)
-                    .receiver(attacker)
-                    .send();
-        }
-
         if (this.config.disableDefaultDeathMessage) {
             event.setDeathMessage(null);
         }
 
-        FunnyMessageDispatcher deathMessage = this.messageService.getMessage(config -> config.rankDeathMessage)
+        this.messageService.getMessage(config -> config.player.rank.pvp.killer)
+                .receiver(attacker)
+                .with(killFormatter)
+                .with(itemReplacement)
+                .send();
+
+        this.messageService.getMessage(config -> config.player.rank.pvp.victim)
+                .receiver(victim)
+                .with(killFormatter)
+                .with(itemReplacement)
+                .send();
+
+        FunnyMessageDispatcher deathMessage = this.messageService.getMessage(config -> config.player.rank.pvp.broadcast)
                 .with(killFormatter)
                 .with(itemReplacement)
                 .with(CommandSender.class, receiver -> {
@@ -258,10 +262,10 @@ public class PlayerDeath extends AbstractFunnyListener {
                     CombatPointsChangeEvent.CombatTable combatTable = combatPointsChangeEvent.getAssistsMap();
                     if (!combatTable.isEmpty()) {
                         List<String> formattedAssists = this.formatAssists(receiver, combatTable.getAssistsMap());
-                        String assistsDelimiter = this.messageService.get(receiver, config -> config.rankAssistDelimiter);
+                        String assistsDelimiter = this.messageService.get(receiver, config -> config.player.rank.pvp.assists.delimiter);
                         assistsMessage = this.messageService.get(
                                 receiver,
-                                config -> config.rankAssistMessage,
+                                config -> config.player.rank.pvp.assists.message,
                                 Replacement.of("{ASSISTS}", FunnyStringUtils.join(formattedAssists, assistsDelimiter))
                         );
                     }
@@ -306,19 +310,19 @@ public class PlayerDeath extends AbstractFunnyListener {
         Option<Instant> attackerTimestamp = attackerDamageState.getLastKillTime(victim);
 
         if (victimTimestamp.is(timestamp -> Duration.between(timestamp, Instant.now()).compareTo(this.config.rankFarmingCooldown) < 0)) {
-            this.messageService.getMessage(config -> config.rankLastVictimV)
+            this.messageService.getMessage(config -> config.player.rank.farming.lastVictim.victim)
                     .receiver(playerVictim)
                     .send();
-            this.messageService.getMessage(config -> config.rankLastVictimA)
+            this.messageService.getMessage(config -> config.player.rank.farming.lastVictim.attacker)
                     .receiver(playerAttacker)
                     .send();
 
             return true;
         } else if (this.config.bidirectionalRankFarmingProtect && attackerTimestamp.is(timestamp -> Duration.between(timestamp, Instant.now()).compareTo(this.config.rankFarmingCooldown) < 0)) {
-            this.messageService.getMessage(config -> config.rankLastAttackerV)
+            this.messageService.getMessage(config -> config.player.rank.farming.lastAttacker.victim)
                     .receiver(playerVictim)
                     .send();
-            this.messageService.getMessage(config -> config.rankLastAttackerA)
+            this.messageService.getMessage(config -> config.player.rank.farming.lastAttacker.attacker)
                     .receiver(playerAttacker)
                     .send();
 
@@ -336,10 +340,10 @@ public class PlayerDeath extends AbstractFunnyListener {
 
         String attackerIP = playerAttacker.getAddress().getHostString();
         if (attackerIP != null && attackerIP.equalsIgnoreCase(playerVictim.getAddress().getHostString())) {
-            this.messageService.getMessage(config -> config.rankIPVictim)
+            this.messageService.getMessage(config -> config.player.rank.farming.sameIP.victim)
                     .receiver(playerVictim)
                     .send();
-            this.messageService.getMessage(config -> config.rankIPAttacker)
+            this.messageService.getMessage(config -> config.player.rank.farming.sameIP.attacker)
                     .receiver(playerAttacker)
                     .send();
             return true;
@@ -359,10 +363,10 @@ public class PlayerDeath extends AbstractFunnyListener {
         }
 
         if (victim.getGuild().equals(attacker.getGuild())) {
-            this.messageService.getMessage(config -> config.rankMemberVictim)
+            this.messageService.getMessage(config -> config.player.rank.farming.sameGuild.victim)
                     .receiver(victim)
                     .send();
-            this.messageService.getMessage(config -> config.rankMemberAttacker)
+            this.messageService.getMessage(config -> config.player.rank.farming.sameGuild.attacker)
                     .receiver(attacker)
                     .send();
             return true;
@@ -386,8 +390,11 @@ public class PlayerDeath extends AbstractFunnyListener {
         Guild attackerGuild = attackerGuildOption.get();
 
         if (victimGuild.isAlly(attackerGuild) || attackerGuild.isAlly(victimGuild)) {
-            this.messageService.getMessage(config -> config.rankAllyVictim)
+            this.messageService.getMessage(config -> config.player.rank.farming.sameAlliance.victim)
                     .receiver(victim)
+                    .send();
+            this.messageService.getMessage(config -> config.player.rank.farming.sameAlliance.attacker)
+                    .receiver(attacker)
                     .send();
             return true;
         }
@@ -457,7 +464,7 @@ public class PlayerDeath extends AbstractFunnyListener {
                     .register("{PLUS-FORMATTED}", NumberRange.inRangeToString(points, this.config.killPointsChangeFormat, true))
                     .register("{CHANGE}", Math.abs(points))
                     .register("{SHARE}", FunnyStringUtils.getPercent(damageShare));
-            formattedAssists.add(this.messageService.get(receiver, config -> config.rankAssistEntry, formatter));
+            formattedAssists.add(this.messageService.get(receiver, config -> config.player.rank.pvp.assists.entry, formatter));
         });
         return formattedAssists;
     }

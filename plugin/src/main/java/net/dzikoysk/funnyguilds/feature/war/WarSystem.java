@@ -41,7 +41,7 @@ public class WarSystem {
         Option<User> userOp = userManager.findByPlayer(player);
 
         if (!pluginConfiguration.warEnabled) {
-            messageService.getMessage(config -> config.warDisabled)
+            messageService.getMessage(config -> config.guild.war.disabled)
                     .receiver(player)
                     .send();
             return;
@@ -53,7 +53,7 @@ public class WarSystem {
         User user = userOp.get();
 
         if (!user.hasGuild()) {
-            messageService.getMessage(config -> config.warHasNotGuild)
+            messageService.getMessage(config -> config.guild.war.hasNoGuild)
                     .receiver(player)
                     .send();
             return;
@@ -65,14 +65,14 @@ public class WarSystem {
         }
 
         if (attacker.isAlly(guild)) {
-            messageService.getMessage(config -> config.warAlly)
+            messageService.getMessage(config -> config.guild.war.guildIsAlly)
                     .receiver(player)
                     .send();
             return;
         }
 
         if (!guild.canBeAttacked()) {
-            messageService.getMessage(config -> config.warWait)
+            messageService.getMessage(config -> config.guild.war.guildHasProtection)
                     .receiver(player)
                     .with("{TIME}", TimeUtils.formatTime(Duration.between(Instant.now(), guild.getProtection())))
                     .send();
@@ -88,11 +88,11 @@ public class WarSystem {
         if (guild.getLives() < 1) {
             this.conquer(attacker, guild, user);
         } else {
-            messageService.getMessage(config -> config.warAttacker)
+            messageService.getMessage(config -> config.guild.war.attacked)
                     .receiver(attacker)
                     .with("{ATTACKED}", guild.getName())
                     .send();
-            messageService.getMessage(config -> config.warAttacked)
+            messageService.getMessage(config -> config.guild.war.attackedTarget)
                     .receiver(guild)
                     .with("{ATTACKER}", attacker.getName())
                     .send();
@@ -112,11 +112,11 @@ public class WarSystem {
                 .register("{WINNER}", conqueror.getTag())
                 .register("{LOSER}", loser.getTag());
 
-        messageService.getMessage(config -> config.warWin)
+        messageService.getMessage(config -> config.guild.war.win)
                 .receiver(conqueror)
                 .with(formatter)
                 .send();
-        messageService.getMessage(config -> config.warLose)
+        messageService.getMessage(config -> config.guild.war.lose)
                 .receiver(loser)
                 .with(formatter)
                 .send();
@@ -124,7 +124,7 @@ public class WarSystem {
         plugin.getGuildManager().deleteGuild(plugin, loser);
         conqueror.updateLives(lives -> lives + 1);
 
-        messageService.getMessage(config -> config.broadcastWar)
+        messageService.getMessage(config -> config.guild.war.conqueredBroadcast)
                 .broadcast()
                 .with(formatter)
                 .send();

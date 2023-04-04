@@ -10,7 +10,6 @@ import net.dzikoysk.funnyguilds.config.tablist.TablistConfiguration;
 import net.dzikoysk.funnyguilds.data.DataModel;
 import net.dzikoysk.funnyguilds.feature.command.AbstractFunnyCommand;
 import net.dzikoysk.funnyguilds.feature.tablist.IndividualPlayerList;
-import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.FunnyTask.AsyncFunnyTask;
 import net.dzikoysk.funnyguilds.shared.TimeUtils;
 import net.dzikoysk.funnyguilds.user.UserManager;
@@ -48,12 +47,12 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
                 this.saveAll(sender);
                 break;
             case "help":
-                this.messageService.getMessage(config -> config.funnyguildsHelp)
+                this.messageService.getMessage(config -> config.system.commandHelp)
                         .receiver(sender)
                         .send();
                 break;
             default:
-                this.messageService.getMessage(config -> config.funnyguildsVersion)
+                this.messageService.getMessage(config -> config.system.pluginVersion)
                         .receiver(sender)
                         .with("{VERSION}", this.plugin.getVersion().getFullVersion())
                         .send();
@@ -63,9 +62,9 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
     }
 
     private void saveAll(CommandSender sender) {
-        when(!sender.hasPermission("funnyguilds.admin"), config -> config.permission);
+        when(!sender.hasPermission("funnyguilds.admin"), config -> config.commands.validation.noPermission);
 
-        this.messageService.getMessage(config -> config.saveallSaving)
+        this.messageService.getMessage(config -> config.system.saveAllSaving)
                 .receiver(sender)
                 .send();
         Instant startTime = Instant.now();
@@ -81,16 +80,16 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
         }
 
         String time = TimeUtils.formatTimeSimple(Duration.between(startTime, Instant.now()));
-        this.messageService.getMessage(config -> config.saveallSaved)
+        this.messageService.getMessage(config -> config.system.saveAllSaved)
                 .receiver(sender)
                 .with("{TIME}", time)
                 .send();
     }
 
     private void reload(CommandSender sender) {
-        when(!sender.hasPermission("funnyguilds.reload"), config -> config.permission);
+        when(!sender.hasPermission("funnyguilds.reload"), config -> config.commands.validation.noPermission);
 
-        this.messageService.getMessage(config -> config.reloadReloading)
+        this.messageService.getMessage(config -> config.system.reloadReloading)
                 .receiver(sender)
                 .send();
         this.plugin.scheduleFunnyTasks(new ReloadAsyncTask(this.plugin, sender));
@@ -138,7 +137,7 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
             }
 
             String time = TimeUtils.formatTimeSimple(Duration.between(this.startTime, Instant.now()));
-            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.reloadTime)
+            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.system.reloadTime)
                     .receiver(this.sender)
                     .with("{TIME}", time)
                     .send();

@@ -121,7 +121,7 @@ public final class FunnyCommandsConfiguration {
                 .command("deaths", commands.admin.deaths, DeathsCommand.class)
                 .command("delete", commands.admin.delete, DeleteAdminCommand.class)
                 .command("deputy", commands.admin.deputy, DeputyAdminCommand.class)
-                .command("guilds-enabled", commands.admin.enabled, GuildsEnabledCommand.class)
+                .command("guilds-enabled", commands.admin.status, GuildsEnabledCommand.class)
                 .command("kick", commands.admin.kick, KickAdminCommand.class)
                 .command("kills", commands.admin.kills, KillsCommand.class)
                 .command("leader", commands.admin.leader, LeaderAdminCommand.class)

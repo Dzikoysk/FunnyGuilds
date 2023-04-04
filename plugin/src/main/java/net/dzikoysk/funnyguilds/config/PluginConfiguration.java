@@ -1035,10 +1035,6 @@ public class PluginConfiguration extends OkaeriConfig {
     public List<String> restrictedGuildTags = Collections.singletonList("TEST");
 
     @Comment("")
-    @Comment("Czy powiadomienie o zabójstwie gracza powinno się wyświetlać dla zabójcy")
-    public boolean displayNotificationForKiller = false;
-
-    @Comment("")
     @Comment("Czy powiadomienia o wejściu na teren gildii członka gildii powinny byc wyświetlane")
     @CustomKey("notification-guild-member-display")
     public boolean regionEnterNotificationGuildMember = false;

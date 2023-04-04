@@ -17,9 +17,8 @@ final class MemberValidator implements Validator<IsMember, User, ValidationExcep
 
     boolean isMember(User user) {
         if (!user.hasGuild()) {
-            throw new InternalValidationException(config -> config.generalHasNoGuild);
+            throw new InternalValidationException(config -> config.commands.validation.hasNoGuild);
         }
-
         return true;
     }
 

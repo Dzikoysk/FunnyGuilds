@@ -14,7 +14,6 @@ import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.FunnyStringUtils;
 import net.dzikoysk.funnyguilds.user.User;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -30,10 +29,10 @@ public final class BreakCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(@IsOwner User owner, Guild guild, String[] args) {
-        when(!guild.hasAllies(), config -> config.breakHasNotAllies);
+        when(!guild.hasAllies(), config -> config.guild.commands.breakAlly.noAllies);
 
         if (args.length < 1) {
-            this.messageService.getMessage(config -> config.breakAlliesList)
+            this.messageService.getMessage(config -> config.guild.commands.breakAlly.alliesList)
                     .receiver(owner)
                     .with("{GUILDS}", FunnyStringUtils.join(Entity.names(guild.getAllies()), true))
                     .send();
@@ -43,9 +42,9 @@ public final class BreakCommand extends AbstractFunnyCommand {
         Guild oppositeGuild = GuildValidation.requireGuildByTag(args[0]);
         FunnyFormatter formatter = new FunnyFormatter()
                 .register("{GUILD}", oppositeGuild.getName())
-                .register("{TAG}", guild.getTag());
+                .register("{TAG}", oppositeGuild.getTag());
 
-        when(!guild.isAlly(oppositeGuild), config -> config.breakAllyExists);
+        when(!guild.isAlly(oppositeGuild), config -> config.guild.commands.validation.notAllied, formatter);
 
         if (!SimpleEventHandler.handle(new GuildBreakAllyEvent(EventCause.USER, owner, guild, oppositeGuild))) {
             return;
@@ -67,11 +66,11 @@ public final class BreakCommand extends AbstractFunnyCommand {
             oppositeGuild.getMembers().forEach(member -> this.plugin.scheduleFunnyTasks(new ScoreboardGlobalUpdateUserSyncTask(manager, member)));
         });
 
-        this.messageService.getMessage(config -> config.breakDone)
+        this.messageService.getMessage(config -> config.guild.commands.breakAlly.broke)
                 .receiver(owner)
                 .with(breakFormatter)
                 .send();
-        this.messageService.getMessage(config -> config.breakIDone)
+        this.messageService.getMessage(config -> config.guild.commands.breakAlly.broke)
                 .receiver(oppositeGuild.getOwner())
                 .with(breakIFormatter)
                 .send();

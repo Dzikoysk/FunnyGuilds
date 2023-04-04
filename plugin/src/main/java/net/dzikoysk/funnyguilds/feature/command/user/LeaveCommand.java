@@ -11,8 +11,6 @@ import net.dzikoysk.funnyguilds.feature.scoreboard.ScoreboardGlobalUpdateUserSyn
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
-import org.bukkit.entity.Player;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -26,8 +24,8 @@ public final class LeaveCommand extends AbstractFunnyCommand {
             acceptsExceeded = true,
             playerOnly = true
     )
-    public void execute(Player player, @IsMember User member, Guild guild) {
-        when(member.isOwner(), config -> config.leaveIsOwner);
+    public void execute(@IsMember User member, Guild guild) {
+        when(member.isOwner(), config -> config.guild.commands.leave.youAreOwner);
 
         if (!SimpleEventHandler.handle(new GuildMemberLeaveEvent(EventCause.USER, member, guild, member))) {
             return;
@@ -44,11 +42,11 @@ public final class LeaveCommand extends AbstractFunnyCommand {
                 .register("{TAG}", guild.getTag())
                 .register("{PLAYER}", member.getName());
 
-        this.messageService.getMessage(config -> config.leaveToUser)
+        this.messageService.getMessage(config -> config.guild.commands.leave.left)
                 .receiver(member)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.broadcastLeave)
+        this.messageService.getMessage(config -> config.guild.commands.leave.leftBroadcast)
                 .broadcast()
                 .with(formatter)
                 .send();

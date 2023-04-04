@@ -22,7 +22,7 @@ public class PlayerTeleport extends AbstractFunnyListener {
                 .filterNot(user -> user.hasPermission("funnyguilds.admin.teleport"))
                 .filterNot(user -> this.isTeleportationToRegionAllowed(event.getTo(), user))
                 .peek(user -> {
-                    this.messageService.getMessage(config -> config.regionTeleport)
+                    this.messageService.getMessage(config -> config.guild.region.protection.teleport)
                             .receiver(player)
                             .send();
                     event.setCancelled(true);

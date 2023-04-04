@@ -12,7 +12,7 @@ public final class MainCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender) {
-        this.messageService.getMessage(config -> config.adminHelpList)
+        this.messageService.getMessage(config -> config.admin.commands.help)
                 .receiver(sender)
                 .send();
     }

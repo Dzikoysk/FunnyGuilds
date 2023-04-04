@@ -1,8 +1,8 @@
 package net.dzikoysk.funnyguilds.feature.security;
 
-import com.google.common.cache.Cache;
 import dev.peri.yetanothermessageslibrary.replace.Replaceable;
 import dev.peri.yetanothermessageslibrary.replace.replacement.Replacement;
+import com.google.common.cache.Cache;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.message.MessageService;
 import net.dzikoysk.funnyguilds.feature.security.cheat.CheatType;
@@ -29,7 +29,7 @@ public final class SecurityUtils {
                 .register("{PLAYER}", player.getName())
                 .register("{CHEAT}", cheatType.getName());
 
-        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.securitySystemInfo)
+        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.admin.securitySystem.info)
                 .broadcast()
                 .with(formatter)
                 .with(

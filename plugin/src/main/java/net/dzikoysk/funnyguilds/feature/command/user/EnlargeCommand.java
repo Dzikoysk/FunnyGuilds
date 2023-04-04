@@ -1,6 +1,6 @@
 package net.dzikoysk.funnyguilds.feature.command.user;
 
-import java.util.Locale;
+import java.util.Collections;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import net.dzikoysk.funnyguilds.event.FunnyEvent.EventCause;
@@ -11,10 +11,10 @@ import net.dzikoysk.funnyguilds.feature.command.CanManage;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.Region;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
+import net.dzikoysk.funnyguilds.shared.bukkit.ItemUtils;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -28,17 +28,17 @@ public final class EnlargeCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(Player player, @CanManage User deputy, Guild guild) {
-        when(!this.config.regionsEnabled, config -> config.regionsDisabled);
-
-        Region region = when(guild.getRegion(), config -> config.regionsDisabled);
+        Region region = when(guild.getRegion(), config -> config.guild.region.disabled);
 
         int currentEnlargementLevel = region.getEnlargementLevel();
-        when(currentEnlargementLevel > this.config.enlargeItems.size() - 1, config -> config.enlargeMaxSize);
+        when(currentEnlargementLevel > this.config.enlargeItems.size() - 1, config -> config.guild.commands.enlarge.maxSize);
 
         ItemStack need = this.config.enlargeItems.get(currentEnlargementLevel);
-        when(!player.getInventory().containsAtLeast(need, need.getAmount()), config -> config.enlargeItem,
-                FunnyFormatter.of("{ITEM}", need.getAmount() + " " + need.getType().toString().toLowerCase(Locale.ROOT)));
-        when(this.regionManager.isNearRegion(region.getCenter()), config -> config.enlargeIsNear);
+        if (!ItemUtils.playerHasEnoughItems(player, Collections.singletonList(need), config -> config.guild.commands.enlarge.missingItems)) {
+            return;
+        }
+
+        when(this.regionManager.isNearRegion(region.getCenter()), config -> config.guild.commands.enlarge.nearOtherGuild);
 
         if (!SimpleEventHandler.handle(new GuildEnlargeEvent(EventCause.USER, deputy, guild))) {
             return;
@@ -51,7 +51,7 @@ public final class EnlargeCommand extends AbstractFunnyCommand {
                 .register("{SIZE}", region.getSize())
                 .register("{LEVEL}", region.getEnlargementLevel());
 
-        this.messageService.getMessage(config -> config.enlargeDone)
+        this.messageService.getMessage(config -> config.guild.commands.enlarge.enlarged)
                 .receiver(guild)
                 .with(formatter)
                 .send();

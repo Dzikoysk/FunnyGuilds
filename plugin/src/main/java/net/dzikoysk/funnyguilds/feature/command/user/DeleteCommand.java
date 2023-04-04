@@ -29,10 +29,10 @@ public final class DeleteCommand extends AbstractFunnyCommand {
     )
     public void execute(@IsOwner User owner, Guild guild) {
         when(this.config.guildDeleteCancelIfSomeoneIsOnRegion && this.regionManager.isAnyUserInRegion(guild.getRegion().orNull(),
-                guild.getMembers()), config -> config.deleteSomeoneIsNear);
+                guild.getMembers()), config -> config.guild.commands.delete.someoneNearby);
         ConfirmationList.add(owner.getUUID());
 
-        when(this.config.commands.confirm.enabled, config -> config.deleteConfirm);
+        when(this.config.commands.confirm.enabled, config -> config.guild.commands.delete.confirm);
         this.confirmExecutor.execute(owner, guild);
     }
 
