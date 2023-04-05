@@ -343,7 +343,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                     "&7Gildia: &c{GUILD} &8[&c{TAG}&8]",
                     "&7Zalozyciel: &c{OWNER}",
                     "&7Zastepcy: &c{DEPUTIES}",
-                    "&7Punkty: &c{POINTS} &8[&c{POSITION-AVG_POINTS}&8]",
+                    "&7Punkty: &c{POINTS} &8[&c{G-POSITION-AVG_POINTS}&8]",
                     "&7Ochrona: &c{PROTECTION}",
                     "&7Zycia: &4{LIVES}",
                     "&7Waznosc: &c{VALIDITY}",

@@ -197,12 +197,9 @@ tasks.withType<ShadowJar> {
 
     relocate("net.dzikoysk.funnycommands", "net.dzikoysk.funnyguilds.libs.net.dzikoysk.funnycommands")
     relocate("panda.utilities", "net.dzikoysk.funnyguilds.libs.panda.utilities")
+    relocate("org.panda_lang.utilities.inject", "net.dzikoysk.funnyguilds.libs.panda.injector")
     relocate("javassist", "net.dzikoysk.funnyguilds.libs.javassist")
     relocate("com.zaxxer", "net.dzikoysk.funnyguilds.libs.com.zaxxer")
-    relocate("com.google", "net.dzikoysk.funnyguilds.libs.com.google") {
-        exclude("com.google.gson.**")
-    }
-    relocate("org.apache.commons.lang3", "net.dzikoysk.funnyguilds.libs.org.apache.commons.lang3")
     relocate("org.apache.logging", "net.dzikoysk.funnyguilds.libs.org.apache.logging")
     relocate("org.slf4j", "net.dzikoysk.funnyguilds.libs.org.slf4j")
     relocate("org.bstats", "net.dzikoysk.funnyguilds.libs.bstats")
@@ -212,9 +209,11 @@ tasks.withType<ShadowJar> {
     relocate("me.pikamug", "net.dzikoysk.funnyguilds.libs.me.pikamug")
     relocate("org.mariadb", "net.dzikoysk.funnyguilds.libs.org.mariadb")
 
+    exclude("kotlin/**")
     exclude("org/checkerframework/**")
     exclude("org/intellij/lang/annotations/**")
     exclude("org/jetbrains/annotations/**")
+    exclude("javax/annotation/**")
 
     minimize {
         exclude(dependency("net.dzikoysk:funnycommands:.*"))

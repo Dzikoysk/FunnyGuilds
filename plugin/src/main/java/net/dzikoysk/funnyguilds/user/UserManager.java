@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator.NameResult;
-import org.apache.commons.lang3.Validate;
+import net.dzikoysk.funnyguilds.shared.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

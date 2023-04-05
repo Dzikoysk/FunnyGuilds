@@ -1,7 +1,7 @@
 package net.dzikoysk.funnyguilds.shared.bukkit;
 
 import java.util.Objects;
-import org.apache.commons.lang3.Validate;
+import net.dzikoysk.funnyguilds.shared.Validate;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
