@@ -2,6 +2,7 @@ package net.dzikoysk.funnyguilds.config.message;
 
 import dev.peri.yetanothermessageslibrary.MessageRepository;
 import dev.peri.yetanothermessageslibrary.message.SendableMessage;
+import dev.peri.yetanothermessageslibrary.message.holder.impl.ActionBarHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.BossBarHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.ChatHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.TitleHolder;
@@ -702,6 +703,12 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 public SendableMessage teleported = ChatHolder.message("&aTeleportacja&7...");
 
             }
+
+            @Comment("Dostępne zmienne: {PLAYER}, {X}, {Y}, {Z}")
+            public SendableMessage helpRequest = SendableMessage.builder()
+                    .chat("&7Gracz &a{PLAYER} &7poprosił o pomoc&7! &aX: {X} Y: {Y} Z: {Z}")
+                    .actionBar("&7Gracz &a{PLAYER} &7poprosił o pomoc&7! &aX: {X} Y: {Y} Z: {Z}")
+                    .build();
 
             @Comment("")
             public Escape escape = new Escape();
