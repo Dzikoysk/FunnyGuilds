@@ -10,14 +10,17 @@ import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import eu.okaeri.configs.exception.OkaeriException;
+import eu.okaeri.configs.schema.GenericsDeclaration;
+import eu.okaeri.configs.serdes.SerdesContext;
 import eu.okaeri.configs.serdes.commons.duration.DurationSpec;
+import eu.okaeri.validator.annotation.DecimalMax;
+import eu.okaeri.validator.annotation.DecimalMin;
 import eu.okaeri.validator.annotation.Min;
 import eu.okaeri.validator.annotation.NotBlank;
 import eu.okaeri.validator.annotation.Positive;
 import eu.okaeri.validator.annotation.PositiveOrZero;
-import eu.okaeri.validator.annotation.DecimalMax;
-import eu.okaeri.validator.annotation.DecimalMin;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +57,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
+import panda.std.Pair;
+import panda.std.stream.PandaStream;
 
 @Header("~-~-~-~-~-~-~-~-~-~-~-~~-~-~-~~ #")
 @Header("                                #")
@@ -97,6 +102,15 @@ public class PluginConfiguration extends OkaeriConfig {
     @Comment("Jeżeli chcesz dodać nowy język dodaj go tutaj - utworzy to nowy plik z domyślnymi wartościami, które możesz później edytować")
     @Comment("Języki gracza są dobierane automatycznie na podstawie ustawiań klienta")
     public Set<Locale> availableLocales = new HashSet<>(Arrays.asList(Locale.forLanguageTag("pl")));
+
+    @Comment("")
+    @Comment("Strefa czasowa używana przez plugin do wyświetlania dat (np. na tabliście)")
+    @Comment("Możesz znaleźć listę stref czasowych tutaj: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones")
+    public ZoneId timeZone = ZoneId.of("Europe/Warsaw");
+
+    @Comment("")
+    @Comment("Domyślny format daty używany przez plugin (do wyświetlania nazw dni tygodnia/miesięcy)")
+    public Locale timeFormatLocale = Locale.forLanguageTag("pl"); //TODO Use player's locale (see GH-2346)
 
     @Comment("")
     @Comment("Czy ma być włączona możliwość zakładania gildii (można ją zmienić także za pomocą komendy /ga enabled)")
@@ -383,15 +397,22 @@ public class PluginConfiguration extends OkaeriConfig {
     @Comment("Możliwość teleportacji do gildii")
     public boolean baseEnable = true;
 
-    @PositiveOrZero
     @Comment("")
-    @Comment("Czas oczekiwania na teleportację, w sekundach")
-    public Duration baseDelay = Duration.ofSeconds(5);
+    @Comment("Czasy oczekiwania na teleportację dla poszczególnych uprawnień")
+    @Comment("Wartości powinny być podane od najwyższego czasu do najniższego")
+    @Comment("Format dla wartości: <uprawnienie> <czas>")
+    @Comment(" ")
+    @Comment("Format finalne uprawnienie jakie należy nadać graczu: funnyguilds.base.teleportTime.<uprawnienie>")
+    @Comment("WAŻNE: Jeśli dany gracz nie będzie miał żadnego z podanych uprawnień to czas zawsze będzie wynosił 0 sekund!")
+    @Comment(" ")
+    @Comment("Format czasu: <wartość><jednostka><wartość><jednostka><...>")
+    @Comment("Jednostki: s - sekundy, m - minuty, h - godziny")
+    @Comment("Przykład: 1m30s")
+    @CustomKey("base-delay")
+    public List<String> baseDelay_ = Arrays.asList("default 5s", "vip 3s", "admin 0s");
 
-    @PositiveOrZero
-    @Comment("")
-    @Comment("Czas oczekiwania na teleportację, w sekundach, dla graczy posiadających uprawnienie funnyguilds.vip.baseTeleportTime")
-    public Duration baseDelayVip = Duration.ofSeconds(3);
+    @Exclude
+    public Map<String, Duration> baseDelay = new HashMap<>();
 
     @Comment("")
     @Comment("Koszt teleportacji do gildii, jeżeli teleportacja ma byc darmowa - wystarczy wpisac: base-items: []")
@@ -1304,6 +1325,27 @@ public class PluginConfiguration extends OkaeriConfig {
         if (this.heart.createMaterial != null && this.heart.createMaterial.hasGravity()) {
             this.eventPhysics = true;
         }
+
+        this.baseDelay = PandaStream.of(this.baseDelay_)
+                .map(value -> value.split(" "))
+                .map(value -> {
+                    String permission = "funnyguilds.base.teleportTime." + value[0];
+                    Duration delay = this.getConfigurer().resolveType(
+                            value[1],
+                            GenericsDeclaration.of(String.class),
+                            Duration.class,
+                            GenericsDeclaration.of(Duration.class),
+                            SerdesContext.of(this.getConfigurer())
+                    );
+
+                    if (delay.isNegative()) {
+                        FunnyGuilds.getPluginLogger().parser("Negative delay for " + permission + " is not allowed, setting it to 0");
+                        delay = Duration.ZERO;
+                    }
+
+                    return new Pair<>(permission, delay);
+                })
+                .toMap(Pair::getFirst, Pair::getSecond);
 
         if (this.rankSystem == RankSystem.Type.ELO) {
             this.eloConstants = new HashMap<>();

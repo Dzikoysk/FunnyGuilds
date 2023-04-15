@@ -11,12 +11,14 @@ import net.dzikoysk.funnyguilds.feature.command.IsMember;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.bukkit.ItemUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.LocationUtils;
+import net.dzikoysk.funnyguilds.shared.bukkit.PermissionUtil;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -46,17 +48,14 @@ public final class BaseCommand extends AbstractFunnyCommand {
         ItemStack[] items = ItemUtils.toArray(requiredItems);
         player.getInventory().removeItem(items);
 
-        if (this.config.baseDelay.isZero()) {
+        Duration time = PermissionUtil.findHighestValue(player, this.config.baseDelay);
+        if (time == null || time.isZero()) {
             guild.teleportHome(player);
             this.messageService.getMessage(config -> config.guild.commands.base.teleported)
                     .receiver(member)
                     .send();
             return;
         }
-
-        Duration time = player.hasPermission("funnyguilds.vip.baseTeleportTime")
-                ? this.config.baseDelayVip
-                : this.config.baseDelay;
 
         Location before = player.getLocation();
         Instant teleportStart = Instant.now();

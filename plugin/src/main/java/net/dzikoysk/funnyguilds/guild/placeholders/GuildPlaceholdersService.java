@@ -91,8 +91,8 @@ public class GuildPlaceholdersService extends StaticPlaceholdersService<Guild, G
                                 ? messages.get(entity, config -> config.guild.commands.pvp.enabledStatus)
                                 : messages.get(entity, config -> config.guild.commands.pvp.disabledStatus),
                         entity -> messages.get(entity, config -> config.guild.commands.pvp.disabledStatus))
-                .timeProperty("validity", Guild::getValidity, messages, config -> config.noValue.guild.validity)
-                .timeProperty("protection", Guild::getProtection, messages, config -> config.noValue.guild.protection)
+                .timeProperty("validity", Guild::getValidity, pluginConfiguration.timeZone, messages, config -> config.noValue.guild.validity)
+                .timeProperty("protection", Guild::getProtection, pluginConfiguration.timeZone, messages, config -> config.noValue.guild.protection)
                 .property("lives", Guild::getLives, entity -> 0)
                 .property("lives-symbol",
                         guild -> {

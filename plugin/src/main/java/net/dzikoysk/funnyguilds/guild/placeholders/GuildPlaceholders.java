@@ -2,6 +2,7 @@ package net.dzikoysk.funnyguilds.guild.placeholders;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Objects;
 import java.util.function.Function;
 import net.dzikoysk.funnyguilds.config.FunnyTimeFormatter;
@@ -13,7 +14,6 @@ import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocaleMonoResolver
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocalePairResolver;
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocaleSimpleResolver;
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.MonoResolver;
-import net.dzikoysk.funnyguilds.feature.placeholders.resolver.PairResolver;
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.SimpleResolver;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.GuildRank;
@@ -46,18 +46,31 @@ public class GuildPlaceholders extends Placeholders<Guild, GuildPlaceholders> {
         );
     }
 
-    public GuildPlaceholders timeProperty(String name, Function<Guild, Instant> timeSupplier, MessageService messages, Function<MessageConfiguration, String> fallbackSupplier) {
+    public GuildPlaceholders timeProperty(
+            String name,
+            Function<Guild, Instant> timeSupplier,
+            ZoneId timeZone,
+            MessageService messages,
+            Function<MessageConfiguration, String> fallbackSupplier
+    ) {
+        FunnyTimeFormatter dateFormat = messages.get(config -> config.dateFormat);
         String noValue = Objects.toString(messages.get(fallbackSupplier), "");
         SimpleResolver fallbackResolver = () -> noValue;
-        return this.property(name, (entity, guild) -> formatDate(guild, timeSupplier, messages.get(entity, config -> config.dateFormat), noValue), fallbackResolver)
+        return this.property(name, (entity, guild) -> formatDate(guild, timeSupplier, timeZone, messages.get(entity, config -> config.dateFormat), noValue), fallbackResolver)
                 .property(name + "-time", (entity, guild) -> formatTime(guild, timeSupplier, noValue), fallbackResolver);
     }
 
-    private static String formatDate(Guild guild, Function<Guild, Instant> timeSupplier, FunnyTimeFormatter formatter, String noValue) {
+    private static String formatDate(
+            Guild guild,
+            Function<Guild, Instant> timeSupplier,
+            ZoneId timeZone,
+            FunnyTimeFormatter formatter,
+            String noValue
+    ) {
         Instant endTime = timeSupplier.apply(guild);
         return endTime.isBefore(Instant.now())
                 ? noValue
-                : formatter.format(endTime);
+                : formatter.format(endTime, timeZone);
     }
 
     private static String formatTime(Guild guild, Function<Guild, Instant> timeSupplier, String noValue) {

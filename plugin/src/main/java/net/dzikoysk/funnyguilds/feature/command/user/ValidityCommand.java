@@ -19,6 +19,7 @@ import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -64,10 +65,10 @@ public final class ValidityCommand extends AbstractFunnyCommand {
         Instant finalValidity = validity;
         this.messageService.getMessage(config -> config.guild.commands.validity.extended)
                 .receiver(player)
-                .with(CommandSender.class, receiver -> {
-                    String formattedValidity = this.messageService.get(receiver, config -> config.dateFormat).format(finalValidity);
-                    return Replacement.of("{DATE}", formattedValidity);
-                })
+                .with(CommandSender.class, receiver -> Replacement.of(
+                        "{DATE}",
+                        this.messageService.get(receiver, config -> config.dateFormat).format(finalValidity, this.config.timeZone)
+                ))
                 .send();
     }
 

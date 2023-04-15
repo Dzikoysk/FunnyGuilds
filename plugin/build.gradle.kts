@@ -145,7 +145,8 @@ paper {
                 "funnyguilds.admin.interact" to true,
                 "funnyguilds.admin.teleport" to true,
                 "funnyguilds.admin.notification" to true,
-                "funnyguilds.admin.disabledummy" to false
+                "funnyguilds.admin.disabledummy" to false,
+                "funnyguilds.base.teleportTime.admin" to true
             )
         }
         register("funnyguilds.vip") {
@@ -154,7 +155,7 @@ paper {
                 "funnyguilds.vip.items" to true,
                 "funnyguilds.vip.rank" to true,
                 "funnyguilds.vip.base" to true,
-                "funnyguilds.vip.baseTeleportTime" to true
+                "funnyguilds.base.teleportTime.vip" to true
             )
         }
         register("funnyguilds.player") {
@@ -185,7 +186,8 @@ paper {
                 "funnyguilds.tnt" to true,
                 "funnyguilds.top" to true,
                 "funnyguilds.validity" to true,
-                "funnyguilds.war" to true
+                "funnyguilds.war" to true,
+                "funnyguilds.base.teleportTime.default" to true
             )
         }
     }

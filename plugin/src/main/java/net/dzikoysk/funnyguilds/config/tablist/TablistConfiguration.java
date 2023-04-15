@@ -97,23 +97,23 @@ public class TablistConfiguration extends OkaeriConfig {
             .put(2, " &b&lSTATYSTYKI")
             .put(4, " &7Nick: &b{PLAYER}")
             .put(6, " &7Punkty: &b{POINTS}")
-            .put(7, " &7Zabojstwa: &b{KILLS}")
-            .put(8, " &7Smierci: &b{DEATHS}")
+            .put(7, " &7Zabójstwa: &b{KILLS}")
+            .put(8, " &7Śmierci: &b{DEATHS}")
             .put(9, " &7Asysty: &b{ASSISTS}")
             .put(10, " &7KDR: &b{KDR}")
             .put(12, " &b&lINFORMACJE")
             .put(14, " &7Ping: &b{PING}")
             .put(15, " &7TPS: &b{TPS}")
             .put(17, " &7Online: &b{ONLINE}")
-            .put(19, " &7Godzina: &b{HOUR}:{MINUTE}:{SECOND}")
+            .put(19, " &7Czas: &b{DAY_OF_MONTH} {MONTH} {YEAR}&7, &b{HOUR}:{MINUTE}:{SECOND}")
             .put(22, " &b&lSTATYSTYKI GILDII")
             .put(24, " &7Gildia: &b{G-TAG}")
             .put(26, " &7Punkty: &b{G-AVG-POINTS}")
-            .put(27, " &7Zabojstwa: &b{G-KILLS}")
-            .put(28, " &7Smierci: &b{G-DEATHS}")
+            .put(27, " &7Zabójstwa: &b{G-KILLS}")
+            .put(28, " &7Śmierci: &b{G-DEATHS}")
             .put(29, " &7Asysty: &b{G-ASSISTS}")
             .put(30, " &7KDR: &b{G-KDR}")
-            .put(32, " &7Zycia: &b{G-LIVES-SYMBOL} &8(&b{G-LIVES}&8)")
+            .put(32, " &7Życia: &b{G-LIVES-SYMBOL} &8(&b{G-LIVES}&8)")
             .put(42, " &b&lTOP &8- &b&lGracze")
             .put(44, " &7Gracze: &b{USERS}")
             .put(46, " &b1. &7{PTOP-POINTS-1}")
@@ -148,7 +148,7 @@ public class TablistConfiguration extends OkaeriConfig {
 
     @Comment("")
     @Comment("Wygląd stopki listy graczy")
-    public String footer = "&c&lWiadomosci braku (pokazujace sie, gdy gracz nie ma gildii) mozna zmienic w pliku &6&lmessages.yml&c&l!";
+    public String footer = "&c&lWiadomości braku (pokazujące się, gdy gracz nie ma gildii) można zmienić w plikach w katalogu &6&llang&c&l!";
 
     @Comment("")
     @Comment("Wygląd głowek na liście graczy")
@@ -265,7 +265,7 @@ public class TablistConfiguration extends OkaeriConfig {
                             .put(77, " &7Pozycja gildii: &b{G-POSITION-KILLS}")
                             .build(),
                             "&7GitHub: &agithub.com/funnyguilds",
-                            "&c&lWiadomosci braku (pokazujace sie, gdy gracz nie ma gildii) mozna zmienic w pliku &7&lmessages.yml&c&l!"),
+                            "&c&lWiadomości braku (pokazujące się, gdy gracz nie ma gildii) można zmienić w plikach w katalogu &7&llang&c&l!"),
 
                     new TablistPage(10, ImmutableMap.<Integer, String>builder()
                             .put(42, " &b&lTOP &8- &b&lSmierci")
@@ -294,7 +294,7 @@ public class TablistConfiguration extends OkaeriConfig {
                             .put(77, " &7Pozycja gildii: &b{G-POSITION-DEATHS}")
                             .build(),
                             "&7Strona: &6funnyguilds.dzikoysk.net",
-                            "&c&lWiadomosci braku (pokazujace sie, gdy gracz nie ma gildii) mozna zmienic w pliku &b&lmessages.yml&c&l!")
+                            "&c&lWiadomości braku (pokazujące się, gdy gracz nie ma gildii) można zmienić w plikach w katalogu &b&llang&c&l!")
             )
     );
 

@@ -251,7 +251,7 @@ public class FunnyGuilds extends JavaPlugin {
         this.basicPlaceholdersService.register(this, "simple", BasicPlaceholdersService.createSimplePlaceholders(this));
 
         this.timePlaceholdersService = new TimePlaceholdersService();
-        this.timePlaceholdersService.register(this, "time", TimePlaceholdersService.createTimePlaceholders());
+        this.timePlaceholdersService.register(this, "time", TimePlaceholdersService.createTimePlaceholders(this.pluginConfiguration));
 
         this.userPlaceholdersService = new UserPlaceholdersService();
         this.userPlaceholdersService.register(this, "player", UserPlaceholdersService.createPlayerPlaceholders(this));
