@@ -168,7 +168,7 @@ public class FunnyGuilds extends JavaPlugin {
         PLUGIN = this;
         LOGGER = new FunnyGuildsLogger.DefaultLogger(this);
 
-        if (!this.wasDisabled) {
+        if (this.wasDisabled) {
             Component kickMessage = Component.text("Server had been reloaded!").color(NamedTextColor.RED); //TODO Make Configurable
             Bukkit.getOnlinePlayers().forEach(player -> player.kick(kickMessage));
 
@@ -275,7 +275,7 @@ public class FunnyGuilds extends JavaPlugin {
                 this.guildPlaceholdersService
         );
 
-        if (pluginConfiguration.dataModel.isSQL()) {
+        if (this.pluginConfiguration.dataModel.isSQL()) {
             try {
                 this.database = Option.of(new Database());
             } catch (Exception ex) {

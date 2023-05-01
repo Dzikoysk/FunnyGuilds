@@ -20,6 +20,7 @@ public final class DescriptionChanger {
 
         try {
             Field field = this.descriptionFile.getClass().getDeclaredField("name");
+            field.setAccessible(true);
             field.set(this.descriptionFile, pluginName);
         }
         catch (Exception exception) {

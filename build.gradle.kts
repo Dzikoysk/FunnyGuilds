@@ -93,8 +93,13 @@ subprojects {
     }
 
     tasks.withType<Javadoc> {
-        options {
-            (this as CoreJavadocOptions).addStringOption("Xdoclint:none", "-quiet") // mute warnings
+        (options as StandardJavadocDocletOptions).let {
+            it.addStringOption("Xdoclint:none", "-quiet") // mute warnings
+            it.links(
+                "https://jd.papermc.io/paper/1.20.6/",
+                "https://javadoc.io/doc/org.panda-lang/expressible/1.3.6/",
+            )
+            it.encoding = "UTF-8"
         }
     }
 

@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import net.minecrell.pluginyml.paper.PaperPluginDescription
+import kotlin.math.exp
 
 plugins {
     id("net.minecrell.plugin-yml.paper")
@@ -21,13 +22,21 @@ dependencies {
     project(":nms").dependencyProject.subprojects.forEach {
         implementation(it)
     }
-    implementation("net.dzikoysk:funnycommands:0.7.0")
+    implementation("net.dzikoysk:funnycommands:0.7.0") {
+        exclude(group = "org.panda-lang.utilities", module = "di")
+    }
 
     /* std */
 
+    val expressibleGroup = "org.panda-lang"
     val expressible = "1.3.6"
-    api("org.panda-lang:expressible:$expressible")
-    testImplementation("org.panda-lang:expressible-junit:$expressible")
+    compileOnlyApi("${expressibleGroup}:expressible:$expressible")
+    paperLibrary(expressibleGroup, "expressible", expressible)
+
+    val diGroup = "org.panda-lang.utilities"
+    val di = "1.8.0"
+    compileOnlyApi("${diGroup}:di:$di")
+    paperLibrary(diGroup, "di", di)
 
     /* okaeri config library */
 
@@ -48,9 +57,8 @@ dependencies {
 
     /* general stuff */
 
-    @Suppress("GradlePackageUpdate")
-    implementation("com.zaxxer:HikariCP:4.0.3")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
+    paperLibrary("com.zaxxer:HikariCP:5.1.0")
+    paperLibrary("org.mariadb.jdbc:mariadb-java-client:3.1.4")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // bukkit stuff
@@ -72,6 +80,10 @@ dependencies {
     testImplementation("io.papermc.paper:paper-api:${paperVersion}")
     testRuntimeOnly("com.mojang:authlib:6.0.54")
     testRuntimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1")
+
+    testImplementation("${expressibleGroup}:expressible-junit:$expressible")
+    testRuntimeOnly("${expressibleGroup}:expressible:$expressible")
+    testRuntimeOnly("${diGroup}:di:$di")
 }
 
 sourceSets {
@@ -84,14 +96,18 @@ sourceSets {
     }
 }
 
+val packageName = "net.dzikoysk.funnyguilds"
 paper {
     name = rootProject.name
+    main = "${packageName}.FunnyGuilds"
     version = "${project.version} Snowdrop-${grgit.head().abbreviatedId}"
-    author = "FunnyGuilds Team"
-    website = "https://github.com/FunnyGuilds"
     apiVersion = pluginApiVersion
 
-    main = "net.dzikoysk.funnyguilds.FunnyGuilds"
+    author = "FunnyGuilds Team"
+    website = "https://github.com/FunnyGuilds"
+
+    generateLibrariesJson = true
+    loader = "${packageName}.FunnyGuildsLoader"
 
     serverDependencies {
         register("WorldEdit") {
@@ -197,19 +213,16 @@ tasks.withType<ShadowJar> {
     archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC ${mcVersion}+).jar")
     mergeServiceFiles()
 
-    relocate("net.dzikoysk.funnycommands", "net.dzikoysk.funnyguilds.libs.net.dzikoysk.funnycommands")
-    relocate("panda.utilities", "net.dzikoysk.funnyguilds.libs.panda.utilities")
-    relocate("org.panda_lang.utilities.inject", "net.dzikoysk.funnyguilds.libs.panda.injector")
-    relocate("javassist", "net.dzikoysk.funnyguilds.libs.javassist")
-    relocate("com.zaxxer", "net.dzikoysk.funnyguilds.libs.com.zaxxer")
-    relocate("org.apache.logging", "net.dzikoysk.funnyguilds.libs.org.apache.logging")
-    relocate("org.slf4j", "net.dzikoysk.funnyguilds.libs.org.slf4j")
-    relocate("org.bstats", "net.dzikoysk.funnyguilds.libs.bstats")
-    relocate("eu.okaeri", "net.dzikoysk.funnyguilds.libs.eu.okaeri")
-    relocate("net.kyori", "net.dzikoysk.funnyguilds.libs.net.kyori")
-    relocate("dev.peri", "net.dzikoysk.funnyguilds.libs.dev.peri")
-    relocate("me.pikamug", "net.dzikoysk.funnyguilds.libs.me.pikamug")
-    relocate("org.mariadb", "net.dzikoysk.funnyguilds.libs.org.mariadb")
+    setOf(
+        "net.dzikoysk.funnycommands",
+        "com.zaxxer",
+        "org.bstats",
+        "eu.okaeri",
+        "dev.peri",
+        "me.pikamug"
+    ).forEach {
+        relocate(it, "net.dzikoysk.funnyguilds.libs.$it")
+    }
 
     exclude("kotlin/**")
     exclude("org/checkerframework/**")
