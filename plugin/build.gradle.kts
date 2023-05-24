@@ -66,14 +66,13 @@ dependencies {
 
     /* hooks */
 
-    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
+    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     shadow("net.milkbowl.vault:VaultAPI:1.7")
-    shadow("me.clip:placeholderapi:2.10.9") {
-        because("PlaceholderAPI on versions higher than 2.10.9 causes GH-1700 for some unknown reason")
+    shadow("me.clip:placeholderapi:2.11.6") {
         exclude(group = "com.google.code.gson", module = "gson")
     }
     shadow("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9")
-    shadow("com.github.decentsoftware-eu:decentholograms:2.8.1")
+    shadow("com.github.decentsoftware-eu:decentholograms:2.8.8")
     shadow("us.dynmap:dynmap-api:3.0")
 
     /* tests */
