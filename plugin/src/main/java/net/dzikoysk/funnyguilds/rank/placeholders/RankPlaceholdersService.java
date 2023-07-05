@@ -53,7 +53,6 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
      *
      * @param text       text to format
      * @param targetUser user for which text will be formatted
-     *
      * @return formatted text
      */
     @Override
@@ -72,7 +71,6 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
      *
      * @param text       text to format
      * @param targetUser user for which text will be formatted
-     *
      * @return formatted text
      */
     public String formatTop(String text, @Nullable User targetUser) {
@@ -116,9 +114,7 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
                         String topFormat = this.config.top.format.ptop.getValue();
                         if (!topFormat.isEmpty()) {
                             List<RangeFormatting> formats = this.config.top.format.ptopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
-                            topFormat = formatTopValue(topValue, topFormat,formats);
-
-
+                            topFormat = formatTopValue(topValue, topFormat, formats);
                         }
                         return this.formatUserRank(text, placeholder, user, topFormat);
                     })
@@ -136,9 +132,7 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
                         String topFormat = this.config.top.format.gtop.getValue();
                         if (!topFormat.isEmpty()) {
                             List<RangeFormatting> formats = this.config.top.format.gtopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
-                            topFormat = formatTopValue(topValue, topFormat,formats);
-
-
+                            topFormat = formatTopValue(topValue, topFormat, formats);
                         }
                         return this.formatGuildRank(text, placeholder, targetUser, guild, topFormat);
                     })
@@ -153,7 +147,6 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
      *
      * @param text       text to format
      * @param targetUser user for which text will be formatted
-     *
      * @return formatted text
      */
     public String formatTopPosition(String text, @Nullable User targetUser) {

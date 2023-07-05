@@ -1404,8 +1404,8 @@ public class PluginConfiguration extends OkaeriConfig {
             return this.jdbcClassName != null;
         }
 
-        public String getJDBCClassName() {
-            return jdbcClassName;
+        public @Nullable String getJDBCClassName() {
+            return this.jdbcClassName;
         }
 
     }
