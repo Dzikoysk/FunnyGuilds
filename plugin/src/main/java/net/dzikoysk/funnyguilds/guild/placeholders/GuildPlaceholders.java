@@ -14,7 +14,6 @@ import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocaleMonoResolver
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocalePairResolver;
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.LocaleSimpleResolver;
 import net.dzikoysk.funnyguilds.feature.placeholders.resolver.MonoResolver;
-import net.dzikoysk.funnyguilds.feature.placeholders.resolver.SimpleResolver;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.GuildRank;
 import net.dzikoysk.funnyguilds.shared.TimeUtils;
@@ -53,11 +52,18 @@ public class GuildPlaceholders extends Placeholders<Guild, GuildPlaceholders> {
             MessageService messages,
             Function<MessageConfiguration, String> fallbackSupplier
     ) {
-        FunnyTimeFormatter dateFormat = messages.get(config -> config.dateFormat);
         String noValue = Objects.toString(messages.get(fallbackSupplier), "");
-        SimpleResolver fallbackResolver = () -> noValue;
-        return this.property(name, (entity, guild) -> formatDate(guild, timeSupplier, timeZone, messages.get(entity, config -> config.dateFormat), noValue), fallbackResolver)
-                .property(name + "-time", (entity, guild) -> formatTime(guild, timeSupplier, noValue), fallbackResolver);
+        return this
+                .property(
+                        name,
+                        (entity, guild) -> formatDate(guild, timeSupplier, timeZone, messages.get(entity, config -> config.dateFormat), noValue),
+                        (entity) -> messages.get(entity, fallbackSupplier)
+                )
+                .property(
+                        name + "-time",
+                        (entity, guild) -> formatTime(guild, timeSupplier, noValue),
+                        (entity) -> messages.get(entity, fallbackSupplier)
+                );
     }
 
     private static String formatDate(

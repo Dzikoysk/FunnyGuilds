@@ -37,7 +37,7 @@ public final class PlayerInfoCommand extends AbstractFunnyCommand {
     public void sendInfoMessage(Function<MessageConfiguration, Sendable> baseMessage, User infoUser, CommandSender messageTarget) {
         this.messageService.getMessage(baseMessage)
                 .receiver(messageTarget)
-                //.with(this.userPlaceholdersService.getFormatters(infoUser))
+                .with(this.userPlaceholdersService.prepareReplacements(messageTarget, infoUser))
                 .with("{RANK}", infoUser.getRank().getPosition(DefaultTops.USER_POINTS_TOP))
                 .with(CommandSender.class, receiver -> {
                     FunnyFormatter guildFormatter = new FunnyFormatter();

@@ -108,7 +108,7 @@ public class GuildPlaceholdersService extends StaticPlaceholdersService<Guild, G
                 .property("lives-symbol-all",
                         guild -> StringUtils.repeated(guild.getLives(), pluginConfiguration.livesRepeatingSymbol.full.getValue()),
                         entity -> messages.get(entity, config -> config.noValue.guild.lives))
-                .rankProperty("points", GuildRank::getAveragePoints, 0)
+                .rankProperty("points", GuildRank::getPoints, 0)
                 .rankProperty("avg-points", GuildRank::getAveragePoints,0)
                 .rankProperty("avg-points-format",
                         (entity, guild, rank) -> FunnyFormatter.format(NumberRange.inRangeToString(rank.getAveragePoints(),
