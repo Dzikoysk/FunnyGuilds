@@ -1,0 +1,732 @@
+# Dla większości wiadomości poprawny jest format: https://github.com/P3ridot/YetAnotherMessagesLibrary/blob/master/repository/okaeri/FORMAT.md
+# Pozwala on m.in. na zmianę miejsca wyświetlania wiadomości (np. wyświetlanie danej wiadomość na actionbarze zamiast chacie)
+# Jeśli jednak wiadomość nie wspiera danego formatu to w konsoli pojawi się błąd
+#
+# Formatowanie samych wiadomości:
+#   - MiniMessage -> https://docs.adventure.kyori.net/minimessage/format.html
+#   - &X -> legacy formatowanie kolorów np. &c
+#   - &#XXXXXX -> formatowanie kolorów HEX np. &#FF0000
+
+
+
+
+# <------- Global Date Format -------> #
+dateFormat: dd.MM.yyyy HH:mm:ss
+
+# <------- No Value Messages -------> #
+noValue:
+  player:
+    top: None (PTOP-x)
+
+  guild:
+    name: None (G-NAME/NAME)
+    tag: None (G-TAG/TAG)
+    owner: None (G-OWNER)
+    deputies: None (G-DEPUTIES)
+    deputy: None (G-DEPUTY)
+    validity: None (G-VALIDITY)
+    protection: None (G-PROTECTION)
+    regionSize: None (G-REGION-SIZE)
+    lives: None (LIVES-SYMBOL/LIVES-SYMBOL-ALL)
+    allies: None (ALLIES)
+    enemies: None (ENEMIES)
+    wgRegionNoValue: None (WG-REGION)
+    minMembersToInclude: None (guild-min-members in config.yml)
+    top: None (GTOP-x)
+
+# <------- General Commands Messages -------> #
+commands:
+  validation:
+    playerOnly: '&cCommand only available to players!'
+    noPermission: '&cYou do not have enough permissions to execute this command!'
+    notOnline: '&cThis player is currently not on the server!'
+    notPlayedBefore: '&cThis player has never been on the server!'
+    noNickGiven: '&cProvide player''s nickname!'
+    noNameGiven: '&cProvide the guild name!'
+    noTagGiven: '&cProvide the guild tag!'
+    guildWithTagExist: '&cA guild with this tag already exists!'
+    guildWithTagNotExist: '&cA guild with this tag does not exist! '
+    guildWithNameExists: '&cA guild with this name already exists!'
+    hasGuild: '&cYou already have a guild!'
+    hasNoGuild: '&cYou do not have a guild!'
+    userHasGuild: '&cThis player already has a guild!'
+    userHasNoGuild: '&cThis player does not have a guild!'
+    notOwner: '&cYou are not the owner of the guild!'
+    userNotMember: '&cThis player is not a member of your guild!'
+    invalidNumber: '&7The specified value &c''{ERROR}'' &7is not a number!'
+    invalidTime: '&7Invalid time provided!'
+    invalidDate: '&7Invalid date provided! The date must be in the format: &cyyyy/mm/dd
+      hh:mm:ss&7!'
+
+  tnt:
+    info: '&7TNT on guild territories works from {PROTECTION_END} to {PROTECTION_START}'
+    infoAlways: '&7TNT explodes at any time.'
+    enabled: '&aTNT is currently enabled.'
+    disabled: '&cTNT is currently disabled.'
+
+# <------- Player Messages -------> #
+player:
+  commands:
+    info:
+      longForm:
+        - '&8--------------------------------'
+        - '&7Player: &a{PLAYER}'
+        - '&7Guild: &a{TAG}'
+        - '&7Place: &a{RANK} &8(&a{POINTS}&8)'
+        - '&7Kills: &a{KILLS}'
+        - '&7Deaths: &a{DEATHS}'
+        - '&7Assists: &a{ASSISTS}'
+        - '&7Logouts: &a{LOGOUTS}'
+        - '&7KDR: &a{KDR}'
+        - '&8--------------------------------'
+      shortForm:
+        - '&8--------------------------------'
+        - '&7Player: &a{PLAYER}'
+        - '&7Guild: &a{TAG}'
+        - '&7Place: &a{RANK} &8(&a{POINTS}&8)'
+        - '&8--------------------------------'
+
+    # {PTOP-<typ>-<pozycja>} - gracz na podanej pozycji w topce dla danego typu. Lista dostępnych typów znajduje się w 'config.yml' pod kluczem 'top.enabled-user-tops'
+    topList:
+      - '&8----------{ &cTOP 10 Players &8}----------'
+      - '&71&8. &c{PTOP-POINTS-1}'
+      - '&72&8. &c{PTOP-POINTS-2}'
+      - '&73&8. &c{PTOP-POINTS-3}'
+      - '&74&8. &c{PTOP-POINTS-4}'
+      - '&75&8. &c{PTOP-POINTS-5}'
+      - '&76&8. &c{PTOP-POINTS-6}'
+      - '&77&8. &c{PTOP-POINTS-7}'
+      - '&78&8. &c{PTOP-POINTS-8}'
+      - '&79&8. &c{PTOP-POINTS-9}'
+      - '&710&8. &c{PTOP-POINTS-10}'
+
+    rankReset:
+      # Dostępne zmienne: {ITEM}, {ITEMS}
+      missingItems: '&cYou don''t have all the items! You currently lack &7{ITEM}
+        &cz &7{ITEMS}'
+      # Dostępne zmienne: {LAST-RANK}, {CURRENT-RANK}
+      resetMessage: '&7You have reset your rank from level &c{LAST-RANK} &7to level
+        &c{CURRENT-RANK}&7.'
+
+    statsReset:
+      # Dostępne zmienne: {ITEM}, {ITEMS}
+      missingItems: '&cYou don''t have all the items! You currently lack &7{ITEM}
+        &cz &7{ITEMS}'
+      # Dostępne zmienne: {LAST-POINTS}, {CURRENT-POINTS}, {LAST-KILLS}, {CURRENT-KILLS}, {LAST-DEATHS}, {CURRENT-DEATHS}, {LAST-ASSISTS}, {CURRENT-ASSISTS}, {LAST-LOGOUTS}, {CURRENT-LOGOUTS}
+      resetMessage:
+        - '&7You have reset your stats to basic'
+        - ' &7Points: &c{LAST-POINTS} &8-> &a{CURRENT-POINTS}'
+        - ' &7Kills: &c{LAST-KILLS} &8-> &a{CURRENT-KILLS}'
+        - ' &7Deaths: &c{LAST-DEATHS} &8-> &a{CURRENT-DEATHS}'
+        - ' &7Assists: &c{LAST-ASSISTS} &8-> &a{CURRENT-ASSISTS}'
+        - ' &7Logouts: &c{LAST-LOGOUTS} &8-> &a{CURRENT-LOGOUTS}'
+
+  rank:
+    farming:
+      lastVictim:
+        victim: '&7You were last killed by the same player, points are not subtracted!'
+        attacker: '&7You last killed the same player, points are not added!'
+      lastAttacker:
+        victim: '&7You were last killed by the same player, points are not added!'
+        attacker: '&7You last killed the same player, points are not subtracted!'
+      sameIP:
+        victim: '&7This player has the same IP address, points are not subtracted!'
+        attacker: '&7This player has the same IP address, points are not added!'
+      sameGuild:
+        victim: '&7This player is in your guild, points are not subtracted!'
+        attacker: '&7This player is in your guild, points are not added!'
+      sameAlliance:
+        victim: '&7This player is in alliance with your guild, points are not subtracted!'
+        attacker: '&7This player is in alliance with your guild, points are not added!'
+
+    # Dostępne zmienne: {ATTACKER}, {VICTIM}, {-}, {+}, {MINUS-FORMATTED}, {PLUS-FORMATTED}, {POINTS}, {POINTS-FORMAT}, {VTAG}, {ATAG}, {WEAPON}, {WEAPON-NAME}, {ITEM}, {ITEM-NO-AMOUNT}, {REMAINING-HEALTH}, {REMAINING-HEARTS}, {ASSISTS}
+    pvp:
+      broadcast: '{ATAG}&b{ATTACKER} &7({PLUS-FORMATTED}&7) killed {VTAG}&b{VICTIM}
+        &7({MINUS-FORMATTED}&7) using &b{ITEM-NO-AMOUNT}'
+      killer:
+        title:
+          title: '&cYou killed player {VICTIM}'
+          subtitle: '&7{PLUS-FORMATTED}'
+          fade-in: 10
+          stay: 10
+          fade-out: 10
+      victim:
+        title:
+          title: '&cYou were killed by player {ATTACKER}'
+          subtitle: '&7{MINUS-FORMATTED}'
+          fade-in: 10
+          stay: 10
+          fade-out: 10
+      assists:
+        # Zamiast zmiennej {ASSISTS} wstawiane są kolejne wpisy o asystujących graczach
+        message: '&7Assisted by: {ASSISTS}'
+        # Dostępne zmienne: {PLAYER}, {+}, {PLUS-FORMATTED}, {SHARE}
+        entry: '&b{PLAYER} &7({PLUS-FORMATTED}&7, {SHARE}% dmg)'
+        # Znaki oddzielające kolejne wpisy o asystujących graczach
+        delimiter: '&8, '
+
+# <------- Player Messages -------> #
+guild:
+  commands:
+    validation:
+      hasNoRegion: '&cYour guild does not have a territory!'
+      hasNoCenter: '&cYour guild does not have a center of the region!'
+      notAllied: '&cYou have no alliance with this guild!'
+
+    help:
+      - '&7---------------------&8[ &aGuilds &8]&7---------------------'
+      - '&a/zaloz [tag] [name] &8- &7Creates a guild'
+      - '&a/zapros [player] &8- &7Invites a player to the guild'
+      - '&a/dolacz [tag] &8- &7Accepts the guild invitation'
+      - '&a/info [tag] &8- &7Information about a certain guild'
+      - '&a/baza &8- &7Teleports to the guild base'
+      - '&a/powieksz &8- &7Expands the territory of the guild'
+      - '&a/przedluz &8- &7Extends guild validity'
+      - '&a/lider [player] &8- &7Gives guild owner'
+      - '&a/zastepca [player] &8- &7Grants the deputy of the guild'
+      - '&a/sojusz [tag] &8- &7Allows to establish an alliance'
+      - '&a/opusc &8- &7Leaves the guild'
+      - '&a/wyrzuc [player] &8- &7Kicks a player out of the guild'
+      - '&a/rozwiaz [tag] &8- &7Dissolves the alliance'
+      - '&a/usun &8- &7Deletes the guild'
+      - '&a/przedmioty &8- &7Shows items needed to create a guild'
+      - '&a/ucieczka &8- &7Starts escaping from another guild territory'
+
+    # Dostępne zmienne: {GUILD}, {TAG}, {OWNER}, {DEPUTIES}, {MEMBERS}, {MEMBERS-ONLINE}, {MEMBERS-ALL}, {REGION-SIZE}, {POINTS}, {AVG-POINTS-FORMAT}, {KILLS}, {DEATHS}, {ASSISTS}, {LOGOUTS}, {KDR}, {KDA}, {ALLIES}, {ALLIES-TAGS}, {ENEMIES}, {ENEMIES-TAGS}, {RANK}, {VALIDITY}, {LIVES}, {LIVES-SYMBOL}, {LIVES-SYMBOL-ALL}, {GUILD-PROTECTION}
+    info:
+      - '&8-------------------------------'
+      - '&7Guild: &c{GUILD} &8[&c{TAG}&8]'
+      - '&7Leader: &c{OWNER}'
+      - '&7Deputies: &c{DEPUTIES}'
+      - '&7Points: &c{POINTS} &8[&c{G-POSITION-AVG_POINTS}&8]'
+      - '&7Protection: &c{PROTECTION}'
+      - '&7Lifes: &4{LIVES}'
+      - '&7Validity: &c{VALIDITY}'
+      - '&7Members: &7{MEMBERS}'
+      - '&7Alliances: &c{ALLIES}'
+      - '&7Wars: &c{ENEMIES}'
+      - '&8-------------------------------'
+
+    create:
+      # Dostępne zmienne: {LENGTH}
+      tagMinLength: '&7Tag cannot be shorter than &c{LENGTH} letter&7!'
+      # Dostępne zmienne: {LENGTH}
+      tagMaxLength: '&7Tag cannot be longer than &c{LENGTH} letter&7!'
+      # Dostępne zmienne: {LENGTH}
+      nameMinLength: '&cName cannot be shorter than &c{LENGTH} letter&7!'
+      # Dostępne zmienne: {LENGTH}
+      nameMaxLength: '&cName cannot be longer than &c{LENGTH} letter&7!'
+      invalidTag: '&cGuild tag can only contain letters!'
+      invalidName: '&cGuild name can only contain letters!'
+      restrictedGuildTag: '&cGiven guild tag is not allowed.'
+      restrictedGuildName: '&cGiven guild name is not allowed.'
+      blockedWorld: '&cCreating a guild is blocked in this world!'
+      invalidLocation: '&cYou can''t create a guild at this location!'
+      # Dostępne zmienne: {DISTANCE}
+      nearSpawn: '&7You are too close to the spawn! The minimum distance is &c{DISTANCE}'
+      nearOtherGuild: '&cThere is a guild nearby, look for another place!'
+      # Dostępne zmienne: {BORDER-MIN-DISTANCE}
+      nearBorder: '&cYou are too close to the map border to create the guild! (Minimum
+        distance: {BORDER-MIN-DISTANCE})'
+      # Dostępne zmienne: {POINTS}, {POINTS-FORMAT}, {REQUIRED}, {REQUIRED-FORMAT}
+      missingRankingPoints: '&cAt least &7{REQUIRED} &cpoints are required to create
+        a guild.'
+      # Dostępne zmienne: {ITEM}, {ITEMS}
+      missingItems: '&cYou don''t have all the items! Currently, you''re missing &7{ITEM}
+        &cfrom &7{ITEMS}&c. Hover over the item to learn more.'
+      # Dostępne zmienne: {EXP}
+      missingExperience: '&cYou do not have the required experience to create a guild:
+        &7{EXP}'
+      # Dostępne zmienne: {MONEY}
+      missingMoney: '&cYou do not have the required amount of money to create a guild:
+        &7{MONEY}'
+      withdrawError: '&cWas unable to withdraw money from your account due to: &7{ERROR}'
+      couldNotPasteSchematic: '&cAn error occurred when creating the guild terrain,
+        please report to the administration.'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      created: '&7You have set up a guild named &a{GUILD} &7with tag &a{TAG}&7!'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      createdBroadcast: '&7Player &a{PLAYER} &7established the guild named &a{GUILD}
+        &7with tag &a{TAG}&7!'
+
+    delete:
+      someoneNearby: '&cYou cannot delete the guild, someone is nearby!'
+      confirm: '&7To confirm the deletion of the guild, type: &c/confirm'
+      notingToConfirm: '&cYou have no actions to confirm!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      deleted: '&7Successfully &cdeleted &7the guild!'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      deletedBroadcast: '&c{PLAYER} &7has disbanded the guild &c{TAG}&7!'
+
+    enlarge:
+      maxSize: '&cThe maximum size of the territory has already been reached!'
+      nearOtherGuild: '&cThere is a guild nearby, you cannot enlarge your territory!'
+      # Dostępne zmienne: {ITEM}
+      missingItems: '&7You do not have enough items! You currently lack &7{ITEM} &cfrom
+        &7{ITEMS}'
+      # Dostępne zmienne: {SIZE}, {LEVEL}
+      enlarged: '&7The territory of &ayour &7guild has been enlarged and now its size
+        is &a{SIZE} &7(lvl.&a{LEVEL}&7)'
+
+    validity:
+      # Dostępne zmienne: {TIME}
+      tooEarly: '&7You can extend the guild only after &c{TIME}&7!'
+      # Dostępne zmienne: {ITEM}
+      missingItems: '&7You do not have enough items! You currently lack &7{ITEM} &cfrom
+        &7{ITEMS}'
+      # Dostępne zmienne: {DATE}
+      extended: '&7The validity of the guild has been extended to &a{DATE}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}, {X}, {Y}, {Z}
+      expiredBroadcast: '&7The guild &b{TAG} &7expired&b! &7Its base was located at
+        x: &b{X} &7y: &b{Y} &7z: &b{Z}&7!'
+      noCoordinates: N/A
+
+    invite:
+      # Dostępne zmienne: {AMOUNT}
+      playersLimit: '&7The &cmaximum &7number of guild members has already been reached!
+        (&c{AMOUNT}&7)'
+      # Dostępne zmienne: {PLAYER}
+      cancelled: '&cInvite for {PLAYER} has been cancelled!'
+      # Dostępne zmienne: {OWNER}, {GUILD}, {TAG}
+      cancelledTarget: '&7Invite to the guild &c{GUILD} &7has been withdrawn!'
+      # Dostępne zmienne: {PLAYER}
+      invited: '&7Player &a{PLAYER} &7has been invited to the guild!'
+      # Dostępne zmienne: {OWNER}, {GUILD}, {TAG}
+      invitedTarget: '&aReceived an invitation to the guild &7{TAG}&a!'
+
+      all:
+        # Dostępne zmienne: {ERROR}
+        invalidNumber: '&7The range &c{ERROR} &7is not a valid number!'
+        # Dostępne zmienne: {MAX_RANGE}
+        rangeToBig: '&7The specified range is too big! (Max: &c{MAX_RANGE}&7)'
+        noOneNearby: '&cThere''s no one nearby!'
+        # Dostępne zmienne: {RANGE}
+        invited: '&aYou are inviting everyone within a {RANGE} blocks radius!'
+
+    join:
+      noInvitations: '&cYou have no guild invitations!'
+      # Dostępne zmienne: {GUILDS}
+      invitationsList:
+        - '&7Received invitations from guilds: &a{GUILDS}'
+        - '&7Type &a/dolacz [tag] &7to join the selected guild'
+      noInvitationGuild: '&cYou didn''t receive an invitation for this guild!'
+      playerLimit: '&7This guild has already reached a &cmaximum &7number of members!
+        (&c{AMOUNT}&7)'
+      # Dostępne zmienne: {ITEM}, {ITEMS}
+      missingItems: '&cYou don''t have all the items! You currently miss &7{ITEM}
+        &cfrom &7{ITEMS}'
+      # Dostępne zmienne: {PLAYER}
+      joined: '&a{PLAYER} &7joined &aYour &7guild!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      joinedTarget: '&aYou have joined the guild &7{GUILD}'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      joinedBroadcast: '&a{PLAYER} &7joined the guild &a{TAG}&7!'
+
+    leave:
+      youAreOwner: '&cThe owner &7cannot leave the guild!'
+      # Dostępne zmienne: {GUILDS}, {TAG}
+      left: '&7You have left the guild &a{GUILD}&7!'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      leftBroadcast: '&c{PLAYER} &7has left the guild &c{TAG}&7!'
+
+    kick:
+      targetIsOwner: '&cFounder cannot be kicked!'
+      # Dostępne zmienne: {GUILD}, {TAG}, {PLAYER}
+      kicked: '&c{PLAYER} &7has been kicked out of the guild!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      kickedTarget: '&cYou have been kicked out of the guild!'
+      # Dostępne zmienne: {PLAYER}, {GUILD}, {TAG}
+      kickedBroadcast: '&c{PLAYER} &7has been &ckicked &7from the guild &c{TAG}&7!'
+
+    leader:
+      leaderMustBeDifferent: '&cYou''re already the leader of your guild!'
+      changed: '&7New &aleader &7of the guild has been established!'
+      changedTarget: '&7You have become the new &aleader &7of the guild!'
+      # Dostępne zmienne: {PLAYER}
+      changedMembers: '&7{PLAYER} has become the new &aleader &7of the guild!'
+
+    deputy:
+      deputyMustBeDifferent: '&cYou cannot appoint yourself as deputy!'
+      removed: '&7Degraded player from the &cdeputy &7position!'
+      removedTarget: '&7You have been demoted from the &cdeputy &7role!'
+      # Dostępne zmienne: {PLAYER}
+      removedMembers: '&7{PLAYER} is no longer the &adeputy &7of the guild!'
+      set: '&7A new &adeputy &7of the guild has been established!'
+      setTarget: '&7You have become the new &adeputy &7of the guild!'
+      # Dostępne zmienne: {PLAYER}
+      setMembers: '&7{PLAYER} has become the new &adeputy &7of the guild!'
+
+    ally:
+      alliesLimit: '&7The &cmaximum &7number of guild alliances has already been reached!
+        (&c{AMOUNT}&7)'
+      # Dostępne zmienne: {AMOUNT}, {GUILD}, {TAG}
+      targetAlliesLimit: '&7Guild {TAG} has already reached the maximum number of
+        alliances! (&c{AMOUNT}&7)'
+      yourGuild: '&cYou can''t form an alliance with your own guild!'
+      # Dostępne zmienne: {TAG}
+      alreadyAllied: '&cYou are already allied with this guild!'
+      noInvitations: '&7To invite a guild to an alliance, type &c/sojusz [tag]'
+      # Dostępne zmienne: {GUILDS}
+      invitationsList:
+        - '&7Received invitations from guilds: &a{GUILDS}'
+        - '&7To accept, use &a/sojusz [tag]'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      allyInvite: '&7Invited the guild &a{GUILD} &7to the alliance!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      allyInviteTarget: '&7Received an invitation to form an alliance from the guild
+        &a{GUILD}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      allyInviteReturn: '&7Invitation to form an alliance has been cancelled for the
+        guild &c{GUILD}!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      allyInviteReturnTarget: '&7The guild &c{GUILD} &7has withdrawn the invitation
+        to the alliance!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      allied: '&7An alliance has been formed with the guild &a{GUILD}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      alliedTarget: '&7The guild &a{GUILD} &7has joined the alliance!'
+
+    break:
+      noAllies: '&cYour guild does not have any allies!'
+      # Dostępne zmienne: {GUILDS}
+      alliesList:
+        - '&7Your guild made an alliance with &a{GUILDS}'
+        - '&7To disband alliance type &c/rozwiaz [tag]'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      broke: '&7Disbanded alliance with the guild &c{GUILD}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      brokeTarget: '&7The guild &c{GUILD} &7has disbanded the alliance with your guild!'
+
+    enemy:
+      correctUsage: '&7To start a war with a guild, type &c/wojna [tag]'
+      # Dostępne zmienne: {AMOUNT}
+      enemiesLimit: '&7Already reached the &cmaximum &7number of inter-guild wars!
+        (&c{AMOUNT}&7)'
+      # Dostępne zmienne: {AMOUNT}, {GUILD}, {TAG}
+      targetEnemiesLimit: '&7The guild {TAG} already has the maximum number of wars!
+        (&c{AMOUNT}&7)'
+      yourGuild: '&cYou cannot start a war with your own guild!'
+      targetIsAlly: '&cYou cannot start a war with this guild because you are allies!'
+      alreadyEnemy: '&cYou are already at war with this guild!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      enemy: '&7Declared war on the guild &a{GUILD}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      enemyTarget: '&7The guild &a{GUILD} &7has declared war on your guild!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      enemyEnd: '&7Ended war with the guild &a{GUILD}&7!'
+      # Dostępne zmienne: {GUILD}, {TAG}
+      enemyEndTarget: '&7The guild &a{GUILD} &7has ended the war with your guild!'
+
+    pvp:
+      allyPvPDisabled: '&cPVP between allies is disabled in the configuration!'
+      enabled: '&cPVP enabled in the guild!'
+      disabled: '&aPVP disabled in the guild!'
+      # Dostępne zmienne: {TAG}
+      enabledAlly: '&cEnabled pvp with the ally &7{TAG}!'
+      disabledAlly: '&cDisabled pvp with the ally &7{TAG}!'
+      enabledStatus: '&aEnabled'
+      disabledStatus: '&cDisabled'
+
+    setBase:
+      outsideRegion: '&cYou cannot set the guild home outside its area!'
+      set: '&7Moved the &aguild home&7!'
+
+    base:
+      disabled: '&cTeleportation to guild bases is not available'
+      # Dostępne zmienne: {ITEM}, {ITEMS}
+      missingItems: '&cYou do not have all items! You currently miss &7{ITEM} &cfrom
+        &7{ITEMS}'
+      alreadyTeleporting: '&cYou are currently teleporting!'
+      teleporting: '&7Do not move for &c{TIME} &7seconds!'
+      cancelled: '&cYou moved, teleportation cancelled!'
+      teleported: '&aTeleporting&7...'
+    # Dostępne zmienne: {PLAYER}, {X}, {Y}, {Z}
+    helpRequest:
+      chat: '&7Player &a{PLAYER} &7asked for help&7! &aX: {X} Y: {Y} Z: {Z}'
+      actionbar: '&7Player &a{PLAYER} &7asked for help&7! &aX: {X} Y: {Y} Z: {Z}'
+
+    escape:
+      disabled: '&cSorry, escapes are disabled!'
+      alreadyEscaping: '&cEscape already in progress!'
+      notInRegion: '&cYou are not in any guild area, why escape?'
+      noGuild: '&cYou do not have a guild to which you could run away!'
+      yourRegion: '&cYou are on your own guild area, where do you want to run away?'
+      # Dostępne zmienne: {TIME}
+      escaping: '&aOkay, if no one bothers you - you''ll manage to escape in {TIME}
+        seconds!'
+      # Dostępne zmienne: {TIME}, {X}, {Y}, {Z}, {PLAYER}
+      escapingOpponents: '&cPlayer {PLAYER} is trying to escape from your guild area!
+        ({X}  {Y}  {Z})'
+      cancelled: '&cEscape has been cancelled!'
+      escaped: '&aYou managed to escape!'
+      # Dostępne zmienne: {PLAYER}
+      escapedOpponents: '&cThe player {PLAYER} managed to escape from your guild area!'
+
+    # {GTOP-<typ>-<pozycja>} - gildia na podanej pozycji w topce dla danego typu. Lista dostępnych typów znajduje się w 'config.yml' pod kluczem 'top.enabled-guild-tops'
+    topList:
+      - '&8----------{ &cTOP 10 &8}----------'
+      - '&71&8. &c{GTOP-AVG_POINTS-1}'
+      - '&72&8. &c{GTOP-AVG_POINTS-2}'
+      - '&73&8. &c{GTOP-AVG_POINTS-3}'
+      - '&74&8. &c{GTOP-AVG_POINTS-4}'
+      - '&75&8. &c{GTOP-AVG_POINTS-5}'
+      - '&76&8. &c{GTOP-AVG_POINTS-6}'
+      - '&77&8. &c{GTOP-AVG_POINTS-7}'
+      - '&78&8. &c{GTOP-AVG_POINTS-8}'
+      - '&79&8. &c{GTOP-AVG_POINTS-9}'
+      - '&710&8. &c{GTOP-AVG_POINTS-10}'
+    all:
+      invalidNumber: '&7Range &c{ERROR} &7is not a valid number!'
+      rangeToBig: '&7The provided range is too big! (Max: &c{MAX_RANGE}&7)'
+      noOneNearby: '&cThere is no one nearby!'
+      invited: '&aYou''re inviting everyone within a radius of {RANGE} blocks!'
+
+  war:
+    disabled: '&cGuild conquest is disabled.'
+    hasNoGuild: '&cYou must have a guild to attack another!'
+    guildIsAlly: '&cYou cannot attack an ally!'
+    # Dostępne zmienne: {TIME}
+    guildHasProtection: '&7The attack on the guild is possible in &4{TIME}'
+    # Dostępne zmienne: {ATTACKED}
+    attacked: '&7Your guild deprived the guild &4{ATTACKED} &7of &41 life&7!'
+    # Dostępne zmienne: {ATTACKER}
+    attackedTarget: '&7Your guild lost &41 life &7because of &4{ATTACKER}&7!'
+    # Dostępne zmienne: {LOSER}
+    win: '&7Your guild &aconquered &7the guild &a{LOSER}&7! You gain &c1 life&7!'
+    # Dostępne zmienne: {WINNER}
+    lose: '&7Your guild &4lost &7the war with the guild &4{WINNER}&7! &4The guild
+      is destroyed&7!'
+    # Dostępne zmienne: {WINNER}, {LOSER}
+    conqueredBroadcast: '&7The guild &4{WINNER}&7 has conquered the guild &4{LOSER}&7!!'
+
+  region:
+    disabled: '&cGuild regions are disabled!'
+
+    protection:
+      unauthorized: '&cThis land belongs to another guild!'
+      center: '&cYou cannot destroy the center of your guild!'
+      heart: '&cYou cannot interfere with the heart of your guild!'
+      other: '&cYou can''t do this on guild land!!'
+      command: '&cYou can''t use this command on guild land!'
+      teleport: '&cYou cannot teleport to this guild area!'
+
+    explosion:
+      # Dostępne zmienne: {TIME}
+      message: '&cBuilding on guild territory blocked for and4{TIME} seconds&c!'
+      hasProtection: '&cThe explosion did not cause damage on the guild territory,
+        because it is protected!'
+      # Dostępne zmienne: {TIME}
+      interaction: '&cYou still cannot build for &4{TIME} seconds&c!'
+
+    move:
+      # Dostępne zmienne: {PLAYER}
+      intruderEnter:
+        actionbar: '&7The player &c{PLAYER} &7stepped into the area of &cYour &7guild!'
+        bossbar:
+          name: '&7The player &c{PLAYER} &7stepped into the area of &cYour &7guild!'
+          color: RED
+          overlay: PROGRESS
+          flags:
+            - CREATE_WORLD_FOG
+          progress: 1.0
+          stay: 300
+          clear-other-bars: true
+      # Dostępne zmienne: {GUILD}, {TAG}
+      enter:
+        actionbar: '&7You entered the guild territory &c{TAG}&7!'
+        bossbar:
+          name: '&7You entered the guild territory &c{TAG}&7!'
+          color: RED
+          overlay: PROGRESS
+          flags:
+            - CREATE_WORLD_FOG
+          progress: 1.0
+          stay: 300
+          clear-other-bars: true
+      # Dostępne zmienne: {GUILD}, {TAG}
+      leave:
+        actionbar: '&7You left the guild territory &c{TAG}&7!'
+        bossbar:
+          name: '&7You left the guild territory &c{TAG}&7!'
+          color: GREEN
+          overlay: PROGRESS
+          flags:
+            - CREATE_WORLD_FOG
+          progress: 1.0
+          stay: 300
+          clear-other-bars: true
+
+# <------- Adnmin Messages -------> #
+admin:
+  commands:
+    validation:
+      notMemberOf: '&cThis player is not a member of this guild!'
+      noRegion: '&cThe Guild does not have a region!'
+
+    help:
+      - '&a/ga points [nick] [points] &8- &7Sets the player''s point count'
+      - '&a/ga kills [nick] [kills] &8- &7Sets the player''s kill count'
+      - '&a/ga deaths [nick] [deaths] &8- &7Sets the player''s death count'
+      - '&a/ga assists [nick] [assist]s &8- &7Sets the player''s assist count'
+      - '&a/ga logouts [nick] [logouts] &8- &7Sets the player''s logout count'
+      - '&a/ga status &8- &7Guild setup status management'
+      - '&a/ga usun [tag] &8- &7Deletes the guild'
+      - '&a/ga tag [tag] [nowy tag] &8- &7Changes the guild tag'
+      - '&a/ga nazwa [tag] [nazwa] &8- &7Changes the guild name'
+      - '&a/ga przedluz [tag] [czas] &8- &7Extends the validity of the guild for the
+      given time'
+      - '&a/ga ochrona [tag] [czas] &8- &7Sets the protection expiration date'
+      - '&a/ga zycia [tag] [życia] &8- &7Sets the number of guild lives'
+      - '&a/ga przenies [tag] &8- &7Moves the guild territory'
+      - '&a/ga tp [tag] &8- &7Teleports to the guild base'
+      - '&a/ga baza [gracz] &8- &7Teleports the player to his guild base'
+      - '&a/ga dodaj [tag] [nick] &8- &7Adds a player to the guild'
+      - '&a/ga wyrzuc [nick] &8- &7Kicks a player from the guild'
+      - '&a/ga lider [tag] [gracz] &8- &7Changes the guild leader'
+      - '&a/ga zastepca [tag] [gracz] &8- &7Appoints a guild deputy'
+      - '&a/ga ban [tag] [czas] [powód] &8- &7Bans the guild for a specified time'
+      - '&a/ga unban [tag] &8- &7Unbans the guild'
+      - '&a/ga spy &8- &7Spies on the guild chat'
+
+    player:
+      points:
+        noValueGiven: '&cProvide the number of points!'
+        # Dostępne zmienne: {PLAYER}, {VALUE}
+        changed: '&7You changed the count of &c{PLAYER}&7''s points to &c{VALUE}&7!'
+
+      kills:
+        noValueGiven: '&cProvide the number of kills!'
+        # Dostępne zmienne: {PLAYER}, {VALUE}
+        changed: '&7You changed the count of &c{PLAYER}&7''s kills to &c{VALUE}&7!'
+
+      deaths:
+        noValueGiven: '&cProvide the number of deaths!'
+        # Dostępne zmienne: {PLAYER}, {VALUE}
+        changed: '&7You changed the count of &c{PLAYER}&7''s deaths to &c{VALUE}&7!'
+
+      assists:
+        noValueGiven: '&cProvide the number of assists!'
+        # Dostępne zmienne: {PLAYER}, {VALUE}
+        changed: '&7You changed the count of &c{PLAYER}&7''s assists to &c{VALUE}&7!'
+
+      logouts:
+        noValueGiven: '&cProvide the number of logouts!'
+        # Dostępne zmienne: {PLAYER}, {VALUE}
+        changed: '&7You changed the count of &c{PLAYER}&7''s logouts to &c{VALUE}&7!'
+
+    guild:
+      status:
+        enabled: '&aGuild creation is enabled!'
+        disabled: '&cGuild creation is disabled!'
+
+      delete:
+        # Dostępne zmienne: {ADMIN}
+        deletedOwner: '&7Your guild was dissolved by &c{ADMIN}'
+
+      tag:
+        noValueGiven: '&cProvide the new tag!'
+        # Dostępne zmienne: {TAG}, {NAME}, {OLD_TAG}
+        changed: '&7You changed the &c{TAG}&7''s guild tag to &c{VALUE}&7!'
+
+      name:
+        noValueGiven: '&cProvide the new name!'
+        # Dostępne zmienne: {TAG}, {NAME}, {OLD_NAME}
+        changed: '&7You changed the &c{TAG}&7''s guild name to &c{VALUE}&7!'
+
+      validity:
+        noValueGiven: '&cProvide the extension time for the guild!'
+        banned: '&cThis guild is banned!'
+        # Dostępne zmienne: {TAG}, {NAME}, {DATE}
+        changed: '&7You extended the validity of the &c{TAG}&7''s guild to &c{DATE}&7!'
+
+      protection:
+        noValueGiven: '&cProvide a protection date for the guild! (In format: yyyy/mm/dd
+          hh:mm:ss)'
+        # Dostępne zmienne: {TAG}, {NAME}, {DATE}
+        changed: '&7You set the protection of &c{TAG}&7''s guild to &c{DATE}&7!'
+
+      lives:
+        noValueGiven: '&cProvide the number of lives!'
+        # Dostępne zmienne: {TAG}, {NAME}, {VALUE
+        changed: '&7You changed the number of lives of &c{TAG}&7''s guild to &c{VALUE}&7!'
+
+      move:
+        # Dostępne zmienne: {TAG}, {NAME}
+        moved: '&7You moved the territory of &c{TAG}&7''s guild!'
+
+      teleport:
+        # Dostępne zmienne: {TAG}, {NAME}
+        teleported: '&7You teleported to the territory of &c{TAG}&7''s guild!'
+
+      base:
+        noHome: '&cThe player''s guild has no set base!'
+        # Dostępne zmienne: {PLAYER}
+        teleported: '&7Player &c{PLAYER} &8was teleported to the guild base!'
+        # Dostępne zmienne: {ADMIN}
+        teleportedTarget: '&7Admin &c{ADMIN} &7teleported you to the guild base!'
+
+      leader:
+        alreadyLeader: '&cThis player is already the guild leader!'
+
+      ban:
+        noTimeGiven: '&cProvide the time during which the guild should be banned!'
+        noReasonGiven: '&cProvide the reason!'
+        alreadyBanned: '&cThis guild is already banned!'
+        # Dostępne zmienne: {TAG}, {NAME}, {TIME}, {REASON}
+        banned: '&7You banned the &c{TAG} &7guild for &c{TIME} period! Reason: &c{REASON}'
+        # Dostępne zmienne: {TAG}, {NAME}, {TIME}, {REASON}, {ADMIN}
+        bannedBroadcast: '&7The &c{TAG} &7guild was banned by &c{ADMIN}&7! Reason:
+          &c{REASON}'
+        # Dostępne zmienne: {TAG}, {NAME}, {TIME}, {REASON}, {ADMIN}, {NEWLINE}
+        bannedKick: '&7You were banned until &b{DATE}{NEWLINE}{NEWLINE}&7for: &b{REASON}'
+
+      unban:
+        notBanned: '&cThis guild is not banned!'
+        # Dostępne zmienne: {TAG}, {NAME}
+        unbanned: '&7You unbanned the &c{GUILD}&7!'
+        # Dostępne zmienne: {TAG}, {NAME}, {ADMIN}
+        unbannedBroadcast: '&7The &c{TAG} &7''s guild was unbanned&7!'
+
+      spy:
+        start: '&aNow you are spying on players!'
+        stop: '&cYou are no longer spying on players!'
+
+  securitySystem:
+    # Dostępne zmienne: {PLAYER}, {CHEAT}, {NOTE}
+    info:
+      - '&8[&4Security&8] &7The player &c{PLAYER}&7 might be using &c{CHEAT}&7 or other
+      cheat of similar action!'
+      - '&8[&4Security&8] &7Note: &7{NOTE}'
+    # Dostępne zmienne: {DISTANCE}
+    reach: '&7Attacked the crystal from the distance of &c{DISTANCE} &7blocks!'
+    # Dostępne zmienne: {BLOCKS}
+    freeCam: '&7Attacked the crystal through blocks: &c{BLOCKS}'
+
+# <------- System Messages -------> #
+system:
+  loginNickTooShort: '&cNick is too short!'
+  loginNickTooLong: '&cNick is too long!'
+  loginNickInvalid: '&cNick contains forbidden characters!'
+
+  commandHelp:
+    - '&aFunnyGuilds Help:'
+    - '&b/funnyguilds (reload|rl) &7- reload plugin'
+    - '&b/funnyguilds (update|check) &7- check update availability'
+    - '&b/funnyguilds save-all &7- save everything'
+  reloadWarn: '&cFunnyGuilds plugin operation may be impaired after reload, server
+    restart is recommended!'
+  reloadTime: '&aFunnyGuilds &7reloadaed! (&b{TIME}s&7)'
+  reloadReloading: '&7Reloading...'
+  saveAllSaving: '&7Saving...'
+  saveAllSaved: '&7Saved (&b{TIME}s&7)!'
+  pluginVersion: '&7FunnyGuilds &b{VERSION} &7by &bFunnyGuilds Team'
+  newVersionAvailable:
+    - ''
+    - '&8-----------------------------------'
+    - '&7A new version &bFunnyGuilds {VERSION_TYPE}&7 is available!'
+    - '&7Current: &b{CURRENT_VERSION}'
+    - '&7Latest: &b{NEWEST_VERSION}'
+    - '&7GitHub: &b{GITHUB_LINK}'
+    - '&7Discord: &b{DISCORD_LINK}'
+    - '&8-----------------------------------'
+    - ''

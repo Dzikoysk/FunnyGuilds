@@ -101,7 +101,7 @@ public class PluginConfiguration extends OkaeriConfig {
     @Comment("Lista języków używanych przez plugin")
     @Comment("Jeżeli chcesz dodać nowy język dodaj go tutaj - utworzy to nowy plik z domyślnymi wartościami, które możesz później edytować")
     @Comment("Języki gracza są dobierane automatycznie na podstawie ustawiań klienta")
-    public Set<Locale> availableLocales = new HashSet<>(Arrays.asList(Locale.forLanguageTag("pl")));
+    public Set<Locale> availableLocales = new HashSet<>(Arrays.asList(Locale.forLanguageTag("pl"), Locale.forLanguageTag("en")));
 
     @Comment("")
     @Comment("Strefa czasowa używana przez plugin do wyświetlania dat (np. na tabliście)")
