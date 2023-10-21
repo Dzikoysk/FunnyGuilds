@@ -58,7 +58,7 @@ dependencies {
     /* general stuff */
 
     paperLibrary("com.zaxxer:HikariCP:5.1.0")
-    paperLibrary("org.mariadb.jdbc:mariadb-java-client:3.2.0")
+    paperLibrary("org.mariadb.jdbc:mariadb-java-client:3.3.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // bukkit stuff

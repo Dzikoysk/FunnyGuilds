@@ -63,7 +63,7 @@ subprojects {
     dependencies {
         /* general */
 
-        compileOnly("org.jetbrains:annotations:24.0.1")
+        compileOnly("org.jetbrains:annotations:24.1.0")
         testImplementation(kotlin("stdlib"))
 
         /* tests */
@@ -77,7 +77,7 @@ subprojects {
         testImplementation("org.mockito:mockito-junit-jupiter:$mockito")
 
         testImplementation(kotlin("test"))
-        testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.1")
+        testImplementation("nl.jqno.equalsverifier:equalsverifier:3.15.4")
     }
 
     java {
