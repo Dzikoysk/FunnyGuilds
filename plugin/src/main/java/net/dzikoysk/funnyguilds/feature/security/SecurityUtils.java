@@ -46,7 +46,7 @@ public final class SecurityUtils {
     }
 
     public static boolean isBlocked(User user) {
-        return SecuritySystem.getPlayersViolationLevel().asMap().getOrDefault(user, 0) >= FunnyGuilds.getInstance().getPluginConfiguration().securitySystem.maxViolations;
+        return SecuritySystem.getPlayersViolationLevel().asMap().getOrDefault(user, 0) >= FunnyGuilds.getInstance().getGuildConfiguration().securitySystem.maxViolations;
     }
 
 }

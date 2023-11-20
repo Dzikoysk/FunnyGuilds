@@ -1,20 +1,19 @@
 package net.dzikoysk.funnyguilds.config.sections;
 
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.CustomKey;
 import eu.okaeri.configs.annotation.Exclude;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 import net.dzikoysk.funnyguilds.config.FunnyTime;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class TntProtectionConfiguration extends OkaeriConfig {
+public class TntProtectionConfiguration extends ConfigSection {
 
     public TimeConfig time = new TimeConfig();
 
-    public static class TimeConfig extends OkaeriConfig {
+    public static class TimeConfig extends ConfigSection {
 
         @Comment("Czy włączyć ochronę przed TNT na terenach gildii w podanych godzinach")
         public boolean enabled = false;
@@ -42,7 +41,7 @@ public class TntProtectionConfiguration extends OkaeriConfig {
 
     public BuildConfig build = new BuildConfig();
 
-    public static class BuildConfig extends OkaeriConfig {
+    public static class BuildConfig extends ConfigSection {
 
         @Comment("Minimalna wysokość, od której można stawiać TNT")
         public int minHeight = 0;
@@ -55,7 +54,7 @@ public class TntProtectionConfiguration extends OkaeriConfig {
 
     public ExplodeConfig explode = new ExplodeConfig();
 
-    public static class ExplodeConfig extends OkaeriConfig {
+    public static class ExplodeConfig extends ConfigSection {
 
         @Comment("Minimalna wysokość, od której TNT wybucha")
         public int minHeight = 0;

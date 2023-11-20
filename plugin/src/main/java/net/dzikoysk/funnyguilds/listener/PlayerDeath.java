@@ -230,10 +230,10 @@ public class PlayerDeath extends AbstractFunnyListener {
                 .register("{REMAINING-HEALTH}", String.format(Locale.US, "%.2f", playerAttacker.getHealth()))
                 .register("{REMAINING-HEARTS}", (int) (playerAttacker.getHealth() / 2))
                 .register("{VTAG}", victim.getGuild()
-                        .map(guild -> FunnyFormatter.format(this.config.chatGuild.getValue(), "{TAG}", guild.getTag()))
+                        .map(guild -> FunnyFormatter.format(this.config.chatGuild, "{TAG}", guild.getTag()))
                         .orElseGet(""))
                 .register("{ATAG}", attacker.getGuild()
-                        .map(guild -> FunnyFormatter.format(this.config.chatGuild.getValue(), "{TAG}", guild.getTag()))
+                        .map(guild -> FunnyFormatter.format(this.config.chatGuild, "{TAG}", guild.getTag()))
                         .orElseGet(""));
 
         Replaceable itemReplacement = ItemComponentHelper.prepareItemReplacement(playerAttacker.getItemInHand());

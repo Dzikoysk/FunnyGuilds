@@ -1,7 +1,6 @@
 package net.dzikoysk.funnyguilds.config.tablist;
 
 import com.google.common.collect.ImmutableMap;
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
@@ -11,11 +10,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 import net.dzikoysk.funnyguilds.config.NumberRange;
 import net.dzikoysk.funnyguilds.nms.api.playerlist.SkinTexture;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class TablistConfiguration extends OkaeriConfig {
+public class TablistConfiguration extends ConfigSection {
 
     @Comment("Czy lista graczy ma być włączona")
     public boolean enabled = true;
@@ -155,7 +154,7 @@ public class TablistConfiguration extends OkaeriConfig {
     @Comment("Funkcja działa jedynie dla graczy premium, gracze non-premium nie zobaczą żadnych zmian")
     public Heads heads = new Heads();
 
-    public static class Heads extends OkaeriConfig {
+    public static class Heads extends ConfigSection {
 
         @Comment("Czy własne główki na liście graczy maja byc włączone")
         public boolean enabled = true;

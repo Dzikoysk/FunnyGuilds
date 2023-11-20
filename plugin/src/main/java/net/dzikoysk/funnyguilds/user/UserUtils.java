@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.data.util.YamlWrapper;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyStringUtils;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator.NameResult;
@@ -38,20 +39,19 @@ public final class UserUtils {
         return set;
     }
 
-    public static String getUserPosition(PluginConfiguration pluginConfiguration, @Nullable User user) {
+    public static String getUserPosition(GuildConfiguration guildConfiguration, @Nullable User user) {
         if (user == null) {
             return "";
         }
 
+        GuildConfiguration.MemberPosition position = guildConfiguration.memberPosition;
         if (user.isOwner()) {
-            return pluginConfiguration.chatPositionLeader.getValue();
+            return position.leader;
         }
-
-        if (user.isDeputy()) {
-            return pluginConfiguration.chatPositionDeputy.getValue();
+        else if (user.isDeputy()) {
+            return position.deputy;
         }
-
-        return pluginConfiguration.chatPositionMember.getValue();
+        return position.member;
     }
 
     /**

@@ -1,17 +1,16 @@
-package net.dzikoysk.funnyguilds.config.sections;
+package net.dzikoysk.funnyguilds.guild.config;
 
 import com.google.common.collect.ImmutableList;
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import java.util.List;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class HologramConfiguration extends OkaeriConfig {
+public class HologramConfiguration extends ConfigSection {
 
     @Comment("Czy hologram nad sercem gildii ma być włączony")
     public boolean enabled = true;

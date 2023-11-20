@@ -1,6 +1,7 @@
 package net.dzikoysk.funnyguilds.listener.region;
 
 import net.dzikoysk.funnyguilds.feature.protection.ProtectionSystem;
+import net.dzikoysk.funnyguilds.guild.config.RegionConfiguration;
 import net.dzikoysk.funnyguilds.listener.AbstractFunnyListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -9,8 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 
 public class BlockPlace extends AbstractFunnyListener {
+
+    @Inject
+    private RegionConfiguration regionConfiguration;
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlace(BlockPlaceEvent event) {
@@ -37,7 +42,7 @@ public class BlockPlace extends AbstractFunnyListener {
             return;
         }
 
-        if (this.config.placingBlocksBypassOnRegion.contains(type)) {
+        if (this.regionConfiguration.protection.placingBlocksBypass.contains(type)) {
             return;
         }
 

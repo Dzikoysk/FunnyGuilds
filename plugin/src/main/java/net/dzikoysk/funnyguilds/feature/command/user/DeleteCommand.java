@@ -6,14 +6,20 @@ import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.data.util.ConfirmationList;
 import net.dzikoysk.funnyguilds.feature.command.AbstractFunnyCommand;
 import net.dzikoysk.funnyguilds.feature.command.IsOwner;
+import net.dzikoysk.funnyguilds.feature.command.config.CommandConfiguration;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.user.User;
+import org.panda_lang.utilities.inject.annotations.Inject;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
 public final class DeleteCommand extends AbstractFunnyCommand {
 
     private final ConfirmCommand confirmExecutor;
+
+    @Inject
+    private CommandConfiguration commandConfiguration;
 
     public DeleteCommand(FunnyGuilds plugin) throws Throwable {
         this.confirmExecutor = plugin.getInjector().newInstanceWithFields(ConfirmCommand.class);
@@ -32,7 +38,7 @@ public final class DeleteCommand extends AbstractFunnyCommand {
                 guild.getMembers()), config -> config.guild.commands.delete.someoneNearby);
         ConfirmationList.add(owner.getUUID());
 
-        when(this.config.commands.confirm.enabled, config -> config.guild.commands.delete.confirm);
+        when(this.commandConfiguration.user.guild.confirm.enabled, config -> config.guild.commands.delete.confirm);
         this.confirmExecutor.execute(owner, guild);
     }
 

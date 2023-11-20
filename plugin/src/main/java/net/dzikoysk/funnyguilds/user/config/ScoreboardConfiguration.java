@@ -1,15 +1,14 @@
-package net.dzikoysk.funnyguilds.config.sections;
+package net.dzikoysk.funnyguilds.user.config;
 
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import java.time.Duration;
-import net.dzikoysk.funnyguilds.config.RawString;
+import net.dzikoysk.funnyguilds.config.AutoColor;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class ScoreboardConfiguration extends OkaeriConfig {
+public class ScoreboardConfiguration extends ConfigSection {
 
     @Comment("Czy systemy oparte na scoreboardzie (podane niżej) powinny być włączone?")
     public boolean enabled = true;
@@ -23,7 +22,7 @@ public class ScoreboardConfiguration extends OkaeriConfig {
     @Comment("")
     public NameTag nametag = new NameTag();
 
-    public static class NameTag extends OkaeriConfig {
+    public static class NameTag extends ConfigSection {
 
         @Comment("Czy system nametagów powinien być włączony (wartość przed i po nicku gracza)")
         public boolean enabled = true;
@@ -39,7 +38,7 @@ public class ScoreboardConfiguration extends OkaeriConfig {
         @Comment("Konfiguracja prefixu (wartość przed nickiem gracza)")
         @Comment("Wspierane placeholdery: {TAG}, {REL_TAG}, {NAME}, {POS}")
         @Comment("Wspierane jest również PlaceholderAPI (w tym relacyjne placeholdery)")
-        public Value prefix = new Value(new RawString(""), new RawString("{REL_TAG} "));
+        public Value prefix = new Value("", "{REL_TAG} ");
 
         @Comment("")
         @Comment("Konfiguracja suffixu (wartość po nicku gracza)")
@@ -47,15 +46,20 @@ public class ScoreboardConfiguration extends OkaeriConfig {
         @Comment("Wspierane jest również PlaceholderAPI (w tym relacyjne placeholdery)")
         public Value suffix = new Value();
 
-        public static class Value extends OkaeriConfig {
+        public static class Value extends ConfigSection {
 
-            private RawString noGuild = new RawString("");
-            private RawString ourGuild = new RawString("");
-            private RawString alliesGuild = new RawString("");
-            private RawString enemiesGuild = new RawString("");
-            private RawString otherGuild = new RawString("");
+            @AutoColor
+            private String noGuild = "";
+            @AutoColor
+            private String ourGuild = "";
+            @AutoColor
+            private String alliesGuild = "";
+            @AutoColor
+            private String enemiesGuild = "";
+            @AutoColor
+            private String otherGuild = "";
 
-            public Value(RawString noGuild, RawString ourGuild, RawString alliesGuild, RawString enemiesGuild, RawString otherGuild) {
+            public Value(String noGuild, String ourGuild, String alliesGuild, String enemiesGuild, String otherGuild) {
                 this.noGuild = noGuild;
                 this.ourGuild = ourGuild;
                 this.alliesGuild = alliesGuild;
@@ -63,30 +67,30 @@ public class ScoreboardConfiguration extends OkaeriConfig {
                 this.otherGuild = otherGuild;
             }
 
-            public Value(RawString noGuild, RawString anyGuild) {
+            public Value(String noGuild, String anyGuild) {
                 this(noGuild, anyGuild, anyGuild, anyGuild, anyGuild);
             }
 
             public Value() {
             }
 
-            public RawString getNoGuild() {
+            public String getNoGuild() {
                 return this.noGuild;
             }
 
-            public RawString getOurGuild() {
+            public String getOurGuild() {
                 return this.ourGuild;
             }
 
-            public RawString getAlliesGuild() {
+            public String getAlliesGuild() {
                 return this.alliesGuild;
             }
 
-            public RawString getEnemiesGuild() {
+            public String getEnemiesGuild() {
                 return this.enemiesGuild;
             }
 
-            public RawString getOtherGuild() {
+            public String getOtherGuild() {
                 return this.otherGuild;
             }
 
@@ -97,7 +101,7 @@ public class ScoreboardConfiguration extends OkaeriConfig {
     @Comment("")
     public Dummy dummy = new Dummy();
 
-    public static class Dummy extends OkaeriConfig {
+    public static class Dummy extends ConfigSection {
 
         @Comment("Czy włączyć dummy z punktami (liczbę punktów pod nickiem gracza)")
         @Comment("UWAGA: zalecane jest wyłączenie tej opcji w przypadku konfliktów z BungeeCordem, więcej szczegółów tutaj: https://github.com/FunnyGuilds/FunnyGuilds/issues/769")
@@ -112,14 +116,15 @@ public class ScoreboardConfiguration extends OkaeriConfig {
 
         @Comment("")
         @Comment("Wygląd nazwy wyświetlanej za punktami")
-        public RawString suffix = new RawString("pkt");
+        @AutoColor
+        public String suffix = "pkt";
 
     }
 
     @Comment("")
     public QueueConfiguration queueConfiguration = new QueueConfiguration();
 
-    public static class QueueConfiguration extends OkaeriConfig {
+    public static class QueueConfiguration extends ConfigSection {
 
         @Comment("Co jaki czas kolejka (nametagów/dummy) powinna być odświeżana")
         @Comment("Wartość podawana w tickach (1 sekunda = 20 ticków)")

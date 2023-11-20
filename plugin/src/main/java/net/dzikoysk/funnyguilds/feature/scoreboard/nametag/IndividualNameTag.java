@@ -2,16 +2,15 @@ package net.dzikoysk.funnyguilds.feature.scoreboard.nametag;
 
 import java.lang.ref.WeakReference;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
-import net.dzikoysk.funnyguilds.config.PluginConfiguration;
-import net.dzikoysk.funnyguilds.config.RawString;
-import net.dzikoysk.funnyguilds.config.sections.ScoreboardConfiguration;
 import net.dzikoysk.funnyguilds.feature.hooks.HookUtils;
 import net.dzikoysk.funnyguilds.guild.Guild;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
 import net.dzikoysk.funnyguilds.guild.placeholders.GuildPlaceholdersService;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.shared.bukkit.ChatUtils;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserUtils;
+import net.dzikoysk.funnyguilds.user.config.ScoreboardConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -20,13 +19,15 @@ import panda.std.Option;
 
 public class IndividualNameTag {
 
-    private final PluginConfiguration pluginConfiguration;
+    private final ScoreboardConfiguration scoreboardConfiguration;
+    private final GuildConfiguration guildConfiguration;
 
     private WeakReference<Player> playerRef;
     private final User user;
 
-    IndividualNameTag(PluginConfiguration pluginConfiguration, Player player, User user) {
-        this.pluginConfiguration = pluginConfiguration;
+    IndividualNameTag(ScoreboardConfiguration scoreboardConfiguration, GuildConfiguration guildConfiguration, Player player, User user) {
+        this.scoreboardConfiguration = scoreboardConfiguration;
+        this.guildConfiguration = guildConfiguration;
         this.playerRef = new WeakReference<>(player);
         this.user = user;
     }
@@ -71,7 +72,7 @@ public class IndividualNameTag {
 
         Team targetTeam = this.prepareTeam(scoreboard, targetUser.getName());
 
-        ScoreboardConfiguration.NameTag nameTagConfig = this.pluginConfiguration.scoreboard.nametag;
+        ScoreboardConfiguration.NameTag nameTagConfig = this.scoreboardConfiguration.nametag;
         targetTeam.setPrefix(this.prepareValue(this.prepareConfigValue(nameTagConfig.prefix, targetUser), targetPlayer, targetUser));
         targetTeam.setSuffix(this.prepareValue(this.prepareConfigValue(nameTagConfig.suffix, targetUser), targetPlayer, targetUser));
     }
@@ -106,8 +107,7 @@ public class IndividualNameTag {
         return team;
     }
 
-    private String prepareValue(RawString rawValue, Player targetPlayer, User targetUser) {
-        String value = rawValue.getValue();
+    private String prepareValue(String value, Player targetPlayer, User targetUser) {
         Player player = this.getPlayer();
         if (player == null) {
             return value;
@@ -117,8 +117,8 @@ public class IndividualNameTag {
         Guild targetGuild = targetUser.getGuild().orNull();
 
         FunnyFormatter formatter = new FunnyFormatter()
-                .register("{REL_TAG}", this.pluginConfiguration.relationalTag.chooseTag(guild, targetGuild))
-                .register("{POS}", UserUtils.getUserPosition(this.pluginConfiguration, targetUser));
+                .register("{REL_TAG}", this.guildConfiguration.relationalTag.chooseTag(guild, targetGuild))
+                .register("{POS}", UserUtils.getUserPosition(this.guildConfiguration, targetUser));
         value = formatter.format(value);
 
         String finalValue = value;
@@ -135,7 +135,7 @@ public class IndividualNameTag {
         return value;
     }
 
-    private RawString prepareConfigValue(ScoreboardConfiguration.NameTag.Value value, User target) {
+    private String prepareConfigValue(ScoreboardConfiguration.NameTag.Value value, User target) {
         Option<Guild> guildOption = this.user.getGuild();
         Option<Guild> targetGuildOption = target.getGuild();
 
@@ -149,7 +149,7 @@ public class IndividualNameTag {
         Guild guild = guildOption.get();
         Guild targetGuild = targetGuildOption.get();
 
-        RawString finalValue = value.getOtherGuild();
+        String finalValue = value.getOtherGuild();
         if (guild.equals(targetGuild)) {
             finalValue = value.getOurGuild();
         }

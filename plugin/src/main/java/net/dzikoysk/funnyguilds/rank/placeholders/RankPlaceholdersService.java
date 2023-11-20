@@ -11,11 +11,13 @@ import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.NumberRange;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.config.RangeFormatting;
-import net.dzikoysk.funnyguilds.config.RawString;
 import net.dzikoysk.funnyguilds.config.message.MessageService;
 import net.dzikoysk.funnyguilds.feature.placeholders.PlaceholdersService;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.GuildRankManager;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
+import net.dzikoysk.funnyguilds.rank.config.RankConfiguration;
+import net.dzikoysk.funnyguilds.rank.config.TopConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserRankManager;
@@ -31,18 +33,21 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
     private static final Pattern TOP_PATTERN = Pattern.compile("\\{(PTOP|GTOP)-([A-Za-z_]+)-([0-9]+)}");
     private static final Pattern TOP_POSITION_PATTERN = Pattern.compile("\\{(POSITION|G-POSITION)-([A-Za-z_]+)}");
 
-    private final PluginConfiguration config;
+    private final GuildConfiguration guildConfiguration;
+    private final TopConfiguration topConfiguration;
     private final MessageService messageService;
     private final UserRankManager userRankManager;
     private final GuildRankManager guildRankManager;
 
     public RankPlaceholdersService(
-            PluginConfiguration config,
+            GuildConfiguration guildConfiguration,
+            RankConfiguration rankConfiguration,
             MessageService messageService,
             UserRankManager userRankManager,
             GuildRankManager guildRankManager
     ) {
-        this.config = config;
+        this.guildConfiguration = guildConfiguration;
+        this.topConfiguration = rankConfiguration.top;
         this.messageService = messageService;
         this.userRankManager = userRankManager;
         this.guildRankManager = guildRankManager;
@@ -111,9 +116,9 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
                         User user = pair.getFirst();
                         Number topValue = pair.getSecond().getComparator().getValue(user.getRank());
 
-                        String topFormat = this.config.top.format.ptop.getValue();
+                        String topFormat = this.topConfiguration.format.ptop;
                         if (!topFormat.isEmpty()) {
-                            List<RangeFormatting> formats = this.config.top.format.ptopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
+                            List<RangeFormatting> formats = this.topConfiguration.format.ptopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
                             topFormat = formatTopValue(topValue, topFormat, formats);
                         }
                         return this.formatUserRank(text, placeholder, user, topFormat);
@@ -129,9 +134,9 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
                         Guild guild = pair.getFirst();
                         Number topValue = pair.getSecond().getComparator().getValue(guild.getRank());
 
-                        String topFormat = this.config.top.format.gtop.getValue();
+                        String topFormat = this.topConfiguration.format.gtop;
                         if (!topFormat.isEmpty()) {
-                            List<RangeFormatting> formats = this.config.top.format.gtopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
+                            List<RangeFormatting> formats = this.topConfiguration.format.gtopValueFormatting.get(comparatorType.toLowerCase(Locale.ROOT));
                             topFormat = formatTopValue(topValue, topFormat, formats);
                         }
                         return this.formatGuildRank(text, placeholder, targetUser, guild, topFormat);
@@ -207,20 +212,22 @@ public class RankPlaceholdersService implements PlaceholdersService<User> {
 
     private String formatUserRank(String text, String placeholder, User user, String topFormat) {
         boolean online = user.isOnline();
-        if (online && this.config.ptopRespectVanish) {
+        if (online && this.topConfiguration.format.ptopRespectVanish) {
             online = !user.isVanished();
         }
 
-        RawString onlineColor = online ? this.config.ptopOnline : this.config.ptopOffline;
+        String onlineColor = online
+                ? this.topConfiguration.format.ptopOnline
+                : this.topConfiguration.format.ptopOffline;
         return FunnyFormatter.format(text, placeholder, onlineColor + user.getName() + topFormat);
     }
 
     private String formatGuildRank(String text, String placeholder, @Nullable User targetUser, Guild guild, String topFormat) {
         String prefix = "{TAG}";
 
-        if (this.config.top.useRelationshipColors) {
+        if (this.topConfiguration.useRelationshipColors) {
             Guild viewerGuild = targetUser != null ? targetUser.getGuild().orNull() : null;
-            prefix = this.config.relationalTag.chooseAndPrepareTag(viewerGuild, guild);
+            prefix = this.guildConfiguration.relationalTag.chooseAndPrepareTag(viewerGuild, guild);
         }
 
         String formattedPrefix = FunnyFormatter.format(prefix, "{TAG}", guild.getTag());

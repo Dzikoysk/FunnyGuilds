@@ -2,11 +2,9 @@ package net.dzikoysk.funnyguilds.config.message;
 
 import dev.peri.yetanothermessageslibrary.MessageRepository;
 import dev.peri.yetanothermessageslibrary.message.SendableMessage;
-import dev.peri.yetanothermessageslibrary.message.holder.impl.ActionBarHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.BossBarHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.ChatHolder;
 import dev.peri.yetanothermessageslibrary.message.holder.impl.TitleHolder;
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.CustomKey;
 import eu.okaeri.configs.annotation.Header;
@@ -14,6 +12,7 @@ import eu.okaeri.configs.exception.OkaeriException;
 import java.lang.reflect.Field;
 import java.util.List;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 import net.dzikoysk.funnyguilds.config.FunnyTimeFormatter;
 import net.dzikoysk.funnyguilds.shared.bukkit.ChatUtils;
 import net.kyori.adventure.bossbar.BossBar;
@@ -26,7 +25,7 @@ import net.kyori.adventure.bossbar.BossBar;
 @Header("  - MiniMessage -> https://docs.adventure.kyori.net/minimessage/format.html")
 @Header("  - &X -> legacy formatowanie kolorów np. &c")
 @Header("  - &#XXXXXX -> formatowanie kolorów HEX np. &#FF0000")
-public class MessageConfiguration extends OkaeriConfig implements MessageRepository {
+public class MessageConfiguration extends ConfigSection implements MessageRepository {
 
     @Comment("")
     @Comment("<------- Global Date Format -------> #")
@@ -36,11 +35,11 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     @Comment("<------- No Value Messages -------> #")
     public NoValue noValue = new NoValue();
 
-    public static class NoValue extends OkaeriConfig {
+    public static class NoValue extends ConfigSection {
 
         public Player player = new Player();
 
-        public static class Player extends OkaeriConfig {
+        public static class Player extends ConfigSection {
 
             public String top = "Brak (PTOP-x)";
 
@@ -49,7 +48,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public Guild guild = new Guild();
 
-        public static class Guild extends OkaeriConfig {
+        public static class Guild extends ConfigSection {
 
             public String name = "Brak (G-NAME/NAME)";
             public String tag = "Brak (G-TAG/TAG)";
@@ -70,17 +69,15 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
 
     }
 
-
-
     @Comment("")
     @Comment("<------- General Commands Messages -------> #")
     public Commands commands = new Commands();
 
-    public static class Commands extends OkaeriConfig {
+    public static class Commands extends ConfigSection {
 
         public Validation validation = new Validation();
 
-        public static class Validation extends OkaeriConfig {
+        public static class Validation extends ConfigSection {
 
             public SendableMessage playerOnly = ChatHolder.message("&cKomenda dostępna tylko dla graczy!");
             public SendableMessage noPermission = ChatHolder.message("&cNie masz wystarczających uprawnień do wykonania tej komendy!");
@@ -113,7 +110,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public Tnt tnt = new Tnt();
 
-        public static class Tnt extends OkaeriConfig {
+        public static class Tnt extends ConfigSection {
 
             public SendableMessage info = ChatHolder.message("&7TNT na teranach gildii działa od {PROTECTION_END} do {PROTECTION_START}");
             public SendableMessage infoAlways = ChatHolder.message("&7TNT wybucha o każdej porze.");
@@ -128,15 +125,15 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     @Comment("<------- Player Messages -------> #")
     public Player player = new Player();
 
-    public static class Player extends OkaeriConfig {
+    public static class Player extends ConfigSection {
 
         public Commands commands = new Commands();
 
-        public static class Commands extends OkaeriConfig {
+        public static class Commands extends ConfigSection {
 
             public Info info = new Info();
 
-            public static class Info extends OkaeriConfig {
+            public static class Info extends ConfigSection {
 
                 public SendableMessage longForm = ChatHolder.message(
                         "&8--------------------------------",
@@ -180,7 +177,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public RankReset rankReset = new RankReset();
 
-            public static class RankReset extends OkaeriConfig {
+            public static class RankReset extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {ITEM}, {ITEMS}")
                 public SendableMessage missingItems = ChatHolder.message("&cNie masz wszystkich przedmiotów! Obecnie brakuje Ci &7{ITEM} &cz &7{ITEMS}");
@@ -192,7 +189,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public StatsReset statsReset = new StatsReset();
 
-            public static class StatsReset extends OkaeriConfig {
+            public static class StatsReset extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {ITEM}, {ITEMS}")
                 public SendableMessage missingItems = ChatHolder.message("&cNie masz wszystkich przedmiotów! Obecnie brakuje Ci &7{ITEM} &cz &7{ITEMS}");
@@ -213,11 +210,11 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public Rank rank = new Rank();
 
-        public static class Rank extends OkaeriConfig {
+        public static class Rank extends ConfigSection {
 
             public Farming farming = new Farming();
 
-            public static class Farming extends OkaeriConfig {
+            public static class Farming extends ConfigSection {
 
                 public Message lastVictim = new Message(
                         "&7Ostatnio zostałeś zabity przez tego samego gracza, punkty nie zostają odebrane!",
@@ -244,7 +241,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                         "&7Ten gracz jest w sojuszu z twoją gildią, punkty nie zostają dodane!"
                 );
 
-                public static class Message extends OkaeriConfig {
+                public static class Message extends ConfigSection {
 
                     public SendableMessage victim;
                     public SendableMessage attacker;
@@ -267,7 +264,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("Dostępne zmienne: {ATTACKER}, {VICTIM}, {-}, {+}, {MINUS-FORMATTED}, {PLUS-FORMATTED}, {POINTS}, {POINTS-FORMAT}, {VTAG}, {ATAG}, {WEAPON}, {WEAPON-NAME}, {ITEM}, {ITEM-NO-AMOUNT}, {REMAINING-HEALTH}, {REMAINING-HEARTS}, {ASSISTS}")
             public PvP pvp = new PvP();
 
-            public static class PvP extends OkaeriConfig {
+            public static class PvP extends ConfigSection {
 
                 public SendableMessage broadcast = ChatHolder.message("{ATAG}&b{ATTACKER} &7({PLUS-FORMATTED}&7) zabił {VTAG}&b{VICTIM} &7({MINUS-FORMATTED}&7) używając &b{ITEM-NO-AMOUNT}");
                 public SendableMessage killer = TitleHolder.message("&cZabiłeś gracza {VICTIM}", "&7{PLUS-FORMATTED}", 10, 10, 10);
@@ -275,7 +272,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
 
                 public Assists assists = new Assists();
 
-                public static class Assists extends OkaeriConfig {
+                public static class Assists extends ConfigSection {
 
                     @Comment("Zamiast zmiennej {ASSISTS} wstawiane są kolejne wpisy o asystujących graczach")
                     public String message = "&7Asystowali: {ASSISTS}";
@@ -299,15 +296,15 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     @Comment("<------- Player Messages -------> #")
     public Guild guild = new Guild();
 
-    public static class Guild extends OkaeriConfig {
+    public static class Guild extends ConfigSection {
 
         public Commands commands = new Commands();
 
-        public static class Commands extends OkaeriConfig {
+        public static class Commands extends ConfigSection {
 
             public Validation validation = new Validation();
 
-            public static class Validation extends OkaeriConfig {
+            public static class Validation extends ConfigSection {
 
                 public SendableMessage hasNoRegion = ChatHolder.message("&cTwoja gildia nie posiada terenu!");
                 public SendableMessage hasNoCenter = ChatHolder.message("&cTwoja gildia nie posiada srodka regionu!");
@@ -357,7 +354,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Create create = new Create();
 
-            public static class Create extends OkaeriConfig {
+            public static class Create extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {LENGTH}")
                 public SendableMessage tagMinLength = ChatHolder.message("&7Tag nie może byc krótszy niz &c{LENGTH} litery&7!");
@@ -403,7 +400,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Delete delete = new Delete();
 
-            public static class Delete extends OkaeriConfig {
+            public static class Delete extends ConfigSection {
 
                 public SendableMessage someoneNearby = ChatHolder.message("&cNie możesz usunąć gildii, ktoś jest w pobliżu!");
                 public SendableMessage confirm = ChatHolder.message("&7Aby potwierdzić usunięcie gildii, wpisz: &c/potwierdz");
@@ -419,7 +416,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Enlarge enlarge = new Enlarge();
 
-            public static class Enlarge extends OkaeriConfig {
+            public static class Enlarge extends ConfigSection {
 
                 public SendableMessage maxSize = ChatHolder.message("&cOsiagnieto juz maksymalny rozmiar terenu!");
                 public SendableMessage nearOtherGuild = ChatHolder.message("&cW poblizu znajduje sie jakas gildia, nie mozesz powiekszyc terenu!");
@@ -435,7 +432,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Validity validity = new Validity();
 
-            public static class Validity extends OkaeriConfig {
+            public static class Validity extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {TIME}")
                 public SendableMessage tooEarly = ChatHolder.message("&7Gildie możesz przedłużyć dopiero za &c{TIME}&7!");
@@ -455,7 +452,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Invite invite = new Invite();
 
-            public static class Invite extends OkaeriConfig {
+            public static class Invite extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {AMOUNT}")
                 public SendableMessage playersLimit = ChatHolder.message("&7Osiągnięto juz &cmaksymalną &7liczbę członków w gildii! (&c{AMOUNT}&7)");
@@ -471,7 +468,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public All all = new All();
 
-                public static class All extends OkaeriConfig {
+                public static class All extends ConfigSection {
 
                     @Comment("Dostępne zmienne: {ERROR}")
                     public SendableMessage invalidNumber = ChatHolder.message("&7Zasięg &c{ERROR} &7nie jest poprawną liczbą!");
@@ -489,7 +486,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Join join = new Join();
 
-            public static class Join extends OkaeriConfig {
+            public static class Join extends ConfigSection {
 
                 public SendableMessage noInvitations = ChatHolder.message("&cNie masz zaproszenia do gildii!");
                 @Comment("Dostępne zmienne: {GUILDS}")
@@ -515,7 +512,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Leave leave = new Leave();
 
-            public static class Leave extends OkaeriConfig {
+            public static class Leave extends ConfigSection {
 
                 public SendableMessage youAreOwner = ChatHolder.message("&cZałożyciel &7nie może opuścić gildii!");
 
@@ -529,7 +526,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Kick kick = new Kick();
 
-            public static class Kick extends OkaeriConfig {
+            public static class Kick extends ConfigSection {
 
                 public SendableMessage targetIsOwner = ChatHolder.message("&cNie można wyrzucić założyciela!");
 
@@ -545,7 +542,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Leader leader = new Leader();
 
-            public static class Leader extends OkaeriConfig {
+            public static class Leader extends ConfigSection {
 
                 public SendableMessage leaderMustBeDifferent = ChatHolder.message("&cJuż jesteś liderem swojej gildii!");
 
@@ -559,7 +556,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Deputy deputy = new Deputy();
 
-            public static class Deputy extends OkaeriConfig {
+            public static class Deputy extends ConfigSection {
 
                 public SendableMessage deputyMustBeDifferent = ChatHolder.message("&cNie mozesz mianowac siebie zastepca!");
 
@@ -578,7 +575,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Ally ally = new Ally();
 
-            public static class Ally extends OkaeriConfig {
+            public static class Ally extends ConfigSection {
 
                 public SendableMessage alliesLimit = ChatHolder.message("&7Osiągnięto juz &cmaksymalną &7liczbę sojuszy między gildyjnych! (&c{AMOUNT}&7)");
                 @Comment("Dostępne zmienne: {AMOUNT}, {GUILD}, {TAG}")
@@ -616,7 +613,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @CustomKey("break")
             public Break breakAlly = new Break();
 
-            public static class Break extends OkaeriConfig {
+            public static class Break extends ConfigSection {
 
                 public SendableMessage noAllies = ChatHolder.message("&cTwoja gildia nie posiada sojuszy!");
                 @Comment("Dostępne zmienne: {GUILDS}")
@@ -635,7 +632,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Enemy enemy = new Enemy();
 
-            public static class Enemy extends OkaeriConfig {
+            public static class Enemy extends ConfigSection {
 
                 public SendableMessage correctUsage = ChatHolder.message("&7Aby rozpoczac wojne z gildia wpisz &c/wojna [tag]");
 
@@ -663,7 +660,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public PvP pvp = new PvP();
 
-            public static class PvP extends OkaeriConfig {
+            public static class PvP extends ConfigSection {
 
                 public SendableMessage allyPvPDisabled = ChatHolder.message("&cPVP pomiedzy sojuszami jest wylaczone w konfiguracji!");
 
@@ -681,7 +678,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public SetBase setBase = new SetBase();
 
-            public static class SetBase extends OkaeriConfig {
+            public static class SetBase extends ConfigSection {
 
                 public SendableMessage outsideRegion = ChatHolder.message("&cNie mozna ustawic domu gildii poza jej terenem!");
                 public SendableMessage set = ChatHolder.message("&7Przeniesiono &adom &7gildii!");
@@ -691,7 +688,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Base base = new Base();
 
-            public static class Base extends OkaeriConfig {
+            public static class Base extends ConfigSection {
 
                 public SendableMessage disabled = ChatHolder.message("&cTeleportacja do baz gildyjnych nie jest dostępna");
                 @Comment("Dostępne zmienne: {ITEM}, {ITEMS}")
@@ -713,7 +710,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Escape escape = new Escape();
 
-            public static class Escape extends OkaeriConfig {
+            public static class Escape extends ConfigSection {
 
                 public SendableMessage disabled = ChatHolder.message("&cPrzykro mi, ucieczki sa wyłączone!");
                 public SendableMessage alreadyEscaping = ChatHolder.message("&cUcieczka juz trwa!");
@@ -754,7 +751,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public War war = new War();
 
-        public static class War extends OkaeriConfig {
+        public static class War extends ConfigSection {
 
             public SendableMessage disabled = ChatHolder.message("&cPodbijanie gildii jest wyłączone.");
             public SendableMessage hasNoGuild = ChatHolder.message("&cMusisz miec gildie, aby zaatkowac inna!");
@@ -779,14 +776,14 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public Region region = new Region();
 
-        public static class Region extends OkaeriConfig {
+        public static class Region extends ConfigSection {
 
             public SendableMessage disabled = ChatHolder.message("&cRegiony gildii sa wyłączone!");
 
             @Comment("")
             public Protection protection = new Protection();
 
-            public static class Protection extends OkaeriConfig {
+            public static class Protection extends ConfigSection {
 
                 public SendableMessage unauthorized = ChatHolder.message("&cTen teren name do innej gildii!");
                 public SendableMessage center = ChatHolder.message("&cNie możesz zniszczyć środka swojej gildii!");
@@ -800,7 +797,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Explosion explosion = new Explosion();
 
-            public static class Explosion extends OkaeriConfig {
+            public static class Explosion extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {TIME}")
                 public SendableMessage message = ChatHolder.message("&cBudowanie na terenie gildii zablokowane na czas &4{TIME} sekund&c!");
@@ -815,7 +812,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Move move = new Move();
 
-            public static class Move extends OkaeriConfig {
+            public static class Move extends ConfigSection {
 
                 @Comment("Dostępne zmienne: {PLAYER}")
                 public SendableMessage intruderEnter = SendableMessage.builder()
@@ -860,15 +857,15 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     @Comment("<------- Adnmin Messages -------> #")
     public Admin admin = new Admin();
 
-    public static class Admin extends OkaeriConfig {
+    public static class Admin extends ConfigSection {
 
         public Commands commands = new Commands();
 
-        public static class Commands extends OkaeriConfig {
+        public static class Commands extends ConfigSection {
 
             public Validation validation = new Validation();
 
-            public static class Validation extends OkaeriConfig {
+            public static class Validation extends ConfigSection {
 
                 public SendableMessage notMemberOf = ChatHolder.message("&cTen gracz nie jest czlonkiem tej gildii!");
 
@@ -905,7 +902,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Player player = new Player();
 
-            public static class Player extends OkaeriConfig {
+            public static class Player extends ConfigSection {
 
                 public StatsChange points = new StatsChange(
                         "&cPodaj liczbę punktów!",
@@ -936,7 +933,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                         "&7Zmieniłeś liczbę wylogowań gracza &c{PLAYER} &7na &c{VALUE}&7!"
                 );
 
-                public static class StatsChange extends OkaeriConfig {
+                public static class StatsChange extends ConfigSection {
 
                     public SendableMessage noValueGiven;
                     @Comment("Dostępne zmienne: {PLAYER}, {VALUE}")
@@ -954,11 +951,11 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             @Comment("")
             public Guild guild = new Guild();
 
-            public static class Guild extends OkaeriConfig {
+            public static class Guild extends ConfigSection {
 
                 public Status status = new Status();
 
-                public static class Status extends OkaeriConfig {
+                public static class Status extends ConfigSection {
 
                     public SendableMessage enabled = ChatHolder.message("&aZakładanie gildii jest włączone!");
                     public SendableMessage disabled = ChatHolder.message("&cZakładanie gildii jest wyłączone!");
@@ -968,7 +965,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Delete delete = new Delete();
 
-                public static class Delete extends OkaeriConfig {
+                public static class Delete extends ConfigSection {
 
                     @Comment("Dostępne zmienne: {ADMIN}")
                     public SendableMessage deletedOwner = ChatHolder.message("&7Twoja gildia została rozwiązana przez &c{ADMIN}");
@@ -978,7 +975,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Tag tag = new Tag();
 
-                public static class Tag extends OkaeriConfig {
+                public static class Tag extends ConfigSection {
 
                     public SendableMessage noValueGiven = ChatHolder.message("&cPodaj nowy tag!");
                     @Comment("Dostępne zmienne: {TAG}, {NAME}, {OLD_TAG}")
@@ -989,7 +986,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Name name = new Name();
 
-                public static class Name extends OkaeriConfig {
+                public static class Name extends ConfigSection {
 
                     public SendableMessage noValueGiven = ChatHolder.message("&cPodaj nową nazwę!");
                     @Comment("Dostępne zmienne: {TAG}, {NAME}, {OLD_NAME}")
@@ -1000,7 +997,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Validity validity = new Validity();
 
-                public static class Validity extends OkaeriConfig {
+                public static class Validity extends ConfigSection {
 
                     public SendableMessage noValueGiven = ChatHolder.message("&cPodaj czas o jaki ma byc przedłużona ważność gildii!");
                     public SendableMessage banned = ChatHolder.message("&cTa gildia jest zbanowana!");
@@ -1013,7 +1010,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Protection protection = new Protection();
 
-                public static class Protection extends OkaeriConfig {
+                public static class Protection extends ConfigSection {
 
                     public SendableMessage noValueGiven = ChatHolder.message("&cPodaj date ochrony dla gildii! (W formacie: yyyy/mm/dd hh:mm:ss)");
                     @Comment("Dostępne zmienne: {TAG}, {NAME}, {DATE}")
@@ -1024,7 +1021,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Lives lives = new Lives();
 
-                public static class Lives extends OkaeriConfig {
+                public static class Lives extends ConfigSection {
 
                     public SendableMessage noValueGiven = ChatHolder.message("&cPodaj liczbę żyć!");
                     @Comment("Dostępne zmienne: {TAG}, {NAME}, {VALUE")
@@ -1035,7 +1032,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Move move = new Move();
 
-                public static class Move extends OkaeriConfig {
+                public static class Move extends ConfigSection {
 
                     @Comment("Dostępne zmienne: {TAG}, {NAME}")
                     public SendableMessage moved = ChatHolder.message("&7Przeniosłeś teren gildii &c{TAG}&7!");
@@ -1045,7 +1042,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Teleport teleport = new Teleport();
 
-                public static class Teleport extends OkaeriConfig {
+                public static class Teleport extends ConfigSection {
 
                     @Comment("Dostępne zmienne: {TAG}, {NAME}")
                     public SendableMessage teleported = ChatHolder.message("&7Teleportowałeś się na teren gildii &c{TAG}&7!");
@@ -1055,7 +1052,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Base base = new Base();
 
-                public static class Base extends OkaeriConfig {
+                public static class Base extends ConfigSection {
 
                     public SendableMessage noHome = ChatHolder.message("&cGildia gracza nie ma ustawionej bazy!");
 
@@ -1069,7 +1066,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Leader leader = new Leader();
 
-                public static class Leader extends OkaeriConfig {
+                public static class Leader extends ConfigSection {
 
                     public SendableMessage alreadyLeader = ChatHolder.message("&cTen gracz jest juz liderem gildii!");
 
@@ -1078,7 +1075,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Ban ban = new Ban();
 
-                public static class Ban extends OkaeriConfig {
+                public static class Ban extends ConfigSection {
 
                     public SendableMessage noTimeGiven = ChatHolder.message("&cPodaj czas na jaki ma byc zbanowana gildia!");
                     public SendableMessage noReasonGiven = ChatHolder.message("&cPodaj powod!");
@@ -1096,7 +1093,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Unban unban = new Unban();
 
-                public static class Unban extends OkaeriConfig {
+                public static class Unban extends ConfigSection {
 
                     public SendableMessage notBanned = ChatHolder.message("&cTa gildia nie jest zbanowana!");
 
@@ -1110,7 +1107,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
                 @Comment("")
                 public Spy spy = new Spy();
 
-                public static class Spy extends OkaeriConfig {
+                public static class Spy extends ConfigSection {
 
                     public SendableMessage start = ChatHolder.message("&aOd teraz szpiegujesz graczy!");
                     public SendableMessage stop = ChatHolder.message("&cJuz nie szpiegujesz graczy!");
@@ -1124,7 +1121,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         @Comment("")
         public SecuritySystem securitySystem = new SecuritySystem();
 
-        public static class SecuritySystem extends OkaeriConfig {
+        public static class SecuritySystem extends ConfigSection {
 
             @Comment("Dostępne zmienne: {PLAYER}, {CHEAT}, {NOTE}")
             public SendableMessage info = ChatHolder.message(
@@ -1145,7 +1142,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     @Comment("<------- System Messages -------> #")
     public System system = new System();
 
-    public static class System extends OkaeriConfig {
+    public static class System extends ConfigSection {
 
         public String loginNickTooShort = "&cNick jest za krotki!";
         public String loginNickTooLong = "&cNick jest za długi!";
@@ -1180,7 +1177,7 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
     }
 
     @Override
-    public OkaeriConfig load() throws OkaeriException {
+    public ConfigSection load() throws OkaeriException {
         super.load();
 
         try {
@@ -1192,7 +1189,8 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
         return this;
     }
 
-    private void colorFields(OkaeriConfig section) throws IllegalAccessException {
+    //TODO: replace this by adding `@AutoColor` annotation to fields
+    private void colorFields(ConfigSection section) throws IllegalAccessException {
         for (Field field : section.getClass().getDeclaredFields()) {
             Class<?> type = field.getType();
             if (type.equals(String.class)) {
@@ -1200,8 +1198,8 @@ public class MessageConfiguration extends OkaeriConfig implements MessageReposit
             } else if (type.equals(List.class)) {
                 List<String> list = (List<String>) field.get(this);
                 list.replaceAll(ChatUtils::colored);
-            } else if (type.equals(OkaeriConfig.class)) {
-                this.colorFields((OkaeriConfig) field.get(this));
+            } else if (type.equals(ConfigSection.class)) {
+                this.colorFields((ConfigSection) field.get(this));
             }
         }
     }

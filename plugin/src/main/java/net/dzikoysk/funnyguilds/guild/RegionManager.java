@@ -13,6 +13,8 @@ import net.dzikoysk.funnyguilds.data.DataModel;
 import net.dzikoysk.funnyguilds.data.database.SQLDataModel;
 import net.dzikoysk.funnyguilds.data.database.serializer.DatabaseRegionSerializer;
 import net.dzikoysk.funnyguilds.data.flat.FlatDataModel;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
+import net.dzikoysk.funnyguilds.guild.config.RegionConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyIOUtils;
 import net.dzikoysk.funnyguilds.shared.Validate;
 import net.dzikoysk.funnyguilds.shared.bukkit.FunnyBox;
@@ -28,11 +30,11 @@ import panda.std.stream.PandaStream;
 
 public class RegionManager {
 
-    private final PluginConfiguration pluginConfiguration;
+    private final GuildConfiguration guildConfiguration;
     private final Map<Long, Set<Region>> regions = new ConcurrentHashMap<>();
 
-    public RegionManager(PluginConfiguration pluginConfiguration) {
-        this.pluginConfiguration = pluginConfiguration;
+    public RegionManager(GuildConfiguration guildConfiguration) {
+        this.guildConfiguration = guildConfiguration;
     }
 
     public int countRegions() {
@@ -108,7 +110,7 @@ public class RegionManager {
     }
 
     public boolean isAnyPlayerInRegion(Region region, Collection<UUID> ignoredUuids) {
-        if (!this.pluginConfiguration.regionsEnabled) {
+        if (!this.guildConfiguration.isRegionsEnabled()) {
             return false;
         }
 
@@ -136,8 +138,10 @@ public class RegionManager {
             return false;
         }
 
-        int size = this.pluginConfiguration.regionSize + (this.pluginConfiguration.enlargeItems.size() * this.pluginConfiguration.enlargeSize);
-        int requiredDistance = (2 * size) + this.pluginConfiguration.regionMinDistance;
+        RegionConfiguration.Enlarge enlargeConfiguration = this.guildConfiguration.region.enlarge;
+        int enlargementLevels = enlargeConfiguration.requirements.size();
+        int size = enlargeConfiguration.defaultSize + (enlargementLevels * enlargementLevels);
+        int requiredDistance = (2 * size) + this.guildConfiguration.create.distanceToOtherGuild;
 
         return PandaStream.of(this.regions.values())
                 .flatMap(r -> r)
@@ -155,7 +159,7 @@ public class RegionManager {
      * @return if given block is guild's heart
      */
     public boolean isGuildHeart(Block block) {
-        Material heartMaterial = this.pluginConfiguration.heart.createMaterial;
+        Material heartMaterial = this.guildConfiguration.region.heart.createMaterial;
         if (heartMaterial == null || block.getType() != heartMaterial) {
             return false;
         }
@@ -219,14 +223,15 @@ public class RegionManager {
         Validate.notNull(region, "region can't be null!");
         Validate.isTrue(level >= 0, "level can't be negative!");
 
-        int maxEnlargeLevel = this.pluginConfiguration.enlargeItems.size();
+        RegionConfiguration.Enlarge enlargeConfiguration = this.guildConfiguration.region.enlarge;
+        int maxEnlargeLevel = enlargeConfiguration.requirements.size();
         if (level > maxEnlargeLevel) {
             level = maxEnlargeLevel;
         }
 
         this.removeRegion(region);
         region.setEnlargementLevel(level);
-        region.setSize(this.pluginConfiguration.regionSize + (level * this.pluginConfiguration.enlargeSize));
+        region.setSize(enlargeConfiguration.defaultSize + (level * enlargeConfiguration.enlargeSize));
         this.addRegion(region);
     }
 

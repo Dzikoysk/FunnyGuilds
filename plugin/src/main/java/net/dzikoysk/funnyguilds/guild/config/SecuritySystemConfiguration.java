@@ -1,6 +1,5 @@
-package net.dzikoysk.funnyguilds.config.sections;
+package net.dzikoysk.funnyguilds.guild.config;
 
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.CustomKey;
 import eu.okaeri.configs.annotation.NameModifier;
@@ -8,9 +7,9 @@ import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import eu.okaeri.validator.annotation.DecimalMin;
 import eu.okaeri.validator.annotation.Min;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class SecuritySystemConfiguration extends OkaeriConfig {
+public class SecuritySystemConfiguration extends ConfigSection {
 
     @Comment("Czy system bezpieczeństwa (prosty anti-cheat) ma byc włączony?")
     public boolean enabled = true;
@@ -23,7 +22,7 @@ public class SecuritySystemConfiguration extends OkaeriConfig {
     @Comment("")
     public Reach reach = new Reach();
 
-    public static class Reach extends OkaeriConfig {
+    public static class Reach extends ConfigSection {
 
         @DecimalMin("0")
         @Comment("Z jakiej odległości gracz może wejść w interakcje z sercem gildii w trybie survival")
@@ -46,7 +45,7 @@ public class SecuritySystemConfiguration extends OkaeriConfig {
     @CustomKey("freecam")
     public FreeCam freeCam = new FreeCam();
 
-    public static class FreeCam extends OkaeriConfig {
+    public static class FreeCam extends ConfigSection {
 
         @Min(0)
         @Comment("Margines sprawdzania przez ile bloków gracz uderzył serce gildii")

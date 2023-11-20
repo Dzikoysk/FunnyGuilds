@@ -98,15 +98,15 @@ public class GuildPlaceholdersService extends StaticPlaceholdersService<Guild, G
                         guild -> {
                             int lives = guild.getLives();
                             if (lives <= pluginConfiguration.warLives) {
-                                return StringUtils.repeated(lives, pluginConfiguration.livesRepeatingSymbol.full.getValue()) +
-                                        StringUtils.repeated(pluginConfiguration.warLives - lives, pluginConfiguration.livesRepeatingSymbol.empty.getValue());
+                                return StringUtils.repeated(lives, pluginConfiguration.livesRepeatingSymbol.full) +
+                                        StringUtils.repeated(pluginConfiguration.warLives - lives, pluginConfiguration.livesRepeatingSymbol.empty);
                             } else {
-                                return StringUtils.repeated(pluginConfiguration.warLives, pluginConfiguration.livesRepeatingSymbol.full.getValue()) +
-                                        pluginConfiguration.livesRepeatingSymbol.more.getValue();
+                                return StringUtils.repeated(pluginConfiguration.warLives, pluginConfiguration.livesRepeatingSymbol.full) +
+                                        pluginConfiguration.livesRepeatingSymbol.more;
                             }
                         }, entity -> messages.get(config -> config.noValue.guild.lives))
                 .property("lives-symbol-all",
-                        guild -> StringUtils.repeated(guild.getLives(), pluginConfiguration.livesRepeatingSymbol.full.getValue()),
+                        guild -> StringUtils.repeated(guild.getLives(), pluginConfiguration.livesRepeatingSymbol.full),
                         entity -> messages.get(entity, config -> config.noValue.guild.lives))
                 .rankProperty("points", GuildRank::getPoints, 0)
                 .rankProperty("avg-points", GuildRank::getAveragePoints,0)

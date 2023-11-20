@@ -10,6 +10,7 @@ import java.util.Set;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserManager;
+import net.dzikoysk.funnyguilds.user.config.ScoreboardConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +20,7 @@ import panda.std.stream.PandaStream;
 
 public abstract class AbstractScoreboardHandler<T> {
 
-    protected final PluginConfiguration pluginConfiguration;
+    protected final ScoreboardConfiguration scoreboardConfiguration;
     protected final UserManager userManager;
     protected final ScoreboardService scoreboardService;
 
@@ -27,8 +28,8 @@ public abstract class AbstractScoreboardHandler<T> {
     private final Queue<Pair<UpdateData, UpdateData>> updateQueue = new LinkedList<>();
     private final Queue<Pair<UpdateData, UpdateData>> highPriorityUpdateQueue = new LinkedList<>();
 
-    protected AbstractScoreboardHandler(PluginConfiguration pluginConfiguration, UserManager userManager, ScoreboardService scoreboardService) {
-        this.pluginConfiguration = pluginConfiguration;
+    protected AbstractScoreboardHandler(ScoreboardConfiguration scoreboardConfiguration, UserManager userManager, ScoreboardService scoreboardService) {
+        this.scoreboardConfiguration = scoreboardConfiguration;
         this.userManager = userManager;
         this.scoreboardService = scoreboardService;
     }

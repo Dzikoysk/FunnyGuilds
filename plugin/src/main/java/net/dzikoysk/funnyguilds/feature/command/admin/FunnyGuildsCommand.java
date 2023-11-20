@@ -1,4 +1,4 @@
-package net.dzikoysk.funnyguilds.feature.command.user;
+package net.dzikoysk.funnyguilds.feature.command.admin;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.stream.PandaStream;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -26,9 +27,9 @@ public final class FunnyGuildsCommand extends AbstractFunnyCommand {
     public DataModel dataModel;
 
     @FunnyCommand(
-            name = "${user.funnyguilds.name}",
-            description = "${user.funnyguilds.description}",
-            aliases = "${user.funnyguilds.aliases}",
+            name = "${admin.funnyguilds.name}",
+            description = "${admin.funnyguilds.description}",
+            aliases = "${admin.funnyguilds.aliases}",
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {

@@ -3,6 +3,7 @@ package net.dzikoysk.funnyguilds.listener.region;
 import java.util.regex.Pattern;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.Region;
+import net.dzikoysk.funnyguilds.guild.config.RegionConfiguration;
 import net.dzikoysk.funnyguilds.listener.AbstractFunnyListener;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.entity.Player;
@@ -10,12 +11,16 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 
 public class PlayerCommand extends AbstractFunnyListener {
 
     private static final Pattern COMMAND_SPLIT_PATTERN = Pattern.compile("\\s+");
+
+    @Inject
+    private RegionConfiguration regionConfiguration;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onCommand(PlayerCommandPreprocessEvent event) {
@@ -30,7 +35,7 @@ public class PlayerCommand extends AbstractFunnyListener {
         }
 
         String command = commandElements[0].substring(1);
-        PandaStream.of(this.config.regionCommands)
+        PandaStream.of(this.regionConfiguration.protection.blockedCommands)
                 .find(blockedCommand -> blockedCommand.equalsIgnoreCase(command))
                 .peek(blockedCommand -> this.handleCommandUsage(player, event));
     }

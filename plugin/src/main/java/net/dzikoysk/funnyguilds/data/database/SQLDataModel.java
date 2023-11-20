@@ -28,7 +28,6 @@ public class SQLDataModel implements DataModel {
     private final SQLTable guildsTable;
     private final SQLTable regionsTable;
 
-
     public SQLDataModel(FunnyGuilds plugin) {
         this.plugin = plugin;
         this.pluginConfiguration = plugin.getPluginConfiguration();
@@ -147,7 +146,7 @@ public class SQLDataModel implements DataModel {
     }
 
     public void loadRegions() {
-        if (!this.plugin.getPluginConfiguration().regionsEnabled) {
+        if (!this.plugin.getGuildConfiguration().isRegionsEnabled()) {
             FunnyGuilds.getPluginLogger().info("Regions are disabled and thus - not loaded");
             return;
         }
@@ -173,7 +172,7 @@ public class SQLDataModel implements DataModel {
                 .filter(guild -> !ignoreNotChanged || guild.wasChanged())
                 .forEach(DatabaseGuildSerializer::serialize);
 
-        if (!this.plugin.getPluginConfiguration().regionsEnabled) {
+        if (!this.plugin.getGuildConfiguration().isRegionsEnabled()) {
             return;
         }
 
