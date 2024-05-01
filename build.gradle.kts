@@ -154,7 +154,7 @@ subprojects {
 
 project(":nms").subprojects {
     dependencies {
-        implementation("xyz.jpenilla:reflection-remapper:0.1.0")
+        implementation("xyz.jpenilla:reflection-remapper:0.1.1")
     }
 
     if (isEligibleForUserdev(name)) {
