@@ -5,5 +5,5 @@ dependencies {
 
     shadow("com.viaversion:viaversion-api:[4.0.0,5.0.0)")
 
-    shadow("io.netty:netty-transport:4.1.108.Final")
+    shadow("io.netty:netty-transport:4.1.109.Final")
 }
