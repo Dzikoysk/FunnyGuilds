@@ -22,7 +22,7 @@ dependencies {
 
     /* okaeri config library */
 
-    val okaeriConfigs = "5.0.0-beta.2"
+    val okaeriConfigs = "5.0.1"
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:$okaeriConfigs")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:$okaeriConfigs")
     implementation("eu.okaeri:okaeri-configs-validator-okaeri:$okaeriConfigs")
