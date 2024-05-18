@@ -21,6 +21,7 @@ import net.dzikoysk.funnyguilds.config.migration.P0008_Migrate_old_heart_center_
 import net.dzikoysk.funnyguilds.config.migration.P0009_Migrate_old_killer_notification_key;
 import net.dzikoysk.funnyguilds.config.migration.P0010_Migrate_old_enlarge_enable_option;
 import net.dzikoysk.funnyguilds.config.migration.P0011_Migrate_old_security_system_keys;
+import net.dzikoysk.funnyguilds.config.migration.P0012_Migrate_old_broadcast_death_message_key;
 import net.dzikoysk.funnyguilds.config.migration.T0001_Update_player_list_animated;
 import net.dzikoysk.funnyguilds.config.migration.T0002_Update_tablist_keys;
 import net.dzikoysk.funnyguilds.config.serdes.ColorSerializer;
@@ -95,7 +96,8 @@ public final class ConfigurationFactory {
                     new P0008_Migrate_old_heart_center_configuration(),
                     new P0009_Migrate_old_killer_notification_key(),
                     new P0010_Migrate_old_enlarge_enable_option(),
-                    new P0011_Migrate_old_security_system_keys()
+                    new P0011_Migrate_old_security_system_keys(),
+                    new P0012_Migrate_old_broadcast_death_message_key()
             );
         });
     }

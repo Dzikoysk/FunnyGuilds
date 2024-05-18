@@ -35,6 +35,7 @@ import net.dzikoysk.funnyguilds.shared.FunnyStringUtils;
 import net.dzikoysk.funnyguilds.shared.adventure.ItemComponentHelper;
 import net.dzikoysk.funnyguilds.shared.bukkit.MaterialUtils;
 import net.dzikoysk.funnyguilds.user.User;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -267,8 +268,17 @@ public class PlayerDeath extends AbstractFunnyListener {
                 .receivers(calculatedAssists.keySet())
                 .console();
 
-        if (this.config.broadcastDeathMessage) {
-            deathMessage.receivers(event.getEntity().getWorld().getPlayers());
+        switch (this.config.deathMessageReceivers) {
+            case GUILD:
+                attacker.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers()));
+                victim.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers()));
+                calculatedAssists.keySet().forEach(user -> user.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers())));
+            case WORLD:
+                deathMessage.receivers(event.getEntity().getWorld().getPlayers());
+                break;
+            case ALL:
+                deathMessage.receivers(Bukkit.getOnlinePlayers());
+                break;
         }
 
         deathMessage.send();
