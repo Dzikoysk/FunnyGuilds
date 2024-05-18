@@ -11,10 +11,8 @@ public class P0012_Migrate_old_broadcast_death_message_key extends NamedMigratio
             super(
                     "Migrate old boolean broadcast-death-message key to new enum death-message-receivers",
                     move("broadcast-death-message", "death-message-receivers", oldValue -> {
-                        if (oldValue instanceof Boolean) {
-                            return (Boolean) oldValue
-                                    ? PluginConfiguration.DeathMessageReceivers.WORLD
-                                    : PluginConfiguration.DeathMessageReceivers.PARTICIPANTS;
+                        if (oldValue instanceof Boolean && !((Boolean) oldValue)) {
+                            return PluginConfiguration.DeathMessageReceivers.PARTICIPANTS;
                         }
                         return PluginConfiguration.DeathMessageReceivers.ALL;
                     })
