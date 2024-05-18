@@ -609,11 +609,11 @@ public class PluginConfiguration extends OkaeriConfig {
     public List<ItemStack> validityItems = ItemUtils.parseItems("10 diamond");
 
     @Comment("")
-    @Comment("Gdzie ma być wyświetlana wiadomość o śmierci gracza")
+    @Comment("Komu ma być wyświetlana wiadomość o śmierci gracza")
     @Comment("PARTICIPANTS - tylko uczestnikom walki")
-    @Comment("GUILD - wszystkim członkom gildii ofiary, zabójcy i asystujących")
-    @Comment("WORLD - wszystkim graczom na świecie")
-    @Comment("ALL - wszystkim graczom na serwerze")
+    @Comment("GUILD - wszystkim uczestnikom walki i wszystkim członkom gildii ofiary, zabójcy i asystujących")
+    @Comment("WORLD - wszystkim uczestnikom walki i wszystkim graczom w świecie w którym umarła ofiara")
+    @Comment("ALL - wszystkim uczestnikom walki i wszystkim graczom na serwerze")
     public DeathMessageReceivers deathMessageReceivers = DeathMessageReceivers.ALL;
 
     public enum DeathMessageReceivers {
