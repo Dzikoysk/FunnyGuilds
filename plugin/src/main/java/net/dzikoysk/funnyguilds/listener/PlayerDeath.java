@@ -273,6 +273,7 @@ public class PlayerDeath extends AbstractFunnyListener {
                 attacker.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers()));
                 victim.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers()));
                 calculatedAssists.keySet().forEach(user -> user.getGuild().peek(guild -> deathMessage.receivers(guild.getOnlineMembers())));
+                break;
             case WORLD:
                 deathMessage.receivers(event.getEntity().getWorld().getPlayers());
                 break;
