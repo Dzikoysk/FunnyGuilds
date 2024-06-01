@@ -73,7 +73,7 @@ dependencies {
 
     /* hooks */
 
-    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
+    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.10")
     shadow("net.milkbowl.vault:VaultAPI:1.7")
     shadow("me.clip:placeholderapi:2.10.9") {
         because("PlaceholderAPI on versions higher than 2.10.9 causes GH-1700 for some unknown reason")
