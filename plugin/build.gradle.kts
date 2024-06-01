@@ -59,7 +59,7 @@ dependencies {
         because("WorldEdit defined a constraint that we must use 2.8.0 and there is no way to ignore it")
     }
 
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.4.0")
 
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
