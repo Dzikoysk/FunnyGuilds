@@ -81,7 +81,7 @@ dependencies {
     }
     shadow("net.kyori:adventure-api:4.17.0")
     shadow("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9")
-    shadow("com.github.decentsoftware-eu:decentholograms:2.8.1")
+    shadow("com.github.decentsoftware-eu:decentholograms:2.8.8")
     shadow("us.dynmap:dynmap-api:3.0")
 
     /* tests */
