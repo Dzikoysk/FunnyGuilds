@@ -65,11 +65,11 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // probably fix for some exception?
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.23.1")
 
     // bukkit stuff
     shadow("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    shadow("org.apache.logging.log4j:log4j-core:2.20.0")
+    shadow("org.apache.logging.log4j:log4j-core:2.23.1")
 
     /* hooks */
 
