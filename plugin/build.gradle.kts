@@ -61,7 +61,7 @@ dependencies {
 
     implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
 
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
     // probably fix for some exception?
