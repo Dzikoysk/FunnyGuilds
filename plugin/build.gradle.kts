@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("xyz.jpenilla.run-paper")
-    id("org.jetbrains.kotlin.jvm")
+    kotlin("jvm")
 }
 
 @Suppress("VulnerableLibrariesLocal")

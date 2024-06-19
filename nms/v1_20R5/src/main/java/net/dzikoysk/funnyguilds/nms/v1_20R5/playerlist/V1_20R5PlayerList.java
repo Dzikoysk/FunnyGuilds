@@ -31,7 +31,7 @@ public class V1_20R5PlayerList implements PlayerList {
 
     static {
         try {
-            playerInfoEntriesField = ClientboundPlayerInfoUpdatePacket.class.getDeclaredField("b");
+            playerInfoEntriesField = ClientboundPlayerInfoUpdatePacket.class.getDeclaredField("c");
             playerInfoEntriesField.setAccessible(true);
         }
         catch (NoSuchFieldException ex) {

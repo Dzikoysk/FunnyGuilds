@@ -1,3 +1,5 @@
+import io.papermc.paperweight.tasks.RemapJar
+import io.papermc.paperweight.util.constants.OBF_NAMESPACE
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -74,7 +76,6 @@ subprojects {
         val mockito = "5.12.0"
         testImplementation("org.mockito:mockito-core:$mockito")
         testImplementation("org.mockito:mockito-junit-jupiter:$mockito")
-        //testImplementation("org.mockito:mockito-inline:$mockito")
 
         testImplementation(kotlin("test"))
         testImplementation("nl.jqno.equalsverifier:equalsverifier:3.14")
@@ -174,9 +175,10 @@ project(":nms").subprojects {
 
     apply(plugin = "io.papermc.paperweight.userdev")
 
+    val `is-1_20_5-or-newer` = mcVersion.minor >= 21 || mcVersion.minor == 20 && mcVersion.patch >= 5
     java {
         val javaVersion = when {
-            mcVersion.minor >= 21 || mcVersion.minor == 20 && mcVersion.patch >= 4 -> JavaVersion.VERSION_21 // 1.20.5+ uses Java 21
+            `is-1_20_5-or-newer` -> JavaVersion.VERSION_21 // 1.20.5+ uses Java 21
             else -> JavaVersion.VERSION_17
         }
 
@@ -185,6 +187,12 @@ project(":nms").subprojects {
 
         withSourcesJar()
         withJavadocJar()
+    }
+
+    if (`is-1_20_5-or-newer`) {
+        tasks.withType<RemapJar> {
+            toNamespace = OBF_NAMESPACE
+        }
     }
 }
 
