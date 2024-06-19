@@ -40,6 +40,7 @@ allprojects {
         maven("https://maven.reposilite.com/jitpack")
         maven("https://storehouse.okaeri.eu/repository/maven-public")
         maven("https://repo.titanvale.net/releases")
+        maven("https://repo.titanvale.net/snapshots")
 
         /* Servers */
         maven("https://libraries.minecraft.net")
