@@ -1,5 +1,6 @@
 package net.dzikoysk.funnyguilds.listener;
 
+import net.dzikoysk.funnyguilds.damage.DamageManager;
 import net.dzikoysk.funnyguilds.damage.DamageState;
 import net.dzikoysk.funnyguilds.feature.hooks.HookManager;
 import net.dzikoysk.funnyguilds.feature.hooks.worldguard.WorldGuardHook.FriendlyFireStatus;
@@ -13,9 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 
 public class EntityDamage extends AbstractFunnyListener {
+
+    @Inject
+    private DamageManager damageManager;
 
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {

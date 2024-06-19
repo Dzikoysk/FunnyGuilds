@@ -1,0 +1,2 @@
+In Paper 1.20.5 removed package from CraftBukkit's package. We changed how nms modules is handled - now we only have to update nms package, if actually anything in underlying code had changed. 
+Now FG Use "1.20.5" module for every version of Paper 1.20.5 and above.

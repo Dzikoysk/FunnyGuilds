@@ -1,5 +1,6 @@
 package net.dzikoysk.funnyguilds.listener;
 
+import net.dzikoysk.funnyguilds.damage.DamageManager;
 import net.dzikoysk.funnyguilds.damage.DamageState;
 import net.dzikoysk.funnyguilds.event.FunnyEvent;
 import net.dzikoysk.funnyguilds.event.SimpleEventHandler;
@@ -11,8 +12,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 
 public class PlayerQuit extends AbstractFunnyListener {
+
+    @Inject
+    private DamageManager damageManager;
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onKick(PlayerKickEvent event) {

@@ -6,19 +6,23 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.shared.SafeUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 public final class Reflections {
 
-    public static String SERVER_VERSION = "1_0";
-    public static boolean NEED_ADDITIONAL_NMS_PACKAGE;
     public static boolean USE_PRE_13_METHODS;
     public static boolean USE_PRE_12_METHODS;
     public static boolean USE_PRE_9_METHODS;
+
+    private static String CRAFTBUKKIT_PACKAGE;
+    private static final String NMS_PACKAGE = "net.minecraft";
+    private static String NMS_WITH_VERSION_PACKAGE = null;
 
     private static final Map<String, Class<?>> CLASS_CACHE = new HashMap<>();
     private static final Map<String, Field> FIELD_CACHE = new HashMap<>();
@@ -33,14 +37,18 @@ public final class Reflections {
     }
 
     public static void prepareServerVersion() {
-        SERVER_VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+        Server server = Bukkit.getServer();
 
-        int versionNumber = Integer.parseInt(SERVER_VERSION.split("_")[1]);
+        int versionNumber = Integer.parseInt(server.getBukkitVersion().split("-")[0].split("\\.")[1]);
 
-        NEED_ADDITIONAL_NMS_PACKAGE = versionNumber >= 17;
         USE_PRE_13_METHODS = versionNumber < 13;
         USE_PRE_12_METHODS = versionNumber < 12;
         USE_PRE_9_METHODS = versionNumber < 9;
+
+        CRAFTBUKKIT_PACKAGE = server.getClass().getPackage().getName();
+        if (versionNumber < 17) {
+            NMS_WITH_VERSION_PACKAGE = NMS_PACKAGE + ".server." + CRAFTBUKKIT_PACKAGE.split("\\.")[3];
+        }
     }
 
     public static Class<?> getClassOmitCache(String className) {
@@ -58,8 +66,7 @@ public final class Reflections {
         try {
             c = Class.forName(className);
             CLASS_CACHE.put(className, c);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             FunnyGuilds.getPluginLogger().error("Could not retrieve class", ex);
 
             CLASS_CACHE.put(className, INVALID_CLASS);
@@ -68,14 +75,12 @@ public final class Reflections {
     }
 
     public static Class<?> getNMSClass(String name, String subPackage) {
-        subPackage = NEED_ADDITIONAL_NMS_PACKAGE 
-            ? subPackage
-            : "server." + SERVER_VERSION;
-        return getClass("net.minecraft." + subPackage + "." + name);
+        String nmsPackage = Objects.requireNonNull(NMS_WITH_VERSION_PACKAGE, () -> NMS_PACKAGE + "." + subPackage);
+        return getClass(nmsPackage + "." + name);
     }
 
     public static Class<?> getCraftBukkitClass(String name) {
-        return getClass("org.bukkit.craftbukkit." + SERVER_VERSION + "." + name);
+        return getClass(CRAFTBUKKIT_PACKAGE + "." + name);
     }
 
     public static Class<?> getBukkitClass(String name) {
@@ -85,8 +90,7 @@ public final class Reflections {
     public static Object getHandle(Entity entity) {
         try {
             return getMethod(entity.getClass(), "getHandle").invoke(entity);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             FunnyGuilds.getPluginLogger().error("Could not get entity handle", ex);
 
             return null;
@@ -96,8 +100,7 @@ public final class Reflections {
     public static Object getHandle(World world) {
         try {
             return getMethod(world.getClass(), "getHandle").invoke(world);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             FunnyGuilds.getPluginLogger().error("Could not get world handle", ex);
 
             return null;
@@ -120,8 +123,7 @@ public final class Reflections {
         try {
             field = cl.getDeclaredField(fieldName);
             FIELD_CACHE.put(cacheKey, field);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             FunnyGuilds.getPluginLogger().error("Could not retrieve field", ex);
 
             FIELD_CACHE.put(cacheKey, INVALID_FIELD);
@@ -158,8 +160,7 @@ public final class Reflections {
                     public T get(Object target) {
                         try {
                             return (T) field.get(target);
-                        }
-                        catch (IllegalAccessException e) {
+                        } catch (IllegalAccessException e) {
                             throw new RuntimeException("Cannot access reflection.", e);
                         }
                     }
@@ -168,8 +169,7 @@ public final class Reflections {
                     public void set(Object target, Object value) {
                         try {
                             field.set(target, value);
-                        }
-                        catch (IllegalAccessException e) {
+                        } catch (IllegalAccessException e) {
                             throw new RuntimeException("Cannot access reflection.", e);
                         }
                     }
@@ -209,8 +209,7 @@ public final class Reflections {
             c = cl.getDeclaredField(fieldName);
             c.setAccessible(true);
             FIELD_CACHE.put(cacheKey, c);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             FunnyGuilds.getPluginLogger().error("Could not retrieve field", ex);
 
             FIELD_CACHE.put(cacheKey, INVALID_FIELD);
@@ -267,26 +266,34 @@ public final class Reflections {
     }
 
     public interface ConstructorInvoker {
+
         Object invoke(Object... arguments);
+
     }
 
     public interface MethodInvoker {
+
         Object invoke(Object target, Object... arguments);
+
     }
 
     public interface FieldAccessor<T> {
+
         T get(Object target);
 
         void set(Object target, Object value);
 
         boolean hasField(Object target);
+
     }
 
     private static class InvalidMarker {
+
         public Void invalidFieldMarker;
 
         public void invalidMethodMaker() {
         }
+
     }
 
 }

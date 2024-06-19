@@ -7,16 +7,16 @@ plugins {
     application
     `maven-publish`
 
+    kotlin("jvm") version "2.0.0" apply false
     id("idea")
     id("org.ajoberstar.grgit") version "4.1.1"
-    id("org.jetbrains.kotlin.jvm") version "1.9.22" apply false
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.github.goooler.shadow") version "8.1.7" // https://github.com/Goooler/shadow (fork of com.github.johnrengelman.shadow)
     id("xyz.jpenilla.run-paper") version "2.3.0" apply false
-    id("io.papermc.paperweight.userdev") version "1.5.12" apply false
+    id("io.papermc.paperweight.userdev") version "1.7.1" apply false
 }
 
 idea {
-    project.jdkName = "17"
+    project.jdkName = "21"
 }
 
 allprojects {
@@ -24,9 +24,10 @@ allprojects {
     version = "4.13.1-SNAPSHOT"
 
     apply(plugin = "java-library")
+    apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "application")
-    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "io.github.goooler.shadow")
 
     application {
         mainClass.set("net.dzikoysk.funnyguilds.FunnyGuilds")
@@ -65,16 +66,16 @@ subprojects {
 
         /* tests */
 
-        val junit = "5.9.2"
+        val junit = "5.10.2"
         testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
 
-        val mockito = "5.1.1"
+        val mockito = "5.12.0"
         testImplementation("org.mockito:mockito-core:$mockito")
         testImplementation("org.mockito:mockito-junit-jupiter:$mockito")
-        testImplementation("org.mockito:mockito-inline:$mockito")
+        //testImplementation("org.mockito:mockito-inline:$mockito")
 
-        testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.22")
+        testImplementation(kotlin("test"))
         testImplementation("nl.jqno.equalsverifier:equalsverifier:3.14")
     }
 
@@ -97,9 +98,8 @@ subprojects {
     }
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
-            languageVersion = "1.8"
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
             freeCompilerArgs = listOf("-Xjvm-default=all") // Generate default methods in interfaces by default
         }
     }
@@ -108,7 +108,11 @@ subprojects {
         repositories {
             maven {
                 name = "reposilite"
-                url = uri("https://maven.reposilite.com/${if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}")
+                url = uri(
+                    "https://maven.reposilite.com/${
+                        if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"
+                    }"
+                )
                 credentials {
                     username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
                     password = System.getenv("MAVEN_TOKEN") ?: property("mavenPassword").toString()
@@ -126,7 +130,10 @@ subprojects {
                     project.repositories.findAll(closureOf<Any> {
                         if (this is MavenArtifactRepository && this.url.toString().startsWith("https")) {
                             val repository = repositories.appendNode("repository")
-                            repository.appendNode("id", this.url.toString().replace("https://", "").replace("/", "-").replace(".", "-").trim())
+                            repository.appendNode(
+                                "id",
+                                this.url.toString().replace("https://", "").replace("/", "-").replace(".", "-").trim()
+                            )
                             repository.appendNode("url", this.url.toString().trim())
                         }
                     })
@@ -136,6 +143,7 @@ subprojects {
     }
 
     tasks.withType<Test> {
+        jvmArgs("-XX:+EnableDynamicAgentLoading") // I hate JDK team
         useJUnitPlatform()
         setForkEvery(1)
         maxParallelForks = 4
@@ -157,23 +165,35 @@ project(":nms").subprojects {
         implementation("xyz.jpenilla:reflection-remapper:0.1.1")
     }
 
-    if (isEligibleForUserdev(name)) {
-        apply(plugin = "io.papermc.paperweight.userdev")
+    val mcVersion = matchNmsMcVersion(name)
+    if (mcVersion.minor < 17) {
+        // Paperweight is only compatible with 1.17 and above
+        return@subprojects
+    }
 
-        java {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
+    apply(plugin = "io.papermc.paperweight.userdev")
 
-            withSourcesJar()
-            withJavadocJar()
+    java {
+        val javaVersion = when {
+            mcVersion.minor >= 21 || mcVersion.minor == 20 && mcVersion.patch >= 4 -> JavaVersion.VERSION_21 // 1.20.5+ uses Java 21
+            else -> JavaVersion.VERSION_17
         }
+
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+
+        withSourcesJar()
+        withJavadocJar()
     }
 }
 
-fun isEligibleForUserdev(projectName: String): Boolean {
+fun matchNmsMcVersion(projectName: String): MCVersion {
     val minorPatchPart = projectName.split("_").getOrNull(1) // v1_20R3 -> 20R3
-    val minorVersion = minorPatchPart?.split("R")?.getOrNull(0)?.toIntOrNull() ?: 0 // 20R3 -> 20
+    val minorPatchPartSplit = minorPatchPart?.split("R")
+    val minorVersion = minorPatchPartSplit?.getOrNull(0)?.toIntOrNull() ?: 0 // 20R3 -> 20
+    val patchVersion = minorPatchPartSplit?.getOrNull(1)?.toIntOrNull() ?: 0 // 20R3 -> 3
 
-    // paperweight only supports 1.17+
-    return minorVersion >= 17
+    return MCVersion(minorVersion, patchVersion)
 }
+
+data class MCVersion(val minor: Int, val patch: Int)

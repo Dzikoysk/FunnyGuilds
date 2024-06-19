@@ -14,6 +14,7 @@ import net.dzikoysk.funnyguilds.config.NumberRange;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.config.message.FunnyMessageDispatcher;
 import net.dzikoysk.funnyguilds.damage.Damage;
+import net.dzikoysk.funnyguilds.damage.DamageManager;
 import net.dzikoysk.funnyguilds.damage.DamageState;
 import net.dzikoysk.funnyguilds.data.tasks.DatabaseUpdateGuildPointsAsyncTask;
 import net.dzikoysk.funnyguilds.data.tasks.DatabaseUpdateUserPointsAsyncTask;
@@ -40,12 +41,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 
 public class PlayerDeath extends AbstractFunnyListener {
 
     private final RankSystem rankSystem;
+    @Inject
+    private DamageManager damageManager;
 
     public PlayerDeath(PluginConfiguration config) {
         this.rankSystem = RankSystem.create(config);
@@ -310,8 +314,7 @@ public class PlayerDeath extends AbstractFunnyListener {
                     .send();
 
             return true;
-        }
-        else if (this.config.bidirectionalRankFarmingProtect && attackerTimestamp.is(timestamp -> Duration.between(timestamp, Instant.now()).compareTo(this.config.rankFarmingCooldown) < 0)) {
+        } else if (this.config.bidirectionalRankFarmingProtect && attackerTimestamp.is(timestamp -> Duration.between(timestamp, Instant.now()).compareTo(this.config.rankFarmingCooldown) < 0)) {
             this.messageService.getMessage(config -> config.rankLastAttackerV)
                     .receiver(playerVictim)
                     .send();

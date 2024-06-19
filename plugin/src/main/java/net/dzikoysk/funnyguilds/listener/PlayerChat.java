@@ -12,6 +12,7 @@ import net.dzikoysk.funnyguilds.event.guild.GuildChatEvent.Type;
 import net.dzikoysk.funnyguilds.event.guild.GuildPreChatEvent;
 import net.dzikoysk.funnyguilds.feature.hooks.HookUtils;
 import net.dzikoysk.funnyguilds.guild.Guild;
+import net.dzikoysk.funnyguilds.guild.GuildManager;
 import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
@@ -21,10 +22,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
 
 public class PlayerChat extends AbstractFunnyListener {
+
+    @Inject
+    private GuildManager guildManager;
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event) {

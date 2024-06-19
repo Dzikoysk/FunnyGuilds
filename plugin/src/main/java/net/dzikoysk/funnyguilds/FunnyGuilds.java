@@ -2,6 +2,8 @@ package net.dzikoysk.funnyguilds;
 
 import com.google.common.collect.ImmutableSet;
 import eu.okaeri.configs.exception.OkaeriException;
+import java.io.File;
+import java.lang.reflect.Method;
 import me.pikamug.localelib.LocaleManager;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnyguilds.config.ConfigurationFactory;
@@ -64,13 +66,10 @@ import net.dzikoysk.funnyguilds.listener.region.PlayerTeleport;
 import net.dzikoysk.funnyguilds.nms.DescriptionChanger;
 import net.dzikoysk.funnyguilds.nms.Reflections;
 import net.dzikoysk.funnyguilds.nms.api.NmsAccessor;
-import net.dzikoysk.funnyguilds.nms.api.message.MessageAccessor;
 import net.dzikoysk.funnyguilds.nms.api.packet.FunnyGuildsInboundChannelHandler;
 import net.dzikoysk.funnyguilds.nms.api.packet.FunnyGuildsOutboundChannelHandler;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntitySupplier;
-import net.dzikoysk.funnyguilds.nms.v1_20R2.V1_20R2NmsAccessor;
-import net.dzikoysk.funnyguilds.nms.v1_20R3.V1_20R3NmsAccessor;
 import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.rank.RankRecalculationTask;
 import net.dzikoysk.funnyguilds.rank.placeholders.RankPlaceholdersService;
@@ -95,8 +94,6 @@ import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.std.Result;
 import panda.utilities.ClassUtils;
-
-import java.io.File;
 
 import static java.lang.String.format;
 
@@ -204,7 +201,17 @@ public class FunnyGuilds extends JavaPlugin {
             this.nmsAccessor = prepareNmsAccessor();
         }
         catch (Throwable th) {
-            logger.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", Reflections.SERVER_VERSION), th);
+            String currentVersion = "Unknown";
+            try {
+                Method getMinecraftVersion = Server.class.getMethod("getMinecraftVersion");
+                currentVersion = (String) getMinecraftVersion.invoke(this.getServer());
+            } catch (Throwable ignored) {
+                try {
+                    currentVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+                } catch (Throwable ignored2) { }
+            }
+
+            logger.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", currentVersion), th);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -332,7 +339,6 @@ public class FunnyGuilds extends JavaPlugin {
             resources.on(GuildPlaceholdersService.class).assignInstance(this.guildPlaceholdersService);
             resources.on(RankPlaceholdersService.class).assignInstance(this.rankPlaceholdersService);
             resources.on(NmsAccessor.class).assignInstance(this.nmsAccessor);
-            resources.on(MessageAccessor.class).assignInstance(this.nmsAccessor.getMessageAccessor());
             resources.on(GuildEntityHelper.class).assignInstance(this.guildEntityHelper);
             resources.on(DataModel.class).assignInstance(this.dataModel);
         });

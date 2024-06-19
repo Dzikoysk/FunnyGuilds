@@ -1,15 +1,15 @@
-package net.dzikoysk.funnyguilds.nms.v1_16R3.statistics;
+package net.dzikoysk.funnyguilds.nms.v1_20R5.statistics;
 
 import net.dzikoysk.funnyguilds.nms.api.statistics.StatisticsAccessor;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 
-public class V1_16R3StatisticsAccessor implements StatisticsAccessor {
+public class V1_20R5StatisticsAccessor implements StatisticsAccessor {
 
     @Override
     public double getTpsInLastMinute() {
-        return ((CraftServer) Bukkit.getServer()).getServer().recentTps[0];
+        return ((CraftServer) Bukkit.getServer()).getServer().tps1.getAverage();
     }
 
     @Override

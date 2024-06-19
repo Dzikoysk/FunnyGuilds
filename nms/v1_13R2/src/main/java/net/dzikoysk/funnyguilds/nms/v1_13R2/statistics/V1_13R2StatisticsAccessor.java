@@ -19,6 +19,7 @@ public class V1_13R2StatisticsAccessor implements StatisticsAccessor {
         return ((CraftServer) Bukkit.getServer()).reloadCount;
     }
 
+    @Override
     public int getPlayerPing(Player player) {
         Preconditions.checkNotNull(player, "player can't be null!");
         return ((CraftPlayer) player).getHandle().ping;

@@ -18,4 +18,5 @@ include(
     ":nms:v1_20R1",
     ":nms:v1_20R2",
     ":nms:v1_20R3",
+    ":nms:v1_20R5",
 )

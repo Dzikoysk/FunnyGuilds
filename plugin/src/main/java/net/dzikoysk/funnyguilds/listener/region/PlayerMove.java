@@ -6,6 +6,7 @@ import net.dzikoysk.funnyguilds.event.guild.GuildRegionEnterEvent;
 import net.dzikoysk.funnyguilds.event.guild.GuildRegionLeaveEvent;
 import net.dzikoysk.funnyguilds.guild.Region;
 import net.dzikoysk.funnyguilds.listener.AbstractFunnyListener;
+import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserCache;
@@ -15,9 +16,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 
 public class PlayerMove extends AbstractFunnyListener {
+
+    @Inject
+    public GuildEntityHelper guildEntityHelper;
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        jdk: [ 17 ]
+        jdk: [ 21 ]
     steps:
     - uses: actions/checkout@v3
     - name: Setup Maven cache
