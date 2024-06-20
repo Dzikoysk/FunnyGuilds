@@ -110,11 +110,7 @@ subprojects {
         repositories {
             maven {
                 name = "reposilite"
-                url = uri(
-                    "https://maven.reposilite.com/${
-                        if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"
-                    }"
-                )
+                url = uri("https://maven.reposilite.com/${if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}")
                 credentials {
                     username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
                     password = System.getenv("MAVEN_TOKEN") ?: property("mavenPassword").toString()
@@ -132,10 +128,7 @@ subprojects {
                     project.repositories.findAll(closureOf<Any> {
                         if (this is MavenArtifactRepository && this.url.toString().startsWith("https")) {
                             val repository = repositories.appendNode("repository")
-                            repository.appendNode(
-                                "id",
-                                this.url.toString().replace("https://", "").replace("/", "-").replace(".", "-").trim()
-                            )
+                            repository.appendNode("id", this.url.toString().replace("https://", "").replace("/", "-").replace(".", "-").trim())
                             repository.appendNode("url", this.url.toString().trim())
                         }
                     })
