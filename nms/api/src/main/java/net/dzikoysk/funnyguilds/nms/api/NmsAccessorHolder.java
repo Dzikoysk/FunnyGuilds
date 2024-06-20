@@ -23,7 +23,8 @@ public final class NmsAccessorHolder {
 
         try {
             return (NmsAccessor) Class.forName(className).newInstance();
-        } catch (Throwable th) {
+        }
+        catch (Throwable th) {
             throw new RuntimeException(format("could not initialize NmsAccessor for version '%s'", nmsVersion), th);
         }
     }
@@ -33,7 +34,8 @@ public final class NmsAccessorHolder {
             Method getDataVersion = UnsafeValues.class.getMethod("getDataVersion");
             int dataVersion = (int) getDataVersion.invoke(Bukkit.getServer().getUnsafe());
             return NMS_VERSION_MAPPING.floorEntry(dataVersion).getValue();
-        } catch (NoSuchMethodException ignored) {
+        }
+        catch (NoSuchMethodException ignored) {
             // Fallback to legacy method
             StringBuilder nmsVersion = new StringBuilder(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
 
@@ -41,8 +43,9 @@ public final class NmsAccessorHolder {
             nmsVersion.deleteCharAt(revPosition);
 
             return nmsVersion.toString();
-        } catch(IllegalAccessException | InvocationTargetException ignored) {
-            throw new RuntimeException("could not get minecraft version");
+        }
+        catch(IllegalAccessException | InvocationTargetException ex) {
+            throw new RuntimeException("could not get minecraft version", ex);
         }
     }
 
