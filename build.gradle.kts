@@ -138,7 +138,7 @@ subprojects {
     }
 
     tasks.withType<Test> {
-        jvmArgs("-XX:+EnableDynamicAgentLoading") // I hate JDK team
+        jvmArgs("-XX:+EnableDynamicAgentLoading") // I hate JDK team (https://github.com/mockito/mockito/issues/3037)
         useJUnitPlatform()
         setForkEvery(1)
         maxParallelForks = 4
