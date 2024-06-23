@@ -96,7 +96,7 @@ tasks.processResources {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC 1.8-1.20).jar")
+    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC 1.8-1.21).jar")
     mergeServiceFiles()
 
     relocate("net.dzikoysk.funnycommands", "net.dzikoysk.funnyguilds.libs.net.dzikoysk.funnycommands")
@@ -134,6 +134,6 @@ tasks.withType<ShadowJar> {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.20.6")
     }
 }
