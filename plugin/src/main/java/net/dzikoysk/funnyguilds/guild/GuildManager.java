@@ -13,6 +13,8 @@ import net.dzikoysk.funnyguilds.data.database.SQLDataModel;
 import net.dzikoysk.funnyguilds.data.database.serializer.DatabaseGuildSerializer;
 import net.dzikoysk.funnyguilds.data.flat.FlatDataModel;
 import net.dzikoysk.funnyguilds.feature.scoreboard.ScoreboardGlobalUpdateUserSyncTask;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
+import net.dzikoysk.funnyguilds.guild.config.HeartConfiguration;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
 import net.dzikoysk.funnyguilds.shared.FunnyIOUtils;
 import net.dzikoysk.funnyguilds.shared.Validate;
@@ -27,11 +29,13 @@ import panda.std.stream.PandaStream;
 
 public class GuildManager {
 
-    private final PluginConfiguration pluginConfiguration;
+    private final GuildConfiguration guildConfiguration;
+    private final HeartConfiguration heartConfiguration;
     private final Map<UUID, Guild> guildsMap = new ConcurrentHashMap<>();
 
-    public GuildManager(PluginConfiguration pluginConfiguration) {
-        this.pluginConfiguration = pluginConfiguration;
+    public GuildManager(GuildConfiguration guildConfiguration) {
+        this.guildConfiguration = guildConfiguration;
+        this.heartConfiguration = guildConfiguration.region.heart;
     }
 
     public int countGuilds() {
@@ -233,14 +237,14 @@ public class GuildManager {
             return;
         }
 
-        if (this.pluginConfiguration.regionsEnabled) {
+        if (this.guildConfiguration.isRegionsEnabled()) {
             guild.getRegion()
                     .peek(region -> {
-                        if (this.pluginConfiguration.heart.createEntityType != null) {
+                        if (this.heartConfiguration.createEntityType != null) {
                             plugin.getGuildEntityHelper().despawnGuildEntity(guild);
                         }
-                        else if (this.pluginConfiguration.heart.createMaterial != null &&
-                                this.pluginConfiguration.heart.createMaterial != Material.AIR) {
+                        else if (this.heartConfiguration.createMaterial != null &&
+                                this.heartConfiguration.createMaterial != Material.AIR) {
                             Location center = region.getCenter().clone();
 
                             Bukkit.getScheduler().runTask(plugin, () -> {
@@ -300,10 +304,10 @@ public class GuildManager {
      * @param guild the guild for which heart should be spawned
      */
     public void spawnHeart(GuildEntityHelper guildEntityHelper, Guild guild) {
-        if (this.pluginConfiguration.heart.createMaterial != null && this.pluginConfiguration.heart.createMaterial != Material.AIR) {
+        if (this.heartConfiguration.createMaterial != null && this.heartConfiguration.createMaterial != Material.AIR) {
             guild.getRegion()
                     .flatMap(Region::getHeartBlock)
-                    .peek(heart -> heart.setType(this.pluginConfiguration.heart.createMaterial));
+                    .peek(heart -> heart.setType(this.heartConfiguration.createMaterial));
             return;
         }
 

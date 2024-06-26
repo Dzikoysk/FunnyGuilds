@@ -3,6 +3,7 @@ package net.dzikoysk.funnyguilds.feature.scoreboard.dummy;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.user.User;
+import net.dzikoysk.funnyguilds.user.config.ScoreboardConfiguration;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -12,11 +13,11 @@ public class Dummy {
 
     private static final String OBJECTIVE_NAME = "FG-Points";
 
-    private final PluginConfiguration pluginConfiguration;
+    private final ScoreboardConfiguration scoreboardConfiguration;
     private final User user;
 
-    Dummy(PluginConfiguration pluginConfiguration, User user) {
-        this.pluginConfiguration = pluginConfiguration;
+    Dummy(ScoreboardConfiguration scoreboardConfiguration, User user) {
+        this.scoreboardConfiguration = scoreboardConfiguration;
         this.user = user;
     }
 
@@ -40,7 +41,7 @@ public class Dummy {
 
         objective = scoreboard.registerNewObjective(OBJECTIVE_NAME, "dummy");
         objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-        objective.setDisplayName(this.pluginConfiguration.scoreboard.dummy.suffix.getValue());
+        objective.setDisplayName(this.scoreboardConfiguration.dummy.suffix);
 
         return Option.of(objective);
     }

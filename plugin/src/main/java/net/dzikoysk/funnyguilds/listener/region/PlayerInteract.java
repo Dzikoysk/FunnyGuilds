@@ -6,11 +6,12 @@ import net.dzikoysk.funnyguilds.event.SimpleEventHandler;
 import net.dzikoysk.funnyguilds.event.guild.GuildHeartInteractEvent;
 import net.dzikoysk.funnyguilds.event.guild.GuildHeartInteractEvent.Click;
 import net.dzikoysk.funnyguilds.feature.command.InternalValidationException;
-import net.dzikoysk.funnyguilds.feature.command.user.InfoCommand;
+import net.dzikoysk.funnyguilds.feature.command.user.GuildInfoCommand;
 import net.dzikoysk.funnyguilds.feature.security.SecuritySystem;
 import net.dzikoysk.funnyguilds.feature.war.WarSystem;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.Region;
+import net.dzikoysk.funnyguilds.guild.config.RegionConfiguration;
 import net.dzikoysk.funnyguilds.listener.AbstractFunnyListener;
 import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.block.Block;
@@ -20,14 +21,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.panda_lang.utilities.inject.annotations.Inject;
 import panda.std.Option;
 
 public class PlayerInteract extends AbstractFunnyListener {
 
-    private final InfoCommand infoExecutor;
+    @Inject
+    private RegionConfiguration regionConfiguration;
+    private final GuildInfoCommand infoExecutor;
 
     public PlayerInteract(FunnyGuilds plugin) throws Throwable {
-        this.infoExecutor = plugin.getInjector().newInstanceWithFields(InfoCommand.class);
+        this.infoExecutor = plugin.getInjector().newInstanceWithFields(GuildInfoCommand.class);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -63,7 +67,7 @@ public class PlayerInteract extends AbstractFunnyListener {
             Guild guild = region.getGuild();
 
             this.userManager.findByPlayer(player).peek(user -> {
-                boolean blocked = this.config.blockedInteract.contains(clicked.getType());
+                boolean blocked = this.regionConfiguration.protection.blockedInteractions.contains(clicked.getType());
 
                 if (guild.isMember(user)) {
                     event.setCancelled(blocked && this.config.regionExplodeBlockInteractions && !guild.canBuild());

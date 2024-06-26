@@ -1,6 +1,5 @@
-package net.dzikoysk.funnyguilds.config.sections;
+package net.dzikoysk.funnyguilds.guild.config;
 
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.Exclude;
 import eu.okaeri.configs.annotation.NameModifier;
@@ -8,6 +7,8 @@ import eu.okaeri.configs.annotation.NameStrategy;
 import eu.okaeri.configs.annotation.Names;
 import java.io.File;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
+import net.dzikoysk.funnyguilds.listener.dynamic.DynamicListenerStorage;
 import net.dzikoysk.funnyguilds.shared.FunnyStringUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.EntityUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.LocationUtils;
@@ -18,8 +19,12 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class HeartConfiguration extends OkaeriConfig {
+public class HeartConfiguration extends ConfigSection {
+
+    @Comment("Czy serce gildii ma być włączone")
+    @Comment("Wyłączenie go jest równoważne z tym, że gildii nie będzie można podbić")
+    //TODO implement
+    public boolean enabled = true;
 
     @Comment("Blok lub entity, które jest sercem gildii")
     @Comment("Zmiana entity wymaga pełnego restartu serwera")
@@ -39,7 +44,7 @@ public class HeartConfiguration extends OkaeriConfig {
     @Comment("Konfiguracja domyślnej lokalizacji serca gildii przy jej zakładaniu")
     public Center center = new Center();
 
-    public static class Center extends OkaeriConfig {
+    public static class Center extends ConfigSection {
 
         @Comment("Konfiguracja na jakiejś wysokości (wartość y) powinno znajdować się serce gildii")
         @Comment("Dostępne wartości:")
@@ -124,7 +129,7 @@ public class HeartConfiguration extends OkaeriConfig {
     @Comment("Pozycja głowy gracza dla domyślnego home gildii")
     public HeadPosition homeHeadPosition = new HeadPosition(0, 0);
 
-    public static class HeadPosition extends OkaeriConfig {
+    public static class HeadPosition extends ConfigSection {
 
         private float yaw;
         private float pitch;
@@ -151,7 +156,7 @@ public class HeartConfiguration extends OkaeriConfig {
 
     public InteractionProtection interactionProtection = new InteractionProtection();
 
-    public static class InteractionProtection extends OkaeriConfig {
+    public static class InteractionProtection extends ConfigSection {
 
         @Comment("Czy blokada interakcji w okolicach serca gildii powinna być włączona")
         public boolean enabled = false;
@@ -166,10 +171,14 @@ public class HeartConfiguration extends OkaeriConfig {
 
     }
 
-    public void loadProcessedProperties() {
+    public void processProperties() {
         this.createEntityType = EntityUtils.parseEntityType(this.createType, true, false);
         if (this.createEntityType == null) {
             this.createMaterial = MaterialUtils.parseMaterial(this.createType, true);
+        }
+
+        if (this.createMaterial != null && this.createMaterial.hasGravity()) {
+            DynamicListenerStorage.physicsEvent = true;
         }
 
         if (this.pasteSchematicOnCreation) {

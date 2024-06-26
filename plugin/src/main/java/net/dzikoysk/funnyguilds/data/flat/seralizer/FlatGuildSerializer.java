@@ -79,7 +79,7 @@ public final class FlatGuildSerializer {
         }
 
         Region region = null;
-        if (config.regionsEnabled) {
+        if (FunnyGuilds.getInstance().getGuildConfiguration().isRegionsEnabled()) {
             if (regionName == null) {
                 logger.deserialize("Cannot deserialize guild: " + name + ", caused by: region is null");
                 return Option.none();
@@ -177,7 +177,7 @@ public final class FlatGuildSerializer {
             return false;
         }
 
-        if (!guild.hasRegion() && FunnyGuilds.getInstance().getPluginConfiguration().regionsEnabled) {
+        if (!guild.hasRegion() && FunnyGuilds.getInstance().getGuildConfiguration().isRegionsEnabled()) {
             FunnyGuilds.getPluginLogger().error("[Serialize] Cannot serialize guild: " + guild.getName() + ", caused by: region is null");
             return false;
         }

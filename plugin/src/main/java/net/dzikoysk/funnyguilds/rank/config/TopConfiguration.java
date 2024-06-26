@@ -1,7 +1,6 @@
-package net.dzikoysk.funnyguilds.config.sections;
+package net.dzikoysk.funnyguilds.rank.config;
 
 import com.google.common.collect.ImmutableMap;
-import eu.okaeri.configs.OkaeriConfig;
 import eu.okaeri.configs.annotation.Comment;
 import eu.okaeri.configs.annotation.NameModifier;
 import eu.okaeri.configs.annotation.NameStrategy;
@@ -11,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import net.dzikoysk.funnyguilds.config.AutoColor;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 import net.dzikoysk.funnyguilds.config.RangeFormatting;
-import net.dzikoysk.funnyguilds.config.RawString;
 
-@Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
-public class TopConfiguration extends OkaeriConfig {
+public class TopConfiguration extends ConfigSection {
 
     @Comment("Lista topek graczy, które mają być obliczane i parsowane")
     @Comment("Najlepiej włączyć tylko te, które będą używane, żeby niepotrzebnie nie obciążać serwera")
@@ -33,18 +32,39 @@ public class TopConfiguration extends OkaeriConfig {
     @Comment("")
     public Format format = new Format();
 
-    public static class Format extends OkaeriConfig {
+    public static class Format extends ConfigSection {
+
+        @Comment("")
+        @Comment("Czy ptop-online/ptop-offline mają uznawać graczy na vanishu za graczy offline")
+        @Comment("UWAGA: opcja powinna wspierać pluginy jak VanishNoPacket, SuperVanish czy PremiumVanish")
+        @Comment("Jeśli opcja by nie działała z tymi (lub innymi) pluginami - proszę stworzyć issue na GitHubie")
+        @AutoColor
+        public boolean ptopRespectVanish = true;
+
+        @Comment("")
+        @Comment("Kolory dodawane przed nickiem gracza online przy zamianie zmiennej {PTOP-x}")
+        @Comment("Jeśli nie chcesz kolorowania zależnego od statusu online - pozostaw tę sekcję (i ptop-offline) pustą")
+        @AutoColor
+        public String ptopOnline = "&a";
+
+        @Comment("")
+        @Comment("Kolory dodawane przed nickiem gracza offline przy zamianie zmiennej {PTOP-x}")
+        @Comment("Jeśli nie chcesz kolorowania zależnego od statusu online - pozostaw tę sekcję (i ptop-online) pustą")
+        @AutoColor
+        public String ptopOffline = "&c";
 
         @Comment("Znacznik z wartością dodawany do zmiennej {PTOP-typ-x}")
         @Comment("Używaj zmiennych {VALUE} i {VALUE-FORMAT}")
         @Comment("Jeśli nie chcesz wyświetlać wartości, tylko sam nick - nie podawaj tu nic")
-        public RawString ptop = new RawString(" &7[{VALUE}&7]");
+        @AutoColor
+        public String ptop = " &7[{VALUE}&7]";
 
         @Comment("")
         @Comment("Znacznik z wartością dodawany do zmiennej {GTOP-typ-x}")
         @Comment("Używaj zmiennych {VALUE} i {VALUE-FORMAT}")
         @Comment("Jeśli nie chcesz wyświetlać wartości, tylko sam tag - nie podawaj tu nic")
-        public RawString gtop = new RawString(" &7[&b{VALUE}&7]");
+        @AutoColor
+        public String gtop = " &7[&b{VALUE}&7]";
 
         @Comment("")
         @Comment("Wygląd znacznika {VALUE-FORMAT} w zależności od wartości topki graczy")

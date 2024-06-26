@@ -9,10 +9,11 @@ import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import panda.std.Option;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
-public final class InfoCommand extends AbstractFunnyCommand {
+public final class GuildInfoCommand extends AbstractFunnyCommand {
 
     @FunnyCommand(
             name = "${user.info.name}",

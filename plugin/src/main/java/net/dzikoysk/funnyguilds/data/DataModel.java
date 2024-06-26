@@ -20,12 +20,12 @@ public interface DataModel {
 
     default void validateLoadedData() {
         FunnyGuilds plugin = FunnyGuilds.getInstance();
-        GuildManager guildManager = plugin.getGuildManager();
-        RegionManager regionManager = plugin.getRegionManager();
-
-        if (!plugin.getPluginConfiguration().regionsEnabled) {
+        if (!plugin.getGuildConfiguration().isRegionsEnabled()) {
             return;
         }
+
+        GuildManager guildManager = plugin.getGuildManager();
+        RegionManager regionManager = plugin.getRegionManager();
 
         Set<String> guilds = Entity.names(guildManager.getGuilds());
         Set<String> regions = Entity.names(regionManager.getRegions());

@@ -9,7 +9,7 @@ import net.dzikoysk.funnyguilds.event.SimpleEventHandler;
 import net.dzikoysk.funnyguilds.event.guild.GuildHeartInteractEvent;
 import net.dzikoysk.funnyguilds.event.guild.GuildHeartInteractEvent.Click;
 import net.dzikoysk.funnyguilds.feature.command.InternalValidationException;
-import net.dzikoysk.funnyguilds.feature.command.user.InfoCommand;
+import net.dzikoysk.funnyguilds.feature.command.user.GuildInfoCommand;
 import net.dzikoysk.funnyguilds.feature.security.SecuritySystem;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.nms.heart.GuildEntityHelper;
@@ -27,7 +27,7 @@ public class WarInfoAsyncTask extends AsyncFunnyTask {
     private final PluginConfiguration config;
     private final MessageService messageService;
     private final GuildEntityHelper guildEntityHelper;
-    private InfoCommand infoExecutor;
+    private GuildInfoCommand infoExecutor;
     private final User user;
     private final int entityId;
 
@@ -38,7 +38,7 @@ public class WarInfoAsyncTask extends AsyncFunnyTask {
         this.guildEntityHelper = guildEntityHelper;
 
         try {
-            this.infoExecutor = plugin.getInjector().newInstanceWithFields(InfoCommand.class);
+            this.infoExecutor = plugin.getInjector().newInstanceWithFields(GuildInfoCommand.class);
         }
         catch (Throwable throwable) {
             FunnyGuilds.getPluginLogger().error("An error occurred while creating war info request", throwable);

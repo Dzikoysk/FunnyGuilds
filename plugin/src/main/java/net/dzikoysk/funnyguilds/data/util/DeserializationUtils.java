@@ -70,7 +70,7 @@ public final class DeserializationUtils {
         guild.setOwner((User) values[3]);
         guild.setHome((Location) values[4]);
 
-        if (pluginConfiguration.regionsEnabled) {
+        if (FunnyGuilds.getInstance().getGuildConfiguration().isRegionsEnabled()) {
             guild.setRegion((Region) values[5]);
         }
 

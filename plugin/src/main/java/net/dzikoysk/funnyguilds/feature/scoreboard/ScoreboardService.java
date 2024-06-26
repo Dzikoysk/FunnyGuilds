@@ -4,20 +4,21 @@ import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserCache;
+import net.dzikoysk.funnyguilds.user.config.ScoreboardConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 
 public class ScoreboardService {
 
-    private final PluginConfiguration pluginConfiguration;
+    private final ScoreboardConfiguration scoreboardConfiguration;
 
-    public ScoreboardService(PluginConfiguration pluginConfiguration) {
-        this.pluginConfiguration = pluginConfiguration;
+    public ScoreboardService(ScoreboardConfiguration scoreboardConfiguration) {
+        this.scoreboardConfiguration = scoreboardConfiguration;
     }
 
     public void updatePlayer(Player player, User user) {
-        if (!this.pluginConfiguration.scoreboard.enabled) {
+        if (!this.scoreboardConfiguration.enabled) {
             return;
         }
 
@@ -37,7 +38,7 @@ public class ScoreboardService {
             FunnyGuilds.getPluginLogger().debug("We're trying to update player scoreboard, but cached scoreboard is null.");
 
             Scoreboard scoreboard;
-            if (this.pluginConfiguration.scoreboard.useSharedScoreboard) {
+            if (this.scoreboardConfiguration.useSharedScoreboard) {
                 scoreboard = player.getScoreboard();
             }
             else {

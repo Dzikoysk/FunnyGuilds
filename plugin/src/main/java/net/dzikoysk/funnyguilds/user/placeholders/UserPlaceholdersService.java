@@ -10,6 +10,7 @@ import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.feature.hooks.HookManager;
 import net.dzikoysk.funnyguilds.feature.hooks.vault.VaultHook;
 import net.dzikoysk.funnyguilds.feature.placeholders.StaticPlaceholdersService;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserRank;
@@ -25,13 +26,14 @@ public class UserPlaceholdersService extends StaticPlaceholdersService<User, Use
 
     public static UserPlaceholders createUserPlaceholders(FunnyGuilds plugin) {
         PluginConfiguration config = plugin.getPluginConfiguration();
+        GuildConfiguration guildConfiguration = plugin.getGuildConfiguration();
         return new UserPlaceholders()
                 .property("name", User::getName)
                 .property("player", User::getName)
                 .property("ping", User::getPing)
                 .property("ping-format", user -> FunnyFormatter.format(NumberRange.inRangeToString(user.getPing(),
                         config.pingFormat), "{PING}", user.getPing()))
-                .property("guild-position", user -> UserUtils.getUserPosition(config, user))
+                .property("guild-position", user -> UserUtils.getUserPosition(guildConfiguration, user))
                 .rankProperty("points", UserRank::getPoints)
                 .rankProperty("points-format", (UserRank rank) -> FunnyFormatter.format(NumberRange.inRangeToString(rank.getPoints(),
                         config.pointsFormat), "{POINTS}", rank.getPoints()))

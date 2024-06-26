@@ -13,6 +13,7 @@ import net.dzikoysk.funnyguilds.event.guild.GuildPreChatEvent;
 import net.dzikoysk.funnyguilds.feature.hooks.HookUtils;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.guild.GuildManager;
+import net.dzikoysk.funnyguilds.guild.config.GuildConfiguration;
 import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
@@ -28,6 +29,8 @@ import panda.std.stream.PandaStream;
 
 public class PlayerChat extends AbstractFunnyListener {
 
+    @Inject
+    private GuildConfiguration guildConfiguration;
     @Inject
     private GuildManager guildManager;
 
@@ -57,18 +60,18 @@ public class PlayerChat extends AbstractFunnyListener {
 
         int points = user.getRank().getPoints();
         FunnyFormatter formatter = new FunnyFormatter()
-                .register("{RANK}", this.config.chatRank.getValue())
+                .register("{RANK}", this.config.chatRank)
                 .register("{RANK}", user.getRank().getPosition(DefaultTops.USER_POINTS_TOP))
-                .register("{POINTS}", this.config.chatPoints.getValue())
+                .register("{POINTS}", this.config.chatPoints)
                 .register("{POINTS-FORMAT}", NumberRange.inRangeToString(points, this.config.pointsFormat))
                 .register("{POINTS}", points);
 
         user.getGuild()
                 .peek(guild -> {
-                    formatter.register("{TAG}", this.config.chatGuild.getValue());
+                    formatter.register("{TAG}", this.config.chatGuild);
                     formatter.register("{TAG}", guild.getTag());
-                    formatter.register("{POS}", this.config.chatPosition.getValue());
-                    formatter.register("{POS}", UserUtils.getUserPosition(this.config, user));
+                    formatter.register("{POS}", this.config.chatPosition);
+                    formatter.register("{POS}", UserUtils.getUserPosition(this.guildConfiguration, user));
                 })
                 .onEmpty(() -> {
                     formatter.register("{TAG}", "");
@@ -91,7 +94,7 @@ public class PlayerChat extends AbstractFunnyListener {
     }
 
     private boolean sendMessageToGuildMembers(User user, Player player, Guild guild, String message) {
-        return this.sendMessageToGuilds(user, player, guild, this.config.chatPrivDesign.getValue(), this.config.chatPriv,
+        return this.sendMessageToGuilds(user, player, guild, this.config.chatPrivDesign, this.config.chatPriv,
                 message, Collections.singleton(guild), Type.PRIVATE);
     }
 
@@ -99,12 +102,12 @@ public class PlayerChat extends AbstractFunnyListener {
         Set<Guild> allies = new HashSet<>(guild.getAllies());
         allies.add(guild);
 
-        return this.sendMessageToGuilds(user, player, guild, this.config.chatAllyDesign.getValue(), this.config.chatAlly,
+        return this.sendMessageToGuilds(user, player, guild, this.config.chatAllyDesign, this.config.chatAlly,
                 message, allies, Type.ALLY);
     }
 
     private boolean sendMessageToAllGuilds(User user, Player player, Guild guild, String message) {
-        return this.sendMessageToGuilds(user, player, guild, this.config.chatGlobalDesign.getValue(), this.config.chatGlobal,
+        return this.sendMessageToGuilds(user, player, guild, this.config.chatGlobalDesign, this.config.chatGlobal,
                 message, this.guildManager.getGuilds(), Type.ALL);
     }
 
@@ -139,7 +142,7 @@ public class PlayerChat extends AbstractFunnyListener {
     }
 
     private void spy(User user, Player player, Guild playerGuild, String message) {
-        String spyMessage = this.formatChatDesign(user, player, playerGuild, this.config.chatSpyDesign.getValue(), message);
+        String spyMessage = this.formatChatDesign(user, player, playerGuild, this.config.chatSpyDesign, message);
 
         PandaStream.of(Bukkit.getOnlinePlayers())
                 .flatMap(onlinePlayer -> this.userManager.findByPlayer(onlinePlayer))
@@ -151,8 +154,8 @@ public class PlayerChat extends AbstractFunnyListener {
         FunnyFormatter formatter = new FunnyFormatter()
                 .register("{PLAYER}", player.getName())
                 .register("{TAG}", playerGuild.getTag())
-                .register("{POS}", this.config.chatPosition.getValue())
-                .register("{POS}", UserUtils.getUserPosition(this.config, user))
+                .register("{POS}", this.config.chatPosition)
+                .register("{POS}", UserUtils.getUserPosition(this.guildConfiguration, user))
                 .register("{MESSAGE}", message);
 
         return HookUtils.replacePlaceholders(player, formatter.format(chatDesign));

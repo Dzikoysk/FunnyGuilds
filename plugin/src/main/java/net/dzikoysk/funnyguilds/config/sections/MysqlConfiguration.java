@@ -1,12 +1,9 @@
 package net.dzikoysk.funnyguilds.config.sections;
 
-import eu.okaeri.configs.OkaeriConfig;
-import eu.okaeri.configs.annotation.NameStrategy;
-import eu.okaeri.configs.annotation.Names;
 import eu.okaeri.configs.annotation.Variable;
+import net.dzikoysk.funnyguilds.config.ConfigSection;
 
-@Names(strategy = NameStrategy.IDENTITY)
-public class MysqlConfiguration extends OkaeriConfig {
+public class MysqlConfiguration extends ConfigSection {
 
     @Variable("FG_MYSQL_HOSTNAME")
     public String hostname = "localhost";

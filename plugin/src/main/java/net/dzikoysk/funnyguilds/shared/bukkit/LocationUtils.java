@@ -1,6 +1,6 @@
 package net.dzikoysk.funnyguilds.shared.bukkit;
 
-import java.util.List;
+import java.util.Set;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,6 +28,11 @@ public final class LocationUtils {
 
     public static double flatDistance(Location a, Location b) {
         return Math.sqrt(Math.pow(b.getX() - a.getX(), 2) + Math.pow(b.getZ() - a.getZ(), 2));
+    }
+
+    public static boolean checkWorld(Player player) {
+        Set<String> blockedWorlds = FunnyGuilds.getInstance().getGuildConfiguration().create.blockedWorlds;
+        return blockedWorlds != null && !blockedWorlds.isEmpty() && blockedWorlds.contains(player.getWorld().getName());
     }
 
     @Nullable
@@ -73,11 +78,6 @@ public final class LocationUtils {
 
     public static String toString(Option<Location> location) {
         return toString(location.orNull());
-    }
-
-    public static boolean checkWorld(Player player) {
-        List<String> blockedWorlds = FunnyGuilds.getInstance().getPluginConfiguration().blockedWorlds;
-        return blockedWorlds != null && !blockedWorlds.isEmpty() && blockedWorlds.contains(player.getWorld().getName());
     }
 
     public static int getMinHeight(World world) {

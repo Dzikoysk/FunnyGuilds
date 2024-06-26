@@ -73,12 +73,12 @@ open class FunnyGuildsSpec : BukkitSpec() {
         lenient().`when`(funnyGuilds.messageService).thenReturn(messages)
 
         userManager = UserManager(config)
-        guildManager = GuildManager(config)
+        guildManager = GuildManager(config, guildConfiguration)
         userRankManager = UserRankManager(config)
         userRankManager.register(DefaultTops.defaultUserTops(config, userManager))
         guildRankManager = GuildRankManager(config)
         guildRankManager.register(DefaultTops.defaultGuildTops(guildManager))
-        regionManager = RegionManager(config)
+        regionManager = RegionManager(config, guildConfiguration)
 
         lenient().`when`(funnyGuilds.userManager).thenReturn(userManager)
         lenient().`when`(funnyGuilds.guildManager).thenReturn(guildManager)
@@ -87,10 +87,11 @@ open class FunnyGuildsSpec : BukkitSpec() {
         lenient().`when`(funnyGuilds.regionManager).thenReturn(regionManager)
 
         rankPlaceholdersService = RankPlaceholdersService(
-            config,
-            messages,
-            userRankManager,
-            guildRankManager
+                pluginConfiguration,
+                config,
+                messages,
+                userRankManager,
+                guildRankManager
         )
 
         lenient().`when`(funnyGuilds.rankPlaceholdersService).thenReturn(rankPlaceholdersService)
