@@ -1,5 +1,6 @@
 package net.dzikoysk.funnyguilds.feature.protection;
 
+import dev.peri.yetanothermessageslibrary.message.Sendable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Function;
@@ -16,9 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import panda.std.Option;
-import panda.std.Pair;
 import panda.std.Triple;
-import dev.peri.yetanothermessageslibrary.message.Sendable;
 
 public final class ProtectionSystem {
 
@@ -42,8 +41,8 @@ public final class ProtectionSystem {
         PluginConfiguration config = plugin.getPluginConfiguration();
         HeartConfiguration heartConfig = config.heart;
         if (region.getHeart().contentEquals(location)) {
-            Pair<Material, Byte> heartMaterial = heartConfig.createMaterial;
-            return Option.when(heartMaterial != null && heartMaterial.getFirst() != Material.AIR, Triple.of(player, guild, ProtectionType.HEART));
+            Material heartMaterial = heartConfig.createMaterial;
+            return Option.when(heartMaterial != null && heartMaterial != Material.AIR, Triple.of(player, guild, ProtectionType.HEART));
         }
 
         if (player.hasPermission("funnyguilds.admin.build")) {
@@ -92,19 +91,19 @@ public final class ProtectionSystem {
         Function<MessageConfiguration, Sendable> messageSupplier;
         switch (protectionType) {
             case UNAUTHORIZED:
-                messageSupplier = config -> config.regionUnauthorized;
+                messageSupplier = config -> config.guild.region.protection.unauthorized;
                 break;
             case HEART:
-                messageSupplier = config -> config.regionCenter;
+                messageSupplier = config -> config.guild.region.protection.center;
                 break;
             case HEART_INTERACTION:
-                messageSupplier = config -> config.regionInteract;
+                messageSupplier = config -> config.guild.region.protection.heart;
                 break;
             case LOCKED:
                 ProtectionSystem.sendRegionExplodeMessage(player, result.getSecond());
                 return;
             default:
-                messageSupplier = config -> config.regionOther;
+                messageSupplier = config -> config.guild.region.protection.other;
                 break;
         }
         FunnyGuilds.getInstance().getMessageService().getMessage(messageSupplier)
@@ -115,7 +114,7 @@ public final class ProtectionSystem {
     private static void sendRegionExplodeMessage(Player player, Guild guild) {
         guild.getBuild().peek(build -> {
             Duration time = Duration.between(Instant.now(), build);
-            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.regionExplodeInteract)
+            FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.guild.region.explosion.interaction)
                     .with(FunnyFormatter.of("{TIME}", time.getSeconds()))
                     .receiver(player)
                     .send();

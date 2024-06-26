@@ -22,12 +22,12 @@ public final class LivesCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-        when(args.length < 2, config -> config.adminNoLivesGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
+
+        when(args.length < 2, config -> config.admin.commands.guild.lives.noValueGiven);
         int lives = Option.attempt(NumberFormatException.class, () -> Integer.parseInt(args[1])).orThrow(() -> {
-            return new InternalValidationException(config -> config.adminErrorInNumber, FunnyFormatter.of("{ERROR}", args[0]));
+            return new InternalValidationException(config -> config.commands.validation.invalidNumber, FunnyFormatter.of("{ERROR}", args[0]));
         });
 
         User admin = AdminUtils.getAdminUser(sender);
@@ -37,13 +37,10 @@ public final class LivesCommand extends AbstractFunnyCommand {
 
         guild.setLives(lives);
 
-        FunnyFormatter formatter = new FunnyFormatter()
-                .register("{GUILD}", guild.getTag())
-                .register("{LIVES}", lives);
-
-        this.messageService.getMessage(config -> config.adminLivesChanged)
-                .with(formatter)
+        this.messageService.getMessage(config -> config.admin.commands.guild.lives.changed)
                 .receiver(sender)
+                .with(guild)
+                .with("{VALUE}", lives)
                 .send();
     }
 

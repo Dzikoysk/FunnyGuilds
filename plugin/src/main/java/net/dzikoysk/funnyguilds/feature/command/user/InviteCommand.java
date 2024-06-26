@@ -45,8 +45,8 @@ public final class InviteCommand extends AbstractFunnyCommand {
                 .register("{GUILD}", guild.getName())
                 .register("{TAG}", guild.getTag());
 
-        when(args.length < 1, config -> config.generalNoNickGiven);
-        when(guild.getMembers().size() >= this.config.maxMembersInGuild, config -> config.inviteAmount, formatter);
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
+        when(guild.getMembers().size() >= this.config.maxMembersInGuild, config -> config.guild.commands.invite.playersLimit, formatter);
 
         boolean checkArgument = this.config.inviteCommandAllArgumentIgnoreCase
                 ? args[0].equalsIgnoreCase(this.config.inviteCommandAllArgument)
@@ -55,20 +55,20 @@ public final class InviteCommand extends AbstractFunnyCommand {
         if (checkArgument) {
             double range = args.length >= 2
                     ? Option.attempt(NumberFormatException.class, () -> Double.parseDouble(args[1]))
-                        .orThrow(() -> new InternalValidationException(config -> config.inviteAllArgumentIsNotNumber))
+                        .orThrow(() -> new InternalValidationException(config -> config.guild.commands.invite.all.invalidNumber, FunnyFormatter.of("{ERROR}", args[1])))
                     : this.config.inviteCommandAllDefaultRange;
 
-            when(range > this.config.inviteCommandAllMaxRange, config -> config.inviteRangeToBig, FunnyFormatter.of("{MAX_RANGE}", this.config.inviteCommandAllMaxRange));
+            when(range > this.config.inviteCommandAllMaxRange, config -> config.guild.commands.invite.all.rangeToBig, FunnyFormatter.of("{MAX_RANGE}", this.config.inviteCommandAllMaxRange));
 
             List<Player> nearbyPlayers = PandaStream.of(Bukkit.getServer().getOnlinePlayers())
                     .filter(player -> range >= player.getLocation().distance(sender.getLocation()))
                     .filterNot(player -> player.equals(sender))
                     .collect(Collectors.toList());
 
-            when(guild.getMembers().size() + nearbyPlayers.size() > this.config.maxMembersInGuild, config -> config.inviteAmount, formatter);
-            when(nearbyPlayers.isEmpty(), config -> config.inviteNoOneIsNearby);
+            when(guild.getMembers().size() + nearbyPlayers.size() > this.config.maxMembersInGuild, config -> config.guild.commands.invite.playersLimit, formatter);
+            when(nearbyPlayers.isEmpty(), config -> config.guild.commands.invite.all.noOneNearby);
 
-            this.messageService.getMessage(config -> config.inviteAllCommand)
+            this.messageService.getMessage(config -> config.guild.commands.invite.all.invited)
                     .receiver(sender)
                     .with("{RANGE}", range)
                     .send();
@@ -90,11 +90,11 @@ public final class InviteCommand extends AbstractFunnyCommand {
                 return;
             }
 
-            this.messageService.getMessage(config -> config.inviteCancelled)
+            this.messageService.getMessage(config -> config.guild.commands.invite.cancelled)
                     .receiver(deputy)
                     .with("{PLAYER}", invitedUser.getName())
                     .send();
-            this.messageService.getMessage(config -> config.inviteCancelledToInvited)
+            this.messageService.getMessage(config -> config.guild.commands.invite.cancelledTarget)
                     .receiver(invitedUser)
                     .with(formatter)
                     .send();
@@ -103,7 +103,7 @@ public final class InviteCommand extends AbstractFunnyCommand {
             return;
         }
 
-        when(invitedUser.hasGuild(), config -> config.generalUserHasGuild);
+        when(invitedUser.hasGuild(), config -> config.commands.validation.userHasGuild);
 
         if (!SimpleEventHandler.handle(new GuildMemberInviteEvent(EventCause.USER, deputy, guild, invitedUser))) {
             return;
@@ -111,11 +111,11 @@ public final class InviteCommand extends AbstractFunnyCommand {
 
         this.guildInvitationList.createInvitation(guild, invitedUser);
 
-        this.messageService.getMessage(config -> config.inviteToOwner)
+        this.messageService.getMessage(config -> config.guild.commands.invite.invited)
                 .receiver(deputy)
                 .with("{PLAYER}", invitedUser.getName())
                 .send();
-        this.messageService.getMessage(config -> config.inviteToInvited)
+        this.messageService.getMessage(config -> config.guild.commands.invite.invitedTarget)
                 .receiver(invitedUser)
                 .with(formatter)
                 .send();

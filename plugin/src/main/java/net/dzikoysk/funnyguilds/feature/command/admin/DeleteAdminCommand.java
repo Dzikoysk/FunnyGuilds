@@ -20,9 +20,9 @@ public final class DeleteAdminCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
+
         User admin = AdminUtils.getAdminUser(sender);
 
         if (!SimpleEventHandler.handle(new GuildDeleteEvent(AdminUtils.getCause(admin), admin, guild))) {
@@ -37,15 +37,15 @@ public final class DeleteAdminCommand extends AbstractFunnyCommand {
                 .register("{GUILD}", guild.getName())
                 .register("{TAG}", guild.getTag());
 
-        this.messageService.getMessage(config -> config.deleteSuccessful)
-                .receiver(sender)
-                .with(formatter)
-                .send();
-        this.messageService.getMessage(config -> config.adminGuildBroken)
+        this.messageService.getMessage(config -> config.admin.commands.guild.delete.deletedOwner)
                 .receiver(guild.getOwner())
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.broadcastDelete)
+        this.messageService.getMessage(config -> config.guild.commands.delete.deleted)
+                .receiver(sender)
+                .with(formatter)
+                .send();
+        this.messageService.getMessage(config -> config.guild.commands.delete.deletedBroadcast)
                 .broadcast()
                 .with(formatter)
                 .send();

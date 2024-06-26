@@ -3,8 +3,8 @@ package net.dzikoysk.funnyguilds.damage;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import net.dzikoysk.funnyguilds.shared.Validate;
 import net.dzikoysk.funnyguilds.user.User;
-import org.apache.commons.lang3.Validate;
 
 public final class Damage {
 

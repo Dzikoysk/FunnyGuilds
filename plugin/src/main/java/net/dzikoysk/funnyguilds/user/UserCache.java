@@ -1,7 +1,5 @@
 package net.dzikoysk.funnyguilds.user;
 
-import net.dzikoysk.funnyguilds.FunnyGuilds;
-import net.dzikoysk.funnyguilds.damage.DamageState;
 import net.dzikoysk.funnyguilds.feature.scoreboard.dummy.Dummy;
 import net.dzikoysk.funnyguilds.feature.scoreboard.nametag.IndividualNameTag;
 import net.dzikoysk.funnyguilds.feature.tablist.IndividualPlayerList;
@@ -25,11 +23,6 @@ public class UserCache {
 
     public UserCache(User user) {
         this.user = user;
-    }
-
-    @Deprecated
-    public DamageState getDamageHistory() {
-        return FunnyGuilds.getInstance().getDamageManager().getDamageState(this.user.getUUID());
     }
 
     public Option<IndividualPlayerList> getPlayerList() {

@@ -7,14 +7,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator;
 import net.dzikoysk.funnyguilds.shared.FunnyValidator.NameResult;
-import org.apache.commons.lang3.Validate;
+import net.dzikoysk.funnyguilds.shared.Validate;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import panda.std.Option;
 import panda.std.stream.PandaStream;
@@ -211,18 +209,6 @@ public class UserManager {
      */
     public boolean playedBefore(String nickname, boolean ignoreCase) {
         return this.findByName(nickname, ignoreCase).isPresent();
-    }
-
-    /**
-     * Gets the user manager.
-     *
-     * @return the user manager
-     * @deprecated for removal in the future, in favour of {@link FunnyGuilds#getUserManager()}
-     */
-    @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "5.0")
-    public static UserManager getInstance() {
-        return FunnyGuilds.getInstance().getUserManager();
     }
 
 }

@@ -10,7 +10,6 @@ import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.feature.hooks.HookManager;
 import net.dzikoysk.funnyguilds.feature.hooks.vault.VaultHook;
 import net.dzikoysk.funnyguilds.feature.placeholders.StaticPlaceholdersService;
-import net.dzikoysk.funnyguilds.rank.DefaultTops;
 import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserRank;
@@ -33,7 +32,6 @@ public class UserPlaceholdersService extends StaticPlaceholdersService<User, Use
                 .property("ping-format", user -> FunnyFormatter.format(NumberRange.inRangeToString(user.getPing(),
                         config.pingFormat), "{PING}", user.getPing()))
                 .property("guild-position", user -> UserUtils.getUserPosition(config, user))
-                .rankProperty("position", (rank) -> rank.getPosition(DefaultTops.USER_POINTS_TOP))
                 .rankProperty("points", UserRank::getPoints)
                 .rankProperty("points-format", (UserRank rank) -> FunnyFormatter.format(NumberRange.inRangeToString(rank.getPoints(),
                         config.pointsFormat), "{POINTS}", rank.getPoints()))
@@ -46,7 +44,7 @@ public class UserPlaceholdersService extends StaticPlaceholdersService<User, Use
     }
 
     public static UserPlaceholders createPlayerPlaceholders(FunnyGuilds plugin) {
-        String wgRegionNoValue = plugin.getMessageService().get(config -> config.wgRegionNoValue);
+        String wgRegionNoValue = plugin.getMessageService().get(config -> config.noValue.guild.wgRegionNoValue);
         return new UserPlaceholders()
                 .playerOptionProperty("world", playerOption -> playerOption
                         .map(Player::getWorld)

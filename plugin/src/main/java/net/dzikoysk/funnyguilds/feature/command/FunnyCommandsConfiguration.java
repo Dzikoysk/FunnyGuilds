@@ -61,6 +61,7 @@ import net.dzikoysk.funnyguilds.feature.command.user.TntCommand;
 import net.dzikoysk.funnyguilds.feature.command.user.TopCommand;
 import net.dzikoysk.funnyguilds.feature.command.user.ValidityCommand;
 import net.dzikoysk.funnyguilds.feature.command.user.WarCommand;
+import net.dzikoysk.funnyguilds.feature.command.user.HelpRequestCommand;
 import net.dzikoysk.funnyguilds.guild.GuildManager;
 import net.dzikoysk.funnyguilds.user.UserManager;
 import org.bukkit.Server;
@@ -111,7 +112,8 @@ public final class FunnyCommandsConfiguration {
                 .command("top", commands.top, TopCommand.class)
                 .command("validity", commands.validity, ValidityCommand.class)
                 .command("war", commands.war, WarCommand.class)
-                .command("tnt", commands.tnt, TntCommand.class);
+                .command("tnt", commands.tnt, TntCommand.class)
+                .command("helprequest", commands.helpRequest, HelpRequestCommand.class);
 
         CommandComponents adminCommands = new CommandComponents("admin")
                 .command("add", commands.admin.add, AddCommand.class)
@@ -121,7 +123,7 @@ public final class FunnyCommandsConfiguration {
                 .command("deaths", commands.admin.deaths, DeathsCommand.class)
                 .command("delete", commands.admin.delete, DeleteAdminCommand.class)
                 .command("deputy", commands.admin.deputy, DeputyAdminCommand.class)
-                .command("guilds-enabled", commands.admin.enabled, GuildsEnabledCommand.class)
+                .command("guilds-enabled", commands.admin.status, GuildsEnabledCommand.class)
                 .command("kick", commands.admin.kick, KickAdminCommand.class)
                 .command("kills", commands.admin.kills, KillsCommand.class)
                 .command("leader", commands.admin.leader, LeaderAdminCommand.class)

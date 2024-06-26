@@ -2,36 +2,14 @@ package net.dzikoysk.funnyguilds.nms.api.entity;
 
 import org.bukkit.Location;
 
-public class FakeEntity {
+public record FakeEntity(int id, Location location, Object spawnPacket) {
 
-    private final int id;
-    private final Location location;
-    private final Object spawnPacket;
-
-    public FakeEntity(int id, Location location, Object spawnPacket) {
-        this.id = id;
-        this.location = location;
-        this.spawnPacket = spawnPacket;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public int getChunkX() {
+    public int chunkX() {
         return this.location.getBlockX() >> 4;
     }
 
-    public int getChunkZ() {
+    public int chunkZ() {
         return this.location.getBlockZ() >> 4;
-    }
-
-    public Object getSpawnPacket() {
-        return this.spawnPacket;
     }
 
     @Override

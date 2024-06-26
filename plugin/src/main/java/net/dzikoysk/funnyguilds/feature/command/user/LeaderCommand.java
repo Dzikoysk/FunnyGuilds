@@ -25,11 +25,11 @@ public final class LeaderCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(@IsOwner User owner, Guild guild, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
         User leaderUser = UserValidation.requireUserByName(args[0]);
-        when(owner.equals(leaderUser), config -> config.leaderMustBeDifferent);
-        when(!guild.isMember(leaderUser), config -> config.generalIsNotMember);
+
+        when(owner.equals(leaderUser), config -> config.guild.commands.leader.leaderMustBeDifferent);
+        when(!guild.isMember(leaderUser), config -> config.commands.validation.userNotMember);
 
         if (!SimpleEventHandler.handle(new GuildMemberLeaderEvent(EventCause.USER, owner, guild, leaderUser))) {
             return;
@@ -37,11 +37,14 @@ public final class LeaderCommand extends AbstractFunnyCommand {
 
         guild.setOwner(leaderUser);
 
-        this.messageService.getMessage(config -> config.leaderSet)
+        this.messageService.getMessage(config -> config.guild.commands.leader.changed)
                 .receiver(owner)
                 .send();
-        this.messageService.getMessage(config -> config.leaderOwner)
+        this.messageService.getMessage(config -> config.guild.commands.leader.changedTarget)
                 .receiver(leaderUser)
+                .send();
+        this.messageService.getMessage(config -> config.guild.commands.leader.changedMembers)
+                .receiver(guild)
                 .send();
     }
 

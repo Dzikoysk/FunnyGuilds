@@ -3,7 +3,7 @@ package net.dzikoysk.funnyguilds.listener.dynamic;
 import java.util.Collection;
 import java.util.function.Supplier;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
-import org.apache.commons.lang3.Validate;
+import net.dzikoysk.funnyguilds.shared.Validate;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 

@@ -25,11 +25,11 @@ public final class DeputyCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(@IsOwner User owner, Guild guild, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
         User deputyUser = UserValidation.requireUserByName(args[0]);
-        when(owner.equals(deputyUser), config -> config.deputyMustBeDifferent);
-        when(!guild.isMember(deputyUser), config -> config.generalIsNotMember);
+
+        when(owner.equals(deputyUser), config -> config.guild.commands.deputy.deputyMustBeDifferent);
+        when(!guild.isMember(deputyUser), config -> config.commands.validation.userNotMember);
 
         if (!SimpleEventHandler.handle(new GuildMemberDeputyEvent(EventCause.USER, owner, guild, deputyUser))) {
             return;
@@ -37,21 +37,27 @@ public final class DeputyCommand extends AbstractFunnyCommand {
 
         if (deputyUser.isDeputy()) {
             guild.removeDeputy(deputyUser);
-            this.messageService.getMessage(config -> config.deputyRemove)
+            this.messageService.getMessage(config -> config.guild.commands.deputy.removed)
                     .receiver(owner)
                     .send();
-            this.messageService.getMessage(config -> config.deputyMember)
+            this.messageService.getMessage(config -> config.guild.commands.deputy.removedTarget)
                     .receiver(deputyUser)
+                    .send();
+            this.messageService.getMessage(config -> config.guild.commands.deputy.removedMembers)
+                    .receiver(guild)
                     .send();
             return;
         }
 
         guild.addDeputy(deputyUser);
-        this.messageService.getMessage(config -> config.deputySet)
+        this.messageService.getMessage(config -> config.guild.commands.deputy.set)
                 .receiver(owner)
                 .send();
-        this.messageService.getMessage(config -> config.deputyOwner)
+        this.messageService.getMessage(config -> config.guild.commands.deputy.setTarget)
                 .receiver(deputyUser)
+                .send();
+        this.messageService.getMessage(config -> config.guild.commands.deputy.setMembers)
+                .receiver(guild)
                 .send();
     }
 

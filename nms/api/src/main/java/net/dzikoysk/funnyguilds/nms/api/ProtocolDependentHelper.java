@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 
 public final class ProtocolDependentHelper {
 
-    private static final String EMPTY_IDENTIFIER = " ";
     private static final int V1_19_3_PROTOCOL_VERSION = 761;
     private static boolean viaApiAvailable;
 
@@ -17,10 +16,6 @@ public final class ProtocolDependentHelper {
     }
 
     private ProtocolDependentHelper() {}
-
-    public static String getGameProfileNameBasedOnPlayerProtocolVersion(Player player, String paddedIdentifier) {
-        return getGameProfileNameBasedOnPlayerProtocolVersion(player, paddedIdentifier, EMPTY_IDENTIFIER);
-    }
 
     public static String getGameProfileNameBasedOnPlayerProtocolVersion(Player player, String paddedIdentifier, String defaultIdentifier) {
         // NOTE: Sorting changed in 1.19.3 and GameProfile name is being included in the sorting process.
@@ -48,4 +43,5 @@ public final class ProtocolDependentHelper {
     private static int getPlayerProtocolVersionImpl(Player player) {
         return Via.getAPI().getPlayerVersion(player.getUniqueId());
     }
+
 }

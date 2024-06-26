@@ -17,14 +17,12 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
-import panda.std.Pair;
 
 @Names(strategy = NameStrategy.HYPHEN_CASE, modifier = NameModifier.TO_LOWER_CASE)
 public class HeartConfiguration extends OkaeriConfig {
 
     @Comment("Blok lub entity, które jest sercem gildii")
     @Comment("Zmiana entity wymaga pełnego restartu serwera")
-    @Comment("Bloki muszą być podawane w formacie - material:metadata")
     @Comment("Nazwy bloków muszą pasować do nazw podanych tutaj: https://spigotdocs.okaeri.cloud/select/org/bukkit/Material.html")
     @Comment("Typ entity musi byc zgodny z tą lista (i zdrowym rozsądkiem) - https://spigotdocs.okaeri.cloud/select/org/bukkit/entity/EntityType.html")
     @Comment("UWAGA: Zmiana bloku, gdy są juz zrobione jakieś gildie, spowoduje nieprawidłowe działanie ich regionów")
@@ -33,7 +31,7 @@ public class HeartConfiguration extends OkaeriConfig {
     @Comment("Jeśli pojawi sie w powietrzu - spadnie i plugin nie będzie odczytywał go poprawnie!")
     public String createType = "ender_crystal";
     @Exclude
-    public Pair<Material, Byte> createMaterial;
+    public Material createMaterial;
     @Exclude
     public EntityType createEntityType;
 
@@ -114,6 +112,10 @@ public class HeartConfiguration extends OkaeriConfig {
     public File guildSchematicFile;
 
     @Comment("")
+    @Comment("Czy gracz powinien być teleportowany do serca gildii przy jej zakładaniu.")
+    public boolean teleportToHeartOnCreate = true;
+
+    @Comment("")
     @Comment("Przesunięcie domyślnego home gildii względem serca gildii")
     @Comment("Opcja przydatna w przypadku ustawienie własnego schematu serca, aby gracze nie pojawiali sie w bloku")
     public Vector homeOffset = new Vector(0, 0, 0);
@@ -167,7 +169,7 @@ public class HeartConfiguration extends OkaeriConfig {
     public void loadProcessedProperties() {
         this.createEntityType = EntityUtils.parseEntityType(this.createType, true, false);
         if (this.createEntityType == null) {
-            this.createMaterial = MaterialUtils.parseMaterialData(this.createType, true);
+            this.createMaterial = MaterialUtils.parseMaterial(this.createType, true);
         }
 
         if (this.pasteSchematicOnCreation) {

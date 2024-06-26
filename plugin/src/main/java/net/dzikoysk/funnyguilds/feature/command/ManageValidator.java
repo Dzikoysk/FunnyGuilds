@@ -17,7 +17,7 @@ final class ManageValidator implements Validator<CanManage, User, ValidationExce
         this.memberValidator.isMember(user);
 
         if (!user.canManage()) {
-            throw new InternalValidationException(config -> config.generalIsNotOwner);
+            throw new InternalValidationException(config -> config.commands.validation.notOwner);
         }
 
         return true;

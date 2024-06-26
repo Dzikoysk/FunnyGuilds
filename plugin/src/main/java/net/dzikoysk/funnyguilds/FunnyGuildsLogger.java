@@ -3,10 +3,9 @@ package net.dzikoysk.funnyguilds;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import net.dzikoysk.funnyguilds.shared.bukkit.NmsUtils;
 import org.bukkit.Bukkit;
+import org.slf4j.Logger;
 import panda.std.stream.PandaStream;
 
 public class FunnyGuildsLogger {
@@ -38,11 +37,11 @@ public class FunnyGuildsLogger {
     }
 
     public void warning(String content) {
-        this.rootLogger.warning(content);
+        this.rootLogger.warn(content);
     }
 
     public void error(String content) {
-        this.rootLogger.severe(content);
+        this.rootLogger.error(content);
     }
 
     public void error(String content, Throwable cause) {
@@ -61,7 +60,7 @@ public class FunnyGuildsLogger {
         private final FunnyGuilds plugin;
 
         DefaultLogger(FunnyGuilds plugin) {
-            super(plugin.getLogger());
+            super(plugin.getSLF4JLogger());
             this.plugin = plugin;
         }
 
@@ -70,7 +69,6 @@ public class FunnyGuildsLogger {
             if (!this.plugin.getPluginConfiguration().debugMode) {
                 return;
             }
-
             super.debug(content);
         }
 
@@ -94,7 +92,6 @@ public class FunnyGuildsLogger {
             this.error("  Java: " + System.getProperty("java.version"));
             this.error("  Thread: " + Thread.currentThread());
             this.error("  Loaded plugins: " + loadedPlugins);
-            this.error("  Reload count: " + NmsUtils.getReloadCount());
             this.error("");
         }
 

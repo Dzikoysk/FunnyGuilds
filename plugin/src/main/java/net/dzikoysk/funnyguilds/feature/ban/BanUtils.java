@@ -2,6 +2,7 @@ package net.dzikoysk.funnyguilds.feature.ban;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.message.MessageService;
 import net.dzikoysk.funnyguilds.guild.Guild;
@@ -43,17 +44,18 @@ public final class BanUtils {
     }
 
     public static String getBanMessage(User user) {
-        MessageService messageService = FunnyGuilds.getInstance().getMessageService();
-
         return user.getBan()
                 .map(ban -> {
+                    FunnyGuilds plugin = FunnyGuilds.getInstance();
+                    ZoneId timeZone = plugin.getPluginConfiguration().timeZone;
+                    MessageService messageService = plugin.getMessageService();
+
                     FunnyFormatter formatter = new FunnyFormatter()
                             .register("{NEWLINE}", ChatColor.RESET + "\n")
-                            .register("{DATE}", messageService.get(user, config -> config.dateFormat).format(ban.getTime()))
+                            .register("{DATE}", messageService.get(user, config -> config.dateFormat).format(ban.getTime(), timeZone))
                             .register("{REASON}", ban.getReason())
                             .register("{PLAYER}", user.getName());
-
-                    return messageService.get(user, config -> config.banMessage, formatter);
+                    return messageService.get(user, config -> config.admin.commands.guild.ban.bannedKick, formatter);
                 })
                 .orElseGet("");
     }

@@ -92,7 +92,7 @@ public final class FunnyGuildsVersion {
                 .register("{GITHUB_LINK}", GITHUB_URL)
                 .register("{DISCORD_LINK}", DISCORD_URL);
 
-        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.newVersionAvailable)
+        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.system.newVersionAvailable)
                 .receiver(sender)
                 .with(formatter)
                 .send();

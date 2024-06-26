@@ -29,7 +29,7 @@ public final class SecurityUtils {
                 .register("{PLAYER}", player.getName())
                 .register("{CHEAT}", cheatType.getName());
 
-        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.securitySystemInfo)
+        FunnyGuilds.getInstance().getMessageService().getMessage(config -> config.admin.securitySystem.info)
                 .broadcast()
                 .with(formatter)
                 .with(

@@ -5,8 +5,8 @@ import net.dzikoysk.funnyguilds.config.message.MessageConfiguration;
 
 public enum CheatType {
 
-    REACH("Reach", config -> config.securitySystemReach),
-    FREE_CAM("FreeCam", config -> config.securitySystemFreeCam);
+    REACH("Reach", config -> config.admin.securitySystem.reach),
+    FREE_CAM("FreeCam", config -> config.admin.securitySystem.freeCam);
 
     private final String name;
     private final Function<MessageConfiguration, String> noteSupplier;

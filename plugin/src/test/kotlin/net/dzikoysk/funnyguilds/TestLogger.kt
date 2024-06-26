@@ -1,6 +1,6 @@
 package net.dzikoysk.funnyguilds
 
-import java.util.logging.Logger
+import org.slf4j.Logger
 
 class TestLogger(rootLogger: Logger) : FunnyGuildsLogger(rootLogger) {
 

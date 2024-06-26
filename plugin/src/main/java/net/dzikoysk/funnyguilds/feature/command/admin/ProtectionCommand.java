@@ -10,7 +10,6 @@ import net.dzikoysk.funnyguilds.feature.command.AbstractFunnyCommand;
 import net.dzikoysk.funnyguilds.feature.command.GuildValidation;
 import net.dzikoysk.funnyguilds.feature.command.InternalValidationException;
 import net.dzikoysk.funnyguilds.guild.Guild;
-import net.dzikoysk.funnyguilds.shared.FunnyFormatter;
 import org.bukkit.command.CommandSender;
 import panda.std.Option;
 import panda.utilities.text.Joiner;
@@ -27,27 +26,23 @@ public final class ProtectionCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoTagGiven);
-        when(args.length < 3, config -> config.adminNoProtectionDateGive);
-
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
-        String protectionDateAsString = Joiner.on(" ").join(Arrays.copyOfRange(args, 1, 3)).toString();
 
+        when(args.length < 3, config -> config.admin.commands.guild.protection.noValueGiven);
+        String protectionDateAsString = Joiner.on(" ").join(Arrays.copyOfRange(args, 1, 3)).toString();
         LocalDateTime protectionDate = Option.attempt(ParseException.class, () -> {
             return LocalDateTime.parse(protectionDateAsString, PROTECTION_DATE_FORMATTER);
         }).orThrow(() -> {
-            return new InternalValidationException(config -> config.adminInvalidProtectionDate);
+            return new InternalValidationException(config -> config.commands.validation.invalidDate);
         });
 
         guild.setProtection(protectionDate.atZone(ZoneId.systemDefault()).toInstant());
 
-        FunnyFormatter formatter = new FunnyFormatter()
-                .register("{TAG}", guild.getTag())
-                .register("{DATE}", protectionDateAsString);
-
-        this.messageService.getMessage(config -> config.adminProtectionSetSuccessfully)
+        this.messageService.getMessage(config -> config.admin.commands.guild.protection.changed)
                 .receiver(sender)
-                .with(formatter)
+                .with(guild)
+                .with("{DATE}", protectionDateAsString)
                 .send();
     }
 

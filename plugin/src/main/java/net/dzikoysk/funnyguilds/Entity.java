@@ -18,8 +18,6 @@ public interface Entity {
     enum EntityType {
 
         GUILD,
-        OFFLINE_USER,
-        RANK,
         REGION,
         USER
 

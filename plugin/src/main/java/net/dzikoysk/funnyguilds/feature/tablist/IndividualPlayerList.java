@@ -17,9 +17,9 @@ import net.dzikoysk.funnyguilds.shared.MapUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.ChatUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.FunnyServer;
 import net.dzikoysk.funnyguilds.user.User;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.entity.Player;
 import panda.std.Option;
+import panda.utilities.StringUtils;
 import panda.utilities.text.Joiner;
 
 public class IndividualPlayerList {
@@ -136,7 +136,7 @@ public class IndividualPlayerList {
         allCells[PlayerListConstants.DEFAULT_CELL_COUNT + 1] = footer;
 
         String mergedCells = Joiner.on("\0").join(allCells).toString();
-        return StringUtils.splitPreserveAllTokens(this.putVars(mergedCells), '\0');
+        return StringUtils.split(this.putVars(mergedCells), "\0");
     }
 
     private String putTop(String cell) {
@@ -150,7 +150,6 @@ public class IndividualPlayerList {
         if (playerOption.isEmpty()) {
             return formatted;
         }
-
         Player player = playerOption.get();
 
         formatted = FunnyGuilds.getInstance().getTablistPlaceholdersService().format(this.user, formatted, this.user);
@@ -162,13 +161,11 @@ public class IndividualPlayerList {
 
     public SkinTexture[] putTexturePrepareCells() {
         SkinTexture[] textures = new SkinTexture[PlayerListConstants.DEFAULT_CELL_COUNT];
-
         this.cellTextures.forEach((range, texture) -> {
             for (int i = range.getMinRange().intValue(); i <= range.getMaxRange().intValue(); i++) {
                 textures[i - 1] = texture;
             }
         });
-
         return textures;
     }
 

@@ -49,7 +49,7 @@ public class TntProtection extends AbstractFunnyListener {
                 .flatMap(user -> this.funnyServer.getPlayer(user))
                 .toSet();
 
-        this.messageService.getMessage( config -> config.regionExplode)
+        this.messageService.getMessage( config -> config.guild.region.explosion.message)
                 .with("{TIME}", this.config.regionExplode.getSeconds())
                 .receivers(players)
                 .send();

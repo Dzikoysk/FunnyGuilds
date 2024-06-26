@@ -24,14 +24,14 @@ public final class PvPCommand extends AbstractFunnyCommand {
     )
     public void execute(@CanManage User deputy, Guild guild, String[] args) {
         if (args.length > 0) {
-            when(!this.config.damageAlly, config -> config.generalAllyPvpDisabled);
+            when(!this.config.damageAlly, config -> config.guild.commands.pvp.allyPvPDisabled);
 
             Guild targetAlliedGuild = GuildValidation.requireGuildByTag(args[0]);
             FunnyFormatter guildTagFormatter = FunnyFormatter.of("{TAG}", targetAlliedGuild.getTag());
-            when(!guild.isAlly(targetAlliedGuild), config -> config.allyDoesntExist, guildTagFormatter);
+            when(!guild.isAlly(targetAlliedGuild), config -> config.guild.commands.validation.notAllied, guildTagFormatter);
 
             boolean newPvpValue = guild.toggleAllyPvP(targetAlliedGuild);
-            this.messageService.getMessage(config -> newPvpValue ? config.pvpAllyOn : config.pvpAllyOff)
+            this.messageService.getMessage(config -> newPvpValue ? config.guild.commands.pvp.enabledAlly : config.guild.commands.pvp.disabledAlly)
                     .receiver(deputy)
                     .with(guildTagFormatter)
                     .send();
@@ -40,7 +40,7 @@ public final class PvPCommand extends AbstractFunnyCommand {
         }
 
         boolean newPvpValue = guild.togglePvP();
-        this.messageService.getMessage(config -> newPvpValue ? config.pvpOn : config.pvpOff)
+        this.messageService.getMessage(config -> newPvpValue ? config.guild.commands.pvp.enabled : config.guild.commands.pvp.disabled)
                 .receiver(deputy)
                 .send();
     }

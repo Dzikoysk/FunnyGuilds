@@ -19,16 +19,17 @@ public final class TeleportCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(Player player, User user, String[] args) {
-        when(!this.config.regionsEnabled, config -> config.regionsDisabled);
-        when(args.length < 1, config -> config.generalNoTagGiven);
-
+        when(!this.config.regionsEnabled, config -> config.guild.region.disabled);
+        when(args.length < 1, config -> config.commands.validation.noTagGiven);
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
-        Region region = when(guild.getRegion(), config -> config.adminNoRegionFound);
 
-        this.messageService.getMessage(config -> config.baseTeleport)
-                .receiver(player)
-                .send();
+        Region region = when(guild.getRegion(), config ->  config.admin.commands.validation.noRegion);
+
         player.teleport(region.getCenter());
+        this.messageService.getMessage(config -> config.admin.commands.guild.teleport.teleported)
+                .receiver(player)
+                .with(guild)
+                .send();
     }
 
 }

@@ -21,7 +21,6 @@ import net.dzikoysk.funnyguilds.user.User;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.panda_lang.utilities.inject.annotations.Inject;
-
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -40,16 +39,16 @@ public final class JoinCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(Player player, User user, String[] args) {
-        when(user.hasGuild(), config -> config.joinHasGuild);
+        when(user.hasGuild(), config -> config.commands.validation.hasGuild);
 
         Set<GuildInvitation> invitations = this.guildInvitationList.getInvitationsFor(user);
-        when(invitations.isEmpty(), config -> config.joinHasNotInvitation);
+        when(invitations.isEmpty(), config -> config.guild.commands.join.noInvitations);
 
         if (args.length < 1) {
             String guildNames = FunnyStringUtils.join(this.guildInvitationList.getInvitationGuildNames(user), true);
             FunnyFormatter formatter = FunnyFormatter.of("{GUILDS}", guildNames);
 
-            this.messageService.getMessage(config -> config.joinInvitationList)
+            this.messageService.getMessage(config -> config.guild.commands.join.invitationsList)
                     .receiver(player)
                     .with(formatter)
                     .send();
@@ -57,16 +56,16 @@ public final class JoinCommand extends AbstractFunnyCommand {
         }
 
         Guild guild = GuildValidation.requireGuildByTag(args[0]);
-        when(!this.guildInvitationList.hasInvitation(guild, user), config -> config.joinHasNotInvitationTo);
+        when(!this.guildInvitationList.hasInvitation(guild, user), config -> config.guild.commands.join.noInvitationGuild);
 
         List<ItemStack> requiredItems = this.config.joinItems;
-        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.joinItems)) {
+        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.guild.commands.join.missingItems)) {
             return;
         }
 
         when(
                 guild.getMembers().size() >= this.config.maxMembersInGuild,
-                config -> config.inviteAmountJoin, FunnyFormatter.of("{AMOUNT}", this.config.maxMembersInGuild)
+                config -> config.guild.commands.join.playerLimit, FunnyFormatter.of("{AMOUNT}", this.config.maxMembersInGuild)
         );
 
         if (!SimpleEventHandler.handle(new GuildMemberAcceptInviteEvent(EventCause.USER, user, guild, user))) {
@@ -92,17 +91,16 @@ public final class JoinCommand extends AbstractFunnyCommand {
                 .register("{TAG}", guild.getTag())
                 .register("{PLAYER}", player.getName());
 
-        this.messageService.getMessage(config -> config.joinToMember)
+        this.messageService.getMessage( config -> config.guild.commands.join.joined)
+                .receiver(guild.getOwner())
+                .with(formatter)
+                .send();
+        this.messageService.getMessage(config -> config.guild.commands.join.joinedTarget)
                 .receiver(player)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.broadcastJoin)
+        this.messageService.getMessage(config -> config.guild.commands.join.joinedBroadcast)
                 .broadcast()
-                .with(formatter)
-                .send();
-
-        this.messageService.getMessage( config -> config.joinToOwner)
-                .receiver(guild.getOwner())
                 .with(formatter)
                 .send();
     }

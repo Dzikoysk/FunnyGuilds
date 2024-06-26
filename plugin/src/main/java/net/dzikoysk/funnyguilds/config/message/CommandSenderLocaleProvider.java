@@ -2,7 +2,7 @@ package net.dzikoysk.funnyguilds.config.message;
 
 import dev.peri.yetanothermessageslibrary.locale.LocaleProvider;
 import java.util.Locale;
-import net.dzikoysk.funnyguilds.shared.bukkit.LocaleHelper;
+import dev.peri.yetanothermessageslibrary.util.BukkitLocaleHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -17,17 +17,10 @@ public class CommandSenderLocaleProvider implements LocaleProvider<CommandSender
 
     @Override
     public @Nullable Locale getLocale(@NotNull CommandSender entity) {
-        if (!(entity instanceof Player)) {
+        if (!(entity instanceof Player player)) {
             return null;
         }
-
-        String localeString = LocaleHelper.getLocaleString((Player) entity);
-        if (localeString == null) {
-            return null;
-        }
-
-        localeString = localeString.replace('_', '-');
-        return Locale.forLanguageTag(localeString);
+        return BukkitLocaleHelper.getLocale(player);
     }
 
 }

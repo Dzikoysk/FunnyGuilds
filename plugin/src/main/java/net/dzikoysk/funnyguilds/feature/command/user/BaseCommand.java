@@ -11,12 +11,14 @@ import net.dzikoysk.funnyguilds.feature.command.IsMember;
 import net.dzikoysk.funnyguilds.guild.Guild;
 import net.dzikoysk.funnyguilds.shared.bukkit.ItemUtils;
 import net.dzikoysk.funnyguilds.shared.bukkit.LocationUtils;
+import net.dzikoysk.funnyguilds.shared.bukkit.PermissionUtil;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import static net.dzikoysk.funnyguilds.feature.command.DefaultValidation.when;
 
 @FunnyComponent
@@ -31,32 +33,29 @@ public final class BaseCommand extends AbstractFunnyCommand {
             playerOnly = true
     )
     public void execute(Player player, @IsMember User member, Guild guild) {
-        when(!this.config.regionsEnabled, config -> config.regionsDisabled);
-        when(!this.config.baseEnable, config -> config.baseTeleportationDisabled);
-        when(member.getCache().getTeleportation() != null, config -> config.baseIsTeleportation);
+        when(!this.config.regionsEnabled, config -> config.guild.region.disabled);
+        when(!this.config.baseEnable, config -> config.guild.commands.base.disabled);
+        when(member.getCache().getTeleportation() != null, config -> config.guild.commands.base.alreadyTeleporting);
 
         List<ItemStack> requiredItems = player.hasPermission("funnyguilds.vip.base")
                 ? Collections.emptyList()
                 : this.config.baseItems;
 
-        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.baseItems)) {
+        if (!ItemUtils.playerHasEnoughItems(player, requiredItems, config -> config.guild.commands.base.missingItems)) {
             return;
         }
 
         ItemStack[] items = ItemUtils.toArray(requiredItems);
         player.getInventory().removeItem(items);
 
-        if (this.config.baseDelay.isZero()) {
+        Duration time = PermissionUtil.findHighestValue(player, this.config.baseDelay);
+        if (time == null || time.isZero()) {
             guild.teleportHome(player);
-            this.messageService.getMessage(config -> config.baseTeleport)
+            this.messageService.getMessage(config -> config.guild.commands.base.teleported)
                     .receiver(member)
                     .send();
             return;
         }
-
-        Duration time = player.hasPermission("funnyguilds.vip.baseTeleportTime")
-                ? this.config.baseDelayVip
-                : this.config.baseDelay;
 
         Location before = player.getLocation();
         Instant teleportStart = Instant.now();
@@ -71,7 +70,7 @@ public final class BaseCommand extends AbstractFunnyCommand {
 
             if (!LocationUtils.equals(player.getLocation(), before)) {
                 cache.getTeleportation().cancel();
-                this.messageService.getMessage(config -> config.baseMove)
+                this.messageService.getMessage(config -> config.guild.commands.base.cancelled)
                         .receiver(member)
                         .send();
                 cache.setTeleportation(null);
@@ -81,7 +80,7 @@ public final class BaseCommand extends AbstractFunnyCommand {
 
             if (Duration.between(teleportStart, Instant.now()).compareTo(time) > 0) {
                 cache.getTeleportation().cancel();
-                this.messageService.getMessage(config -> config.baseTeleport)
+                this.messageService.getMessage(config -> config.guild.commands.base.teleported)
                         .receiver(member)
                         .send();
                 guild.teleportHome(player);
@@ -89,7 +88,7 @@ public final class BaseCommand extends AbstractFunnyCommand {
             }
         }, 0L, 10L));
 
-        this.messageService.getMessage(config -> config.baseDontMove)
+        this.messageService.getMessage(config -> config.guild.commands.base.teleporting)
                 .receiver(member)
                 .with("{TIME}", time.getSeconds())
                 .send();

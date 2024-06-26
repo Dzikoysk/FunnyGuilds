@@ -17,9 +17,9 @@ public class GuildEntitySupplier implements PacketSuppliers {
     @Override
     public Collection<FakeEntity> supplyFakeEntities(World world, int chunkX, int chunkZ) {
         return PandaStream.of(this.helper.getGuildEntities().values())
-                .filter(entity -> entity.getLocation().getWorld().equals(world))
-                .filter(entity -> entity.getChunkX() == chunkX)
-                .filter(entity -> entity.getChunkZ() == chunkZ)
+                .filter(entity -> entity.location().getWorld().equals(world))
+                .filter(entity -> entity.chunkX() == chunkX)
+                .filter(entity -> entity.chunkZ() == chunkZ)
                 .toSet();
     }
 

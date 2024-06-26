@@ -1,24 +1,42 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import net.minecrell.pluginyml.paper.PaperPluginDescription
+import kotlin.math.exp
 
 plugins {
+    id("net.minecrell.plugin-yml.paper")
+    id("net.kyori.blossom") version "2.1.0"
     id("xyz.jpenilla.run-paper")
     kotlin("jvm")
 }
 
-@Suppress("VulnerableLibrariesLocal")
+val mcVersion: String by project
+val pluginApiVersion: String by project
+val paperVersion: String by project
+val mcDataVersion: String by project
+val runServerVersion: String by project
+
 dependencies {
     /* funnyguilds */
 
     project(":nms").dependencyProject.subprojects.forEach {
         implementation(it)
     }
-    implementation("net.dzikoysk:funnycommands:0.7.0")
+    implementation("net.dzikoysk:funnycommands:0.7.0") {
+        exclude(group = "org.panda-lang.utilities", module = "di")
+    }
 
     /* std */
 
+    val expressibleGroup = "org.panda-lang"
     val expressible = "1.3.6"
-    api("org.panda-lang:expressible:$expressible")
-    testImplementation("org.panda-lang:expressible-junit:$expressible")
+    compileOnlyApi("${expressibleGroup}:expressible:$expressible")
+    paperLibrary(expressibleGroup, "expressible", expressible)
+
+    val diGroup = "org.panda-lang.utilities"
+    val di = "1.8.0"
+    compileOnlyApi("${diGroup}:di:$di")
+    paperLibrary(diGroup, "di", di)
 
     /* okaeri config library */
 
@@ -30,13 +48,6 @@ dependencies {
     implementation("eu.okaeri:okaeri-commons-bukkit-holographicdisplays:0.2.25")
 
     /* messages libraries */
-
-    val adventureVersion = "4.17.0"
-    implementation("net.kyori:adventure-api:$adventureVersion")
-    implementation("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
-    implementation("net.kyori:adventure-text-minimessage:$adventureVersion")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3") // adventure-platform has other versioning than adventure-api
-
     val yamlVersion = "6.8.0-SNAPSHOT"
     implementation("dev.peri.yetanothermessageslibrary:core:$yamlVersion")
     implementation("dev.peri.yetanothermessageslibrary:repository-okaeri:$yamlVersion")
@@ -46,79 +57,177 @@ dependencies {
 
     /* general stuff */
 
-    @Suppress("GradlePackageUpdate")
-    implementation("com.zaxxer:HikariCP:4.0.3")
-
-    @Suppress("GradlePackageUpdate")
-    implementation("com.google.guava:guava:21.0") {
-        because("WorldEdit defined a constraint that we must use 21.0 and there is no way to ignore it")
-    }
-
-    @Suppress("GradlePackageUpdate")
-    implementation("com.google.code.gson:gson:2.8.0") {
-        because("WorldEdit defined a constraint that we must use 2.8.0 and there is no way to ignore it")
-    }
-
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.4")
-
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+    paperLibrary("com.zaxxer:HikariCP:5.1.0")
+    paperLibrary("org.mariadb.jdbc:mariadb-java-client:3.3.1")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    // probably fix for some exception?
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
-
     // bukkit stuff
-    shadow("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    shadow("org.apache.logging.log4j:log4j-core:2.20.0")
+    shadow("io.papermc.paper:paper-api:${paperVersion}")
 
     /* hooks */
 
-    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.5")
+    shadow("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
     shadow("net.milkbowl.vault:VaultAPI:1.7")
-    shadow("me.clip:placeholderapi:2.10.9") {
-        because("PlaceholderAPI on versions higher than 2.10.9 causes GH-1700 for some unknown reason")
+    shadow("me.clip:placeholderapi:2.11.6") {
         exclude(group = "com.google.code.gson", module = "gson")
     }
     shadow("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9")
-    shadow("com.github.decentsoftware-eu:decentholograms:2.8.1")
+    shadow("com.github.decentsoftware-eu:decentholograms:2.8.8")
     shadow("us.dynmap:dynmap-api:3.0")
 
     /* tests */
-    testImplementation("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    testImplementation("com.mojang:authlib:3.2.38")
+    testImplementation("io.papermc.paper:paper-api:${paperVersion}")
+    testRuntimeOnly("com.mojang:authlib:6.0.54")
+    testRuntimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:2.22.1")
+
+    testImplementation("${expressibleGroup}:expressible-junit:$expressible")
+    testRuntimeOnly("${expressibleGroup}:expressible:$expressible")
+    testRuntimeOnly("${diGroup}:di:$di")
 }
 
-tasks.processResources {
-    expand(
-        "funnyGuildsVersion" to version,
-        "funnyGuildsCommit" to grgit.head().abbreviatedId
-    )
+sourceSets {
+    main {
+        blossom {
+            javaSources {
+                property("mcDataVersion", mcDataVersion)
+            }
+        }
+    }
+}
+
+val packageName = "net.dzikoysk.funnyguilds"
+paper {
+    name = rootProject.name
+    main = "${packageName}.FunnyGuilds"
+    version = "${project.version} Snowdrop-${grgit.head().abbreviatedId}"
+    apiVersion = pluginApiVersion
+
+    author = "FunnyGuilds Team"
+    website = "https://github.com/FunnyGuilds"
+
+    generateLibrariesJson = true
+    loader = "${packageName}.FunnyGuildsLoader"
+
+    serverDependencies {
+        register("WorldEdit") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("WorldGuard") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("Vault") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("PlaceholderAPI") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("DecentHolograms") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("HolographicDisplays") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("Multiverse-Core") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+        register("dynmap") {
+            required = false
+            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
+        }
+    }
+
+    permissions {
+        register("funnyguilds.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.player" to true,
+                "funnyguilds.vip" to true,
+                "funnyguilds.admin" to true
+            )
+        }
+        register("funnyguilds.admin") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.reload" to true,
+                "funnyguilds.admin.build" to true,
+                "funnyguilds.admin.interact" to true,
+                "funnyguilds.admin.teleport" to true,
+                "funnyguilds.admin.notification" to true,
+                "funnyguilds.admin.disabledummy" to false,
+                "funnyguilds.base.teleportTime.admin" to true
+            )
+        }
+        register("funnyguilds.vip") {
+            default = BukkitPluginDescription.Permission.Default.OP
+            childrenMap = mapOf(
+                "funnyguilds.vip.items" to true,
+                "funnyguilds.vip.rank" to true,
+                "funnyguilds.vip.base" to true,
+                "funnyguilds.base.teleportTime.vip" to true
+            )
+        }
+        register("funnyguilds.player") {
+            default = BukkitPluginDescription.Permission.Default.TRUE
+            childrenMap = mapOf(
+                "funnyguilds.ally" to true,
+                "funnyguilds.base" to true,
+                "funnyguilds.break" to true,
+                "funnyguilds.create" to true,
+                "funnyguilds.delete" to true,
+                "funnyguilds.deputy" to true,
+                "funnyguilds.enlarge" to true,
+                "funnyguilds.escape" to true,
+                "funnyguilds.guild" to true,
+                "funnyguilds.info" to true,
+                "funnyguilds.invite" to true,
+                "funnyguilds.items" to true,
+                "funnyguilds.join" to true,
+                "funnyguilds.kick" to true,
+                "funnyguilds.leader" to true,
+                "funnyguilds.leave" to true,
+                "funnyguilds.playerinfo" to true,
+                "funnyguilds.pvp" to true,
+                "funnyguilds.ranking" to true,
+                "funnyguilds.rankreset" to true,
+                "funnyguilds.statsreset" to true,
+                "funnyguilds.setbase" to true,
+                "funnyguilds.tnt" to true,
+                "funnyguilds.top" to true,
+                "funnyguilds.validity" to true,
+                "funnyguilds.war" to true,
+                "funnyguilds.base.teleportTime.default" to true
+            )
+        }
+    }
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC 1.8-1.21).jar")
+    archiveFileName.set("FunnyGuilds ${project.version}.${grgit.log().size} (MC ${mcVersion}+).jar")
     mergeServiceFiles()
 
-    relocate("net.dzikoysk.funnycommands", "net.dzikoysk.funnyguilds.libs.net.dzikoysk.funnycommands")
-    relocate("panda.utilities", "net.dzikoysk.funnyguilds.libs.panda.utilities")
-    relocate("javassist", "net.dzikoysk.funnyguilds.libs.javassist")
-    relocate("com.zaxxer", "net.dzikoysk.funnyguilds.libs.com.zaxxer")
-    relocate("com.google", "net.dzikoysk.funnyguilds.libs.com.google") {
-        exclude("com.google.gson.**")
+    setOf(
+        "net.dzikoysk.funnycommands",
+        "com.zaxxer",
+        "org.bstats",
+        "eu.okaeri",
+        "dev.peri",
+        "me.pikamug"
+    ).forEach {
+        relocate(it, "net.dzikoysk.funnyguilds.libs.$it")
     }
-    relocate("org.apache.commons.lang3", "net.dzikoysk.funnyguilds.libs.org.apache.commons.lang3")
-    relocate("org.apache.logging", "net.dzikoysk.funnyguilds.libs.org.apache.logging")
-    relocate("org.slf4j", "net.dzikoysk.funnyguilds.libs.org.slf4j")
-    relocate("org.bstats", "net.dzikoysk.funnyguilds.libs.bstats")
-    relocate("eu.okaeri", "net.dzikoysk.funnyguilds.libs.eu.okaeri")
-    relocate("net.kyori", "net.dzikoysk.funnyguilds.libs.net.kyori")
-    relocate("dev.peri", "net.dzikoysk.funnyguilds.libs.dev.peri")
-    relocate("me.pikamug", "net.dzikoysk.funnyguilds.libs.me.pikamug")
-    relocate("org.mariadb", "net.dzikoysk.funnyguilds.libs.org.mariadb")
 
+    exclude("kotlin/**")
     exclude("org/checkerframework/**")
     exclude("org/intellij/lang/annotations/**")
     exclude("org/jetbrains/annotations/**")
+    exclude("javax/annotation/**")
 
     minimize {
         exclude(dependency("net.dzikoysk:funnycommands:.*"))
@@ -134,6 +243,6 @@ tasks.withType<ShadowJar> {
 
 tasks {
     runServer {
-        minecraftVersion("1.20.6")
+        minecraftVersion(runServerVersion)
     }
 }

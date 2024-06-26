@@ -59,7 +59,7 @@ public final class FlatGuildSerializer {
         boolean pvp = wrapper.getBoolean("pvp");
         Instant born = TimeUtils.positiveOrNullInstant(wrapper.getLong("born"));
         Instant validity = TimeUtils.positiveOrNullInstant(wrapper.getLong("validity"));
-        Instant protection = TimeUtils.positiveOrNullInstant(wrapper.getLong("attacked")); //TODO: [FG 5.0] attacked -> protection
+        Instant protection = TimeUtils.positiveOrNullInstant(wrapper.getLong("protection"));
         Instant ban = TimeUtils.positiveOrNullInstant(wrapper.getLong("ban"));
         int lives = wrapper.getInt("lives");
 
@@ -205,7 +205,7 @@ public final class FlatGuildSerializer {
         wrapper.set("enemies", new ArrayList<>(Entity.names(guild.getEnemies())));
         wrapper.set("born", guild.getBorn().toEpochMilli());
         wrapper.set("validity", guild.getValidity().toEpochMilli());
-        wrapper.set("attacked", guild.getProtection().toEpochMilli()); //TODO: [FG 5.0] attacked -> protection
+        wrapper.set("protection", guild.getProtection().toEpochMilli());
         wrapper.set("lives", guild.getLives());
         wrapper.set("ban", guild.getBan().map(Instant::toEpochMilli).orElseGet(0L));
         wrapper.set("pvp", guild.hasPvPEnabled());

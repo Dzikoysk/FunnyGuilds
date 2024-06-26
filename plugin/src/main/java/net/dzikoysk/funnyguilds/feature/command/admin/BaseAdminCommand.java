@@ -20,14 +20,14 @@ public final class BaseAdminCommand extends AbstractFunnyCommand {
             acceptsExceeded = true
     )
     public void execute(CommandSender sender, String[] args) {
-        when(args.length < 1, config -> config.generalNoNickGiven);
-
+        when(args.length < 1, config -> config.commands.validation.noNickGiven);
         User userToTeleport = UserValidation.requireUserByName(args[0]);
-        when(!userToTeleport.isOnline(), config -> config.generalNotOnline);
-        when(!userToTeleport.hasGuild(), config -> config.generalPlayerHasNoGuild);
+
+        when(!userToTeleport.isOnline(), config -> config.commands.validation.notOnline);
+        when(!userToTeleport.hasGuild(), config -> config.commands.validation.userHasNoGuild);
 
         Guild guild = userToTeleport.getGuild().get();
-        when(!guild.hasHome(), config -> config.adminGuildHasNoHome);
+        when(!guild.hasHome(), config -> config.admin.commands.guild.base.noHome);
 
         Location guildHome = guild.getHome().get();
         FunnyFormatter formatter = new FunnyFormatter()
@@ -35,11 +35,11 @@ public final class BaseAdminCommand extends AbstractFunnyCommand {
                 .register("{PLAYER}", userToTeleport.getName());
 
         userToTeleport.getProfile().teleport(PositionConverter.adapt(guildHome));
-        this.messageService.getMessage(config -> config.adminTeleportedToBase)
+        this.messageService.getMessage(config -> config.admin.commands.guild.base.teleportedTarget)
                 .receiver(userToTeleport)
                 .with(formatter)
                 .send();
-        this.messageService.getMessage(config -> config.adminTargetTeleportedToBase)
+        this.messageService.getMessage(config -> config.admin.commands.guild.base.teleported)
                 .receiver(sender)
                 .with(formatter)
                 .send();
