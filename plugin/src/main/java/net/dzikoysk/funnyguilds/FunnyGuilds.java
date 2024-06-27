@@ -3,7 +3,6 @@ package net.dzikoysk.funnyguilds;
 import com.google.common.collect.ImmutableSet;
 import eu.okaeri.configs.exception.OkaeriException;
 import java.io.File;
-import java.lang.reflect.Method;
 import me.pikamug.localelib.LocaleManager;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnyguilds.config.ConfigurationFactory;
@@ -85,7 +84,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.UnsafeValues;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
@@ -198,7 +196,8 @@ public class FunnyGuilds extends JavaPlugin {
         try {
             this.nmsAccessor = prepareNmsAccessor();
         } catch (Throwable th) {
-            this.printUnsupportedMinecraftVersion(th);
+            String mcVersion = this.getServer().getMinecraftVersion();
+            LOGGER.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", mcVersion), th);
             this.shutdown("Critical error has been encountered!");
             return;
         }
@@ -708,31 +707,6 @@ public class FunnyGuilds extends JavaPlugin {
 
     public static FunnyGuildsLogger getPluginLogger() {
         return LOGGER;
-    }
-
-    private void printUnsupportedMinecraftVersion(Throwable th) {
-        String currentVersion = null;
-        try {
-            Method getMinecraftVersion = Server.class.getMethod("getMinecraftVersion"); // DO NOT CHANGE TO DIRECT METHOD USE - We need this to properly print info that version is REALLY legacy
-            currentVersion = (String) getMinecraftVersion.invoke(this.getServer());
-
-            Method getDataVersion = UnsafeValues.class.getMethod("getDataVersion");
-            int dataVersion = (int) getDataVersion.invoke(this.getServer().getUnsafe());
-            if (dataVersion < FunnyGuildsConst.MC_DATA_VERSION) {
-                throw new Throwable();
-            }
-
-            LOGGER.error(format("Version '%s' is not supported yet, please reach us on issue tracker or on Discord that can be found here: https://github.com/FunnyGuilds/FunnyGuilds", currentVersion), th);
-        } catch (Throwable ignored) {
-            try {
-                if (currentVersion == null) {
-                    currentVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-                }
-
-                LOGGER.error(format("Version '%s' is legacy and therefore not supported ", currentVersion), th);
-            } catch (Throwable ignored2) {
-            }
-        }
     }
 
     private static NmsAccessor prepareNmsAccessor() throws IllegalStateException {

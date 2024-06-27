@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import net.minecrell.pluginyml.paper.PaperPluginDescription
-import kotlin.math.exp
 
 plugins {
     id("net.minecrell.plugin-yml.paper")
@@ -19,6 +18,7 @@ val runServerVersion: String by project
 dependencies {
     /* funnyguilds */
 
+    implementation(project(":plugin-legacy"))
     project(":nms").dependencyProject.subprojects.forEach {
         implementation(it)
     }
@@ -95,18 +95,22 @@ sourceSets {
     }
 }
 
-val packageName = "net.dzikoysk.funnyguilds"
+val pluginName: String by rootProject.extra
+val pluginPackageName: String by rootProject.extra
+val pluginVersion: String by rootProject.extra
+val pluginAuthor: String by rootProject.extra
+val pluginWebsite: String by rootProject.extra
+
 paper {
     name = rootProject.name
-    main = "${packageName}.FunnyGuilds"
-    version = "${project.version} Snowdrop-${grgit.head().abbreviatedId}"
+    version = pluginVersion
     apiVersion = pluginApiVersion
-
-    author = "FunnyGuilds Team"
-    website = "https://github.com/FunnyGuilds"
+    author = pluginAuthor
+    website = pluginWebsite
 
     generateLibrariesJson = true
-    loader = "${packageName}.FunnyGuildsLoader"
+    loader = "${pluginPackageName}.FunnyGuildsLoader"
+    main = "${pluginPackageName}.FunnyGuilds"
 
     serverDependencies {
         register("WorldEdit") {
@@ -214,13 +218,12 @@ tasks.withType<ShadowJar> {
 
     setOf(
         "net.dzikoysk.funnycommands",
-        "com.zaxxer",
         "org.bstats",
         "eu.okaeri",
         "dev.peri",
         "me.pikamug"
     ).forEach {
-        relocate(it, "net.dzikoysk.funnyguilds.libs.$it")
+        relocate(it, "$pluginPackageName.libs.$it")
     }
 
     exclude("kotlin/**")
@@ -231,8 +234,6 @@ tasks.withType<ShadowJar> {
 
     minimize {
         exclude(dependency("net.dzikoysk:funnycommands:.*"))
-        exclude(dependency("com.fasterxml.jackson.core:jackson-core:.*"))
-        exclude(dependency("org.mariadb.jdbc:mariadb-java-client:.*"))
 
         // nms implementation modules are not referenced in the project but are required at runtime
         parent!!.project(":nms").subprojects.forEach {
