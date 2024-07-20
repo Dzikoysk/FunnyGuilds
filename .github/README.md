@@ -1,5 +1,5 @@
-# ⚠️ Project temporarily inactive
-Due to lack of time and developers, project is temporarily suspended and may not receive new features and much support. Keep that in mind before using this plugin.
+# ⚠️ Project temporarily in maintainace mode
+Due to lack of time and developers, project is temporarily suspended and may not receive new features, apart from new versions support and important bug fixes. Keep that in mind before using this plugin.
 <br>
 Also we are open to [pull requests](https://github.com/FunnyGuilds/FunnyGuilds/pulls), if you would like to help in development of FunnyGuilds.
 
