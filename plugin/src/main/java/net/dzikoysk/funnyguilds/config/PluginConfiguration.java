@@ -77,10 +77,6 @@ public class PluginConfiguration extends OkaeriConfig {
     public final Cooldown<UUID> informationMessageCooldowns = new Cooldown<>();
 
     @Comment("")
-    @Comment("Wyświetlana nazwa pluginu")
-    public String pluginName = "FunnyGuilds";
-
-    @Comment("")
     @Comment("Czy plugin ma działać w trybie debug - służy on do wysyłania dodatkowych wiadomości, w celu diagnozowania błędów")
     public boolean debugMode = false;
 

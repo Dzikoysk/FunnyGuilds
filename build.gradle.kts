@@ -13,14 +13,17 @@ plugins {
     id("org.ajoberstar.grgit") version "4.1.1"
     id("io.github.goooler.shadow") version "8.1.7" // https://github.com/Goooler/shadow (fork of com.github.johnrengelman.shadow)
     id("net.minecrell.plugin-yml.paper") version "0.6.0" apply false
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0" apply false
     id("io.papermc.paperweight.userdev") version "1.7.1" apply false
     id("net.kyori.blossom") version "2.1.0" apply false
     id("xyz.jpenilla.run-paper") version "2.3.0" apply false
 }
 
-idea {
-    project.jdkName = "21"
-}
+val pluginName by extra { rootProject.name }
+val pluginPackageName by extra { "net.dzikoysk.funnyguilds" }
+val pluginVersion by extra { "${project.version} Snowdrop-${grgit.head().abbreviatedId}" }
+val pluginAuthor by extra { "FunnyGuilds Team" }
+val pluginWebsite by extra { "https://github.com/FunnyGuilds" }
 
 allprojects {
     group = "net.dzikoysk.funnyguilds"
@@ -163,4 +166,8 @@ subprojects {
             showStandardStreams = true
         }
     }
+}
+
+idea {
+    project.jdkName = "21"
 }
