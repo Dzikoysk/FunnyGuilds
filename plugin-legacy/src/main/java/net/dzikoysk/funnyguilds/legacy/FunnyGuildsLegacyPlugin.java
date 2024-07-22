@@ -34,9 +34,8 @@ public class FunnyGuildsLegacyPlugin extends JavaPlugin {
         String pluginName = this.getDescription().getName();
         return Arrays.asList(
                 " " + pluginName + " requires a latest version of Paper",
-                " You can often find a list of supported game versions",
-                " at the webpage you obtained the plugin from. You could",
-                " also contact the plugin author for assistance."
+                "",
+                " Download latest Paper: https://papermc.io"
         );
     }
 
@@ -46,17 +45,7 @@ public class FunnyGuildsLegacyPlugin extends JavaPlugin {
                 " " + pluginName + " is a Paper plugin, meaning it only supports",
                 " Paper and derivatives, not Spigot or CraftBukkit.",
                 "",
-                " Paper offers significant performance improvements,",
-                " bug fixes, security enhancements and optional",
-                " features for server owners to enhance their server.",
-                " And provides developers an improved and expanded plugin",
-                " development API.",
-                "",
-                " All of your Bukkit and Spigot plugins should still work,",
-                " on Paper, and the community will gladly help you fix any",
-                " issues.",
-                "",
-                " Download Paper and join the community @ https://papermc.io"
+                " Download latest Paper: https://papermc.io"
         );
     }
 
