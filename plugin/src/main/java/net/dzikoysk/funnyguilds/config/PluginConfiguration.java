@@ -193,7 +193,7 @@ public class PluginConfiguration extends OkaeriConfig {
     @Comment("")
     @Comment("Czy wiadomości o braku potrzebnych przedmiotów maja zawierać elementy, na które można najechać")
     @Comment("Takie elementy pokazują informacje o przedmiocie, np. jego typ, nazwę czy opis")
-    public boolean enableItemComponent = true;
+    public boolean enableItemComponent = false;
 
     @Comment("")
     @Comment("Przedmioty wymagane do założenia gildii")
