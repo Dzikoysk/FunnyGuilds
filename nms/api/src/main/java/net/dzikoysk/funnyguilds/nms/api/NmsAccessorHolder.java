@@ -13,6 +13,7 @@ public final class NmsAccessorHolder {
 
     private static final TreeMap<Integer, String> NMS_VERSION_MAPPING = new TreeMap<>(ImmutableMap.<Integer, String>builder()
             .put(3837, "v1_20R5") // Version can be found in server jar in version.json under `world_version` key
+            .put(3953, "v1_21R1")
             .build());
 
     static final NmsAccessor INSTANCE = newAccessorInstance();
