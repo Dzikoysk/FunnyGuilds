@@ -3,6 +3,7 @@ package net.dzikoysk.funnyguilds.nms.api;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.UnsafeValues;
@@ -31,23 +32,34 @@ public final class NmsAccessorHolder {
     }
 
     private static String getNmsVersion() {
+        String version = null;
+
         try {
             Method getDataVersion = UnsafeValues.class.getMethod("getDataVersion");
             int dataVersion = (int) getDataVersion.invoke(Bukkit.getServer().getUnsafe());
-            return NMS_VERSION_MAPPING.floorEntry(dataVersion).getValue();
+            Map.Entry<Integer, String> versionEntry = NMS_VERSION_MAPPING.floorEntry(dataVersion);
+            if (versionEntry != null) {
+                version = versionEntry.getValue();
+            }
         }
         catch (NoSuchMethodException ignored) {
-            // Fallback to legacy method
-            StringBuilder nmsVersion = new StringBuilder(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
-
-            int revPosition = nmsVersion.lastIndexOf("_");
-            nmsVersion.deleteCharAt(revPosition);
-
-            return nmsVersion.toString();
+            version = null;
         }
         catch(IllegalAccessException | InvocationTargetException ex) {
-            throw new RuntimeException("could not get minecraft version", ex);
+            throw new RuntimeException("Could not get minecraft version", ex);
         }
+
+        if (version != null) {
+            return version;
+        }
+
+        // Fallback to legacy method
+        StringBuilder nmsVersion = new StringBuilder(Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3]);
+
+        int revPosition = nmsVersion.lastIndexOf("_");
+        nmsVersion.deleteCharAt(revPosition);
+
+        return nmsVersion.toString();
     }
 
 }
