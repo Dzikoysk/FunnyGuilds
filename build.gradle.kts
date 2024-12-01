@@ -12,7 +12,7 @@ plugins {
     kotlin("jvm") version "2.0.0" apply false
     id("idea")
     id("org.ajoberstar.grgit") version "4.1.1"
-    id("io.github.goooler.shadow") version "8.1.7" // https://github.com/Goooler/shadow (fork of com.github.johnrengelman.shadow)
+    id("com.gradleup.shadow") version "9.0.0-beta2" // https://github.com/Goooler/shadow (fork of com.github.johnrengelman.shadow)
     id("xyz.jpenilla.run-paper") version "2.2.4" apply false
     id("io.papermc.paperweight.userdev") version "1.7.3" apply false
 }
@@ -29,7 +29,7 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "application")
-    apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "com.gradleup.shadow")
 
     application {
         mainClass.set("net.dzikoysk.funnyguilds.FunnyGuilds")
@@ -37,13 +37,9 @@ allprojects {
 
     repositories {
         /* Libs */
-        mavenCentral()
+        maven("https://maven.reposilite.com/maven-central")
         maven("https://maven.reposilite.com/releases")
-        maven("https://maven.reposilite.com/snapshots") {
-            mavenContent {
-                snapshotsOnly()
-            }
-        }
+        maven("https://maven.reposilite.com/snapshots")
         maven("https://storehouse.okaeri.eu/repository/maven-public") {
             mavenContent {
                 releasesOnly()
@@ -120,37 +116,6 @@ subprojects {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
             freeCompilerArgs = listOf("-Xjvm-default=all") // Generate default methods in interfaces by default
-        }
-    }
-
-    publishing {
-        repositories {
-            maven {
-                name = "reposilite"
-                url = uri("https://maven.reposilite.com/${if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}")
-                credentials {
-                    username = System.getenv("MAVEN_NAME") ?: property("mavenUser").toString()
-                    password = System.getenv("MAVEN_TOKEN") ?: property("mavenPassword").toString()
-                }
-            }
-        }
-        publications {
-            create<MavenPublication>("library") {
-                from(components.getByName("java"))
-
-                // Add external repositories to published artifacts
-                // ~ btw: pls don't touch this
-                pom.withXml {
-                    val repositories = asNode().appendNode("repositories")
-                    project.repositories.findAll(closureOf<Any> {
-                        if (this is MavenArtifactRepository && this.url.toString().startsWith("https")) {
-                            val repository = repositories.appendNode("repository")
-                            repository.appendNode("id", this.url.toString().replace("https://", "").replace("/", "-").replace(".", "-").trim())
-                            repository.appendNode("url", this.url.toString().trim())
-                        }
-                    })
-                }
-            }
         }
     }
 
