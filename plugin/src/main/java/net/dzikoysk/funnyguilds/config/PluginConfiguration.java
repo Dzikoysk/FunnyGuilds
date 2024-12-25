@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import net.dzikoysk.funnyguilds.FunnyGuilds;
 import net.dzikoysk.funnyguilds.config.sections.CommandsConfiguration;
 import net.dzikoysk.funnyguilds.config.sections.HeartConfiguration;
@@ -114,7 +116,11 @@ public class PluginConfiguration extends OkaeriConfig {
     @Comment("Bloki, które można stawiać na terenie gildii, niezależnie od tego, czy jest się jej członkiem")
     @Comment("Zostaw puste, aby wyłączyć")
     @Comment("Nazwy bloków muszą pasować do nazw podanych tutaj: https://spigotdocs.okaeri.cloud/select/org/bukkit/Material.html")
-    public Set<Material> placingBlocksBypassOnRegion = Collections.emptySet();
+    @CustomKey("placing-blocks-bypass-on-region")
+    public Set<String> placingBlocksBypassOnRegion_ = Collections.emptySet();
+
+    @Exclude
+    public Set<Material> placingBlocksBypassOnRegion;
 
     @Comment("")
     @Comment("Zablokuj rozlewanie się wody i lawy poza terenem gildii")
@@ -1356,6 +1362,14 @@ public class PluginConfiguration extends OkaeriConfig {
     public void loadProcessedProperties() {
         if (this.availableLocales.add(this.defaultLocale)) {
             FunnyGuilds.getPluginLogger().parser("Default locale '" + this.defaultLocale + "' hasn't been added in available locales, adding it automatically");
+        }
+
+        if (placingBlocksBypassOnRegion_.contains("*")) {
+            placingBlocksBypassOnRegion = new HashSet<>(Arrays.asList(Material.values()));
+        } else {
+            placingBlocksBypassOnRegion = placingBlocksBypassOnRegion_.stream()
+                    .map(Material::matchMaterial)
+                    .collect(Collectors.toSet());
         }
 
         this.guiItems = this.loadGUI(this.guiItems_);
