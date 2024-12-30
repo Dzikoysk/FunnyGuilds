@@ -18,7 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.dynmap.DynmapAPI;
+import org.dynmap.DynmapCommonAPI;
 import org.dynmap.markers.AreaMarker;
 import org.dynmap.markers.Marker;
 import org.dynmap.markers.MarkerAPI;
@@ -33,7 +33,7 @@ public class DynmapHook extends AbstractPluginHook implements Listener {
     private final PluginConfiguration.DynmapHook hookConfig;
     private final GuildManager guildManager;
 
-    private DynmapAPI dynmapApi;
+    private DynmapCommonAPI dynmapApi;
     private MarkerAPI markerApi;
     private MarkerSet guildsMarkerSet;
     private PlayerSet playersMarkerSet;
@@ -49,7 +49,7 @@ public class DynmapHook extends AbstractPluginHook implements Listener {
 
     @Override
     public HookInitResult init() {
-        this.dynmapApi = (DynmapAPI) FunnyGuilds.getInstance().getServer().getPluginManager().getPlugin("dynmap");
+        this.dynmapApi = (DynmapCommonAPI) FunnyGuilds.getInstance().getServer().getPluginManager().getPlugin("dynmap");
         this.markerApi = this.dynmapApi.getMarkerAPI();
 
         this.guildsMarkerSet = this.markerApi.createMarkerSet("fg_guilds", this.hookConfig.guildSetLabel, null, false);
