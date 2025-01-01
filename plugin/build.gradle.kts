@@ -150,6 +150,7 @@ tasks.withType<ShadowJar> {
     exclude("org/checkerframework/**")
     exclude("org/intellij/lang/annotations/**")
     exclude("org/jetbrains/annotations/**")
+    exclude("META-INF/services/javax.annotation.processing.Processor")
 
     minimize {
         exclude(dependency("net.dzikoysk:funnycommands:.*"))
