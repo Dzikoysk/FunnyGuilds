@@ -53,27 +53,27 @@ dependencies {
 
     /* okaeri config library */
 
-    val okaeriConfigs = "5.0.2"
+    val okaeriConfigs = "5.0.5"
     implementation("eu.okaeri:okaeri-configs-yaml-bukkit:$okaeriConfigs")
     implementation("eu.okaeri:okaeri-configs-serdes-commons:$okaeriConfigs")
     implementation("eu.okaeri:okaeri-configs-validator-okaeri:$okaeriConfigs")
     // okaeri holographicdisplays commons
-    implementation("eu.okaeri:okaeri-commons-bukkit-holographicdisplays:0.2.25")
+    implementation("eu.okaeri:okaeri-commons-bukkit-holographicdisplays:0.2.27")
 
     /* messages libraries */
 
-    val adventureVersion = "4.17.0"
+    val adventureVersion = "4.18.0"
     implementation("net.kyori:adventure-api:$adventureVersion")
     implementation("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
     implementation("net.kyori:adventure-text-minimessage:$adventureVersion")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.3") // adventure-platform has other versioning than adventure-api
+    implementation("net.kyori:adventure-platform-bukkit:4.3.4") // adventure-platform has other versioning than adventure-api
 
     val yamlVersion = "6.8.0-SNAPSHOT"
     implementation("dev.peri.yetanothermessageslibrary:core:$yamlVersion")
     implementation("dev.peri.yetanothermessageslibrary:repository-okaeri:$yamlVersion")
     implementation("dev.peri.yetanothermessageslibrary:platform-bukkit:$yamlVersion")
 
-    implementation("com.github.PikaMug:LocaleLib:3.9")
+    implementation("com.github.PikaMug:LocaleLib:4.1.0")
 
     /* general stuff */
 
@@ -111,8 +111,8 @@ dependencies {
         exclude(group = "com.google.code.gson", module = "gson")
     }
     shadow("com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9")
-    shadow("com.github.decentsoftware-eu:decentholograms:2.8.1")
-    shadow("us.dynmap:dynmap-api:3.0")
+    shadow("com.github.decentsoftware-eu:decentholograms:2.8.12")
+    shadow("us.dynmap:DynmapCoreAPI:3.6")
 
     /* tests */
     testImplementation("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
