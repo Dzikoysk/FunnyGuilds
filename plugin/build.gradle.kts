@@ -43,7 +43,7 @@ dependencies {
     project(":nms").dependencyProject.subprojects.forEach {
         implementation(it)
     }
-    implementation("net.dzikoysk:funnycommands:0.7.0")
+    implementation("net.dzikoysk:funnycommands:0.8.0")
 
     /* std */
 
